@@ -1,0 +1,13 @@
+# Lefthook configuration
+# https://github.com/evilmartians/lefthook
+
+pre-commit:
+  parallel: false
+  commands:
+    lint-fix:
+      glob: "*.{js,ts,vue,mjs}"
+      run: pnpm eslint --fix {staged_files}
+      stage_fixed: true
+    
+    tests:
+      run: pnpm run test:types && pnpm run test

@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "@astraldev/nuxt-animejs-playground",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@astraldev/nuxt-animejs": "workspace:*",
+    "@tailwindcss/vite": "^4.1.18",
+    "nuxt": "^4.3.0",
+    "tailwindcss": "^4.1.18"
+  }
+}

@@ -1,0 +1,9 @@
+packages:
+  - '.'
+  - 'playground'
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - lefthook
+  - unrs-resolver

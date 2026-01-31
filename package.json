@@ -1,0 +1,63 @@
+{
+  "name": "@astraldev/nuxt-animejs",
+  "version": "0.0.1-alpha",
+  "description": "Nuxt module for animejs integration and transitions",
+  "repository": "https://github.com/astraldev/nuxt-animejs",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    }
+  },
+  "main": "./dist/module.mjs",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/types.d.mts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "workspaces": [
+    "playground"
+  ],
+  "scripts": {
+    "postinstall": "lefthook install",
+    "prepack": "nuxt-module-build build",
+    "dev": "npm run dev:prepare && nuxt dev playground",
+    "dev:build": "nuxt build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
+    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^4.3.0",
+    "@vueuse/core": "^14.1.0",
+    "animejs": "^4.3.5"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^3.1.1",
+    "@nuxt/eslint-config": "^1.13.0",
+    "@nuxt/module-builder": "^1.0.2",
+    "@nuxt/schema": "^4.3.0",
+    "@nuxt/test-utils": "^3.23.0",
+    "@types/node": "latest",
+    "@vue/test-utils": "^2.4.6",
+    "@vueuse/nuxt": "14.1.0",
+    "changelogen": "^0.6.2",
+    "eslint": "^9.39.2",
+    "happy-dom": "^20.4.0",
+    "lefthook": "^2.0.16",
+    "nuxt": "^4.3.0",
+    "typescript": "~5.9.3",
+    "vitest": "^4.0.18",
+    "vue-tsc": "^3.2.4"
+  }
+}
