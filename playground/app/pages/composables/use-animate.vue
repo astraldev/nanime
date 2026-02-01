@@ -29,9 +29,9 @@
         <PTabs
           v-model="animType"
           :items="[
-            { id: 'move', label: 'Move' },
-            { id: 'spin', label: 'Spin' },
-            { id: 'scale', label: 'Scale' },
+            { value: 'move', label: 'Move' },
+            { value: 'spin', label: 'Spin' },
+            { value: 'scale', label: 'Scale' },
           ]"
         />
 
@@ -60,6 +60,8 @@
 <script setup lang="ts">
 import type { AnimationParams } from 'animejs'
 
+const { $anime } = useNuxtApp()
+
 // --- Section 1 ---
 const box1 = useTemplateRef('box1')
 useWaapiAnimate(box1, {
@@ -74,16 +76,22 @@ useWaapiAnimate(box1, {
 
 // --- Section 2 ---
 const staggerBox = useTemplateRef('staggerBox')
-// useAnimate(staggerBox, {
-//   y: [0, -20],
-//   x: [0, 20],
-//   scale: [1, 0.8],
-//   opacity: [1, 0.5],
-//   delay: stagger(100, { grid: [5, 6], from: 'center' }),
-//   alternate: true,
-//   loop: true,
-//   ease: 'easeInOutSine',
-// })
+useAnimate(staggerBox, {
+  scale: [
+    { to: [0, 1.25] },
+    { to: 0 },
+  ],
+  boxShadow: [
+    { to: '0 0 1rem 0 currentColor' },
+    { to: '0 0 0rem 0 currentColor' },
+  ],
+  delay: $anime.utils.stagger(100, {
+    grid: [5, 6],
+    from: $anime.utils.random(0, 5 * 6),
+  }),
+  loop: true,
+  alternate: true,
+})
 
 // --- Section 3 ---
 const targetA = useTemplateRef('targetA')

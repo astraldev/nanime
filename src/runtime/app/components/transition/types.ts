@@ -1,7 +1,11 @@
 import type { AutoLayoutParams, EasingParam, LayoutAnimationParams, WAAPIEasingParam } from 'animejs'
-import type { TransitionDurationInput } from '../../utils/transition-utils'
 import type { VueInstance } from '@vueuse/core'
 import type { BaseTransitionProps } from 'vue'
+import type { TransitionDurationInput } from '../../utils/transitions/types'
+
+type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}
 
 export type SharedTransitionProps = {
   duration?: TransitionDurationInput
@@ -10,32 +14,32 @@ export type SharedTransitionProps = {
   tag?: keyof HTMLElementTagNameMap | HTMLElement | VueInstance
 } & (
   | {
-    useWaapi: true
-    group?: false
-    ease?: WAAPIEasingParam
-    mode?: BaseTransitionProps['mode']
-  }
-  | {
-    useWaapi: true
+    /**
+     * Constraint 1 & 2:
+     * When group is true, useWaapi MUST be false.
+     * Layout/Animate options are available.
+     */
     group: true
+    useWaapi?: false
     ease?: EasingParam
-    layoutOptions?: AutoLayoutParams
+    layoutOptions?: Prettify<Omit<AutoLayoutParams, 'leaveTo' | 'enterFrom'>>
     animateOptions?: LayoutAnimationParams
+    mode?: never
   }
   | {
-    useWaapi?: false
-    group?: false
-    ease?: EasingParam
+    /**
+     * When group is false/undefined:
+     * useWaapi can be a boolean variable.
+     * Layout/Animate options are strictly disabled.
+     */
+    group?: false | undefined
+    useWaapi?: boolean
+    ease?: WAAPIEasingParam | EasingParam
     mode?: BaseTransitionProps['mode']
+    layoutOptions?: never
+    animateOptions?: never
   }
-  | {
-    useWaapi?: false
-    group: true
-    ease?: EasingParam
-    layoutOptions?: AutoLayoutParams
-    animateOptions?: LayoutAnimationParams
-  }
-  )
+)
 
 export const isWaapiEase = (
   properties: SharedTransitionProps,

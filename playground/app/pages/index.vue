@@ -1,25 +1,26 @@
 <template>
-  <div class="p-8 space-y-8">
-    <nav class="space-y-4">
-      <h1 class="text-3xl font-bold text-white">
-        Nuxt Anime.js Playground
-      </h1>
+  <div class="p-8 max-w-4xl mx-auto space-y-8 my-auto">
+    <div class="space-y-4">
+      <h2 class="text-3xl font-bold text-white">
+        Welcome to the Playground
+      </h2>
+      <p class="text-gray-400">
+        Explore demos
+      </p>
+    </div>
 
-      <div class="flex flex-wrap gap-3">
-        <NuxtLink
-          to="/composables/use-animate"
-          class="px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-white rounded-lg transition-colors border border-gray-700"
-        >
-          useAnimate Demo
-        </NuxtLink>
+    <nav class="grid gap-4 sm:grid-cols-2">
+      <PDemoCard
+        to="/composables/use-animate"
+        title="useAnimate Demo"
+        description="Explore the useAnimate composable with stagger effects and timeline animations."
+      />
 
-        <NuxtLink
-          to="/transitions/slide-transition"
-          class="px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-white rounded-lg transition-colors border border-gray-700"
-        >
-          Slide Transition
-        </NuxtLink>
-      </div>
+      <PDemoCard
+        to="/transitions/slide-transition"
+        title="Slide Transition"
+        description="Interactive demos of slide transitions with useWaapi, modes, and group transitions."
+      />
     </nav>
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { computed, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRefOrGetter } from '#imports'
+import { computed, onBeforeUnmount, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRefOrGetter } from '#imports'
 import { createLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
 import { normalizeLayoutTarget } from '../utils/normalize-targets'
 import { extractNonFunctionProperties } from '../utils/extract-props'
@@ -13,10 +13,15 @@ export function useAnimeLayout(
 
   watchEffect(() => {
     if (!mounted.value) return
-    const targets = normalizeLayoutTarget(toValue(target))
-    if (!targets) return
-    const newLayout = createLayout(targets, toValue(options) || {})
+    const wrapper = normalizeLayoutTarget(toValue(target))
+    if (!wrapper) return
+    const newLayout = createLayout(wrapper, toValue(options) || {})
     layout.value = newLayout
+  })
+
+  onBeforeUnmount(() => {
+    layout.value?.revert()
+    layout.value = null
   })
 
   return {
@@ -24,7 +29,13 @@ export function useAnimeLayout(
     record: () => layout.value?.record(),
     revert: () => layout.value?.revert(),
     animate: (options?: LayoutAnimationParams, cb?: () => void) => {
-      return layout.value?.animate(options || {})?.then(() => cb?.()) || cb?.()
+      const animation = layout.value?.animate(options || {})
+      if (!animation && cb) return cb()
+      if (!animation) return
+      animation.play()
+      animation.then(() => cb?.())
+      if (animation.completed) return cb?.()
+      return animation
     },
   }
 }

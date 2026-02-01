@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { normalizeDuration, normalizeOffset } from '../../../src/runtime/app/utils/transition-utils'
+import { normalizeDuration } from '../../../src/runtime/app/utils/transitions/normalizers/normalize-duration'
+import { normalizeOffset } from '../../../src/runtime/app/utils/transitions/normalizers/normalize-offsets'
+import { normalizeAxis } from '../../../src/runtime/app/utils/transitions/normalizers/normalize-axis'
 
 describe('normalizeDuration', () => {
   it('should return default duration when undefined', () => {
@@ -48,5 +50,26 @@ describe('normalizeOffset', () => {
 
   it('should throw error for invalid units', () => {
     expect(() => normalizeOffset('100em' as any)).toThrow('Invalid offset value: "100em"')
+  })
+})
+
+describe('normalizeAxis', () => {
+  it('should return default axis when undefined', () => {
+    expect(normalizeAxis()).toEqual({ enter: 'y', leave: 'y' })
+  })
+
+  it('should handle string inputs', () => {
+    expect(normalizeAxis('x')).toEqual({ enter: 'x', leave: 'x' })
+    expect(normalizeAxis('y')).toEqual({ enter: 'y', leave: 'y' })
+  })
+
+  it('should handle array inputs', () => {
+    expect(normalizeAxis(['x', 'y'])).toEqual({ enter: 'x', leave: 'y' })
+    expect(normalizeAxis(['y', 'x'])).toEqual({ enter: 'y', leave: 'x' })
+  })
+
+  it('should handle object inputs', () => {
+    expect(normalizeAxis({ enter: 'x', leave: 'y' })).toEqual({ enter: 'x', leave: 'y' })
+    expect(normalizeAxis({ enter: 'y', leave: 'x' })).toEqual({ enter: 'y', leave: 'x' })
   })
 })

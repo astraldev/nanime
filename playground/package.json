@@ -8,10 +8,18 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxt/icon": "2.2.1",
     "@tailwindcss/vite": "^4.1.18",
+    "lodash-es": "^4.17.23",
     "nanime": "workspace:*",
     "nuxt": "^4.3.0",
+    "ohash": "^2.0.11",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "@vueuse/core": "^14.2.0",
+    "@vueuse/nuxt": "14.1.0"
   }
 }

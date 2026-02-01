@@ -2,28 +2,22 @@
 name: Create Utility Tests
 description: Guide for creating utility tests in this project using Nuxt test utils and component mounting.
 ---
-# AI Guide: Creating Utility Tests
-
-This guide outlines the established patterns and best practices for creating utility tests in this project. Follow these guidelines to ensure consistency, type safety, and reliability.
-
 ## 1. Environment Setup
 
 Tests are organized into projects within `vitest.config.ts`. The `suites` project is specifically configured for Nuxt utilities.
 
-- **Location**: Place utility tests in `test/suites/utilities/`.
-- **Environment Tag**: The `suites` project handles the environment, but you may see `// @vitest-environment nuxt` in older files.
+- **Location**: Place utility tests in `test/suites/utilities/` and you can add them under their own directory.
 
 ## 2. Component-Based Testing
 
 Do **not** use mocks for DOM elements or Vue instances. Instead, use **real components**.
 
 ### Pattern
-1.  **Create a Test Component**: Create a `.vue` file (e.g., `test-component.vue`) in the test suite directory.
+1.  **Create a Test Component**: Create a `.vue` file (e.g., `test-component.vue`) in the test suite directory if the utility works with vue components or template refs
     - Use `<script setup lang="ts">` and `useTemplateRef` for type-safe refs.
     - Explicitly `defineExpose` any refs needed for testing.
 
-    ```vue
-    <!-- test-component.vue -->
+    ```
     <script setup lang="ts">
     import { useTemplateRef } from 'vue'
 
@@ -36,7 +30,7 @@ Do **not** use mocks for DOM elements or Vue instances. Instead, use **real comp
     </template>
     ```
 
-2.  **Mount with `mountSuspended`**: specific to Nuxt, handles the environment correctly.
+2.  **Mount the component using with `mountSuspended`**
 
     ```typescript
     import { mountSuspended } from '@nuxt/test-utils/runtime'
@@ -56,7 +50,8 @@ The project enforces strict TypeScript. **Avoid `any`**.
     const div = wrapper.find('.target').element as HTMLElement
     const svg = wrapper.find('svg').element as SVGElement
     ```
-- **Type Imports**: Import types from `@vueuse/core` or other libraries as needed.
+- Do not use "as unknown as ..." for any reason.
+- Only use "as any" in test cases, for parameters.
 
 ## 4. Test Structure
 
