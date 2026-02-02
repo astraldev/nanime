@@ -1,9 +1,13 @@
 packages:
-  - '.'
-  - 'playground'
+  - .
+  - playground
+  - docs
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
+  - better-sqlite3
   - esbuild
   - lefthook
+  - sharp
   - unrs-resolver
+  - vue-demi
