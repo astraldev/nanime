@@ -22,9 +22,6 @@
   "files": [
     "dist"
   ],
-  "workspaces": [
-    "playground"
-  ],
   "scripts": {
     "postinstall": "lefthook install",
     "prepack": "nuxt-module-build build",

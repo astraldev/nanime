@@ -9,43 +9,48 @@ seo:
 ---
 orientation: horizontal
 ---
-  ::code-group
-    ::hero-animation{label="Preview"}
-    ::
-    ```html [Template]
-    <div class="boxes grid grid-cols-5 place-items-center gap-2.5">
-      <div class="box size-8 rounded-md bg-white/40" v-for="i in 20" :key="i" />
+  ::tabs
+    :::tabs-item{icon="i-lucide-eye" label="Preview"}
+      ::hero-animation
+      ::
+    :::
+
+    :::tabs-item{icon="i-lucide-code" label="Template"}
+    ```html
+    <div class="boxes grid grid-cols-10 place-items-center gap-0.5 absolute inset-0 p-5">
+      <div v-for="i in 40" :key="i" class="box size-9 rounded-sm bg-white/40 aspect-square" />
     </div>
     ```
-    ```ts [Script]
-    import { useAnimate } from '#imports';
-    import { stagger } from "#nanime/utils";
 
-    useAnimate(".boxes > .box", {
-      y: {
-        to: '-80%',
-        ease: 'outBack',
-        duration: 600,
-      },
-      rotate: {
-        from: '-1turn',
-        delay: 0
-      },
-      scale: [1, 1.1, 0.8, 1],
-      delay: stagger(50),
-      ease: 'inOutCirc',
-      loopDelay: 1000,
-      loop: true,
-      alternate: true,
-    });
+    :::
+
+    :::tabs-item{icon="i-lucide-file-code" label="Script"}
+    ```ts
+    import { stagger } from '#nanime/utils'
+
+    useAnimate('.boxes > .box', {
+      scale: [
+        { to: [0, 1.25] },
+        { to: 0 }
+      ],
+      boxShadow: [
+        { to: '0 0 1rem 0 currentColor' },
+        { to: '0 0 0rem 0 currentColor' }
+      ],
+      delay: stagger(100, {
+        grid: [10, 4],
+        from: 'center',
+      }),
+    })
     ```
+    :::
   ::
 
 #title
 Effortless animations with [AnimeJS]{.text-primary}
 
 #description
-Build SSR Safe animations for Nuxt without having to worry about targets, hooks and component lifecycle.
+Create SSR Safe animations for Nuxt without having to worry about targets and component lifecycle.
 
 #links
   :::u-button
@@ -96,7 +101,7 @@ Shipped with many features
 
   :::u-page-card
   ---
-  icon: i-simple-icons-nuxt
+  icon: i-tabler-server-cog
   spotlight: true
   target: _blank
   to: https://nuxt.com
@@ -105,12 +110,12 @@ Shipped with many features
   [SSR]{.text-primary} safe
   
   #description
-  Using composables doesn't break ssr nor cause hydration issues
+  Composables doesn't break ssr nor cause hydration issues
   :::
 
   :::u-page-card
   ---
-  icon: i-simple-icons-nuxt
+  icon: i-tabler-settings-bolt
   spotlight: true
   target: _blank
   to: https://nuxt.com/docs/guide/directory-structure/app-config

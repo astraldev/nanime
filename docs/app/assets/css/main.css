@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme static {
+  --font-sans: 'Geom', 'Public Sans', sans-serif;
+
+  /* Colors gotten from the anime.js website root styles */
+  --hex-black-1: #252423;
+  --hex-red-1: #ff4b4b;
+  --hex-corail-1: #ff7d36;
+  --hex-orange-1: #ffa828;
+  --hex-yellow-1: #ffcc2a;
+  --hex-citrus-1: #f9f640;
+  --hex-lime-1: #b7ff54;
+  --hex-green-1: #8dff55;
+  --hex-turquoise-1: #00ffaa;
+  --hex-cyan-1: #26f2d5;
+  --hex-sky-1: #05dbe9;
+  --hex-sega-1: #33b3f1;
+  --hex-king-1: #4d9cff;
+  --hex-indigo-1: #7c85ff;
+  --hex-lavender-1: #a369ff;
+  --hex-purple-1: #c06ddf;
+  --hex-magenta-1: #e962bf;
+  --hex-pink-1: #ff718b;
+  --hex-bg-1: #252423;
+  --hex-fg-1: #f6f4f2;
+
+  --color-primary: var(--hex-red-1);
+  --color-neutral: var(--hex-black-1);
+}

@@ -4,6 +4,7 @@
     "dist",
     "node_modules",
     "playground",
-    "anime-core"
+    "anime-core",
+    "docs"
   ]
 }

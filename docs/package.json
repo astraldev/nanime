@@ -1,12 +1,13 @@
 {
   "name": "docs",
   "scripts": {
-    "dev": "nuxt dev --extends docus",
-    "build": "nuxt build --extends docus"
+    "dev": "nuxt dev",
+    "build": "nuxt build"
   },
   "dependencies": {
-    "docus": "latest",
     "better-sqlite3": "^12.5.0",
-    "nuxt": "^4.2.2"
+    "docus": "latest",
+    "nanime": "workspace:*",
+    "nuxt": "^4.3.0"
   }
 }

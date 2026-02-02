@@ -1,6 +1,7 @@
 export default defineNuxtConfig({
   extends: ['docus'],
-  modules: ['../src/module'],
+  modules: ['nanime'],
+  css: ['./app/assets/css/main.css'],
   devServer: {
     port: 3001,
   },
