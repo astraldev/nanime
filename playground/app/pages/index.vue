@@ -23,6 +23,12 @@
       />
 
       <PDemoCard
+        to="/composables/use-animatable"
+        title="useAnimatable Demo"
+        description="Interactive examples with mouse interaction and property mixing."
+      />
+
+      <PDemoCard
         to="/composables/use-split-text"
         title="useSplitText Demo"
         description="Demonstration of text splitting into lines, words, and chars with animation."

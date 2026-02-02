@@ -1,8 +1,8 @@
-import { computed, onBeforeUnmount, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRefOrGetter } from '#imports'
+import { computed, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRefOrGetter } from '#imports'
 import { createLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
 import { normalizeLayoutTarget } from '../utils/normalize-targets'
 import { extractNonFunctionProperties } from '../utils/extract-props'
-import { useMounted } from '@vueuse/core'
+import { tryOnScopeDispose, useMounted } from '@vueuse/core'
 
 export function useAnimeLayout(
   target: MaybeRef<Parameters<typeof normalizeLayoutTarget>[0]>,
@@ -19,7 +19,7 @@ export function useAnimeLayout(
     layout.value = newLayout
   })
 
-  onBeforeUnmount(() => {
+  tryOnScopeDispose(() => {
     layout.value?.revert()
     layout.value = null
   })
