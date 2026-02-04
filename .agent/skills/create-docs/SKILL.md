@@ -1,0 +1,1 @@
+/Users/ekureedem/Documents/Projects/nuxt-animejs/.agents/./skills/create-docs/SKILL.md

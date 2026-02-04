@@ -14,7 +14,8 @@ useAnimate('.boxes > .box', {
     grid: [10, 4],
     from: 'center',
   }),
-  duration: 600,
+  duration: 1500,
+  playbackEase: 'outQuad',
   loop: true,
 })
 </script>
