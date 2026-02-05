@@ -21,7 +21,7 @@ useDraggable(draggable, {
   <ExampleWrapper>
     <div
       ref="container"
-      class="relative border border-primary/20 rounded-md border-dashed p-1"
+      class="relative border border-primary/20 rounded-md border-dashed h-10"
     >
       <div class="snap-positions">
         <div
