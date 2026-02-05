@@ -1,6 +1,6 @@
 import { isReactive, toValue, type MaybeRef } from '#imports'
 import type { MaybeElementRef, VueInstance } from '@vueuse/core'
-import type { TargetsParam, DOMTargetsParam, DOMTargetSelector } from 'animejs'
+import type { TargetsParam, DOMTargetsParam, DOMTargetSelector, DraggableParams } from 'animejs'
 
 function isVueInstance(value: unknown): value is VueInstance {
   return value !== null && typeof value === 'object' && '$el' in value
@@ -50,7 +50,7 @@ export function normalizeAnimeTarget(target: AnimeTargets): TargetsParam {
   return resolved
 }
 
-type AnimeLayoutTargets = DOMTargetSelector | MaybeElementRef<HTMLElement | VueInstance> | null | undefined
+type AnimeLayoutTargets = DOMTargetSelector | MaybeElementRef<HTMLElement | SVGElement | VueInstance | null> | null | undefined
 export function normalizeLayoutTarget(target: AnimeLayoutTargets): DOMTargetSelector | null {
   const resolved = toValue(target)
 
@@ -65,6 +65,10 @@ export function normalizeLayoutTarget(target: AnimeLayoutTargets): DOMTargetSele
 
 type SplitTargets = HTMLElement | string
 type SplitTextTargets = SplitTargets | MaybeElementRef<HTMLElement> | null | undefined | MaybeElementRef<VueInstance>
+export type SplitTextTypes = {
+  targets: SplitTextTargets
+}
+
 export function normalizeSplitTextTarget(target: SplitTextTargets): SplitTargets | null {
   const resolved = toValue(target)
 
@@ -72,6 +76,31 @@ export function normalizeSplitTextTarget(target: SplitTextTargets): SplitTargets
 
   if (isVueInstance(resolved)) {
     return resolved.$el as HTMLElement
+  }
+
+  return resolved
+}
+
+type DraggableTargets = AnimeLayoutTargets | null
+type DraggableTargetContainer = DraggableParams['container'] | MaybeElementRef<HTMLElement | VueInstance | null> | null | undefined
+type DraggableTargetTrigger = DraggableParams['trigger'] | AnimeLayoutTargets
+export type DraggableTypes = {
+  target: DraggableTargets
+  trigger: DraggableTargetTrigger
+  container: DraggableTargetContainer
+}
+
+export function normalizeDraggableContainer(target: DraggableTargetContainer): DraggableParams['container'] | null | undefined {
+  if (typeof target === 'function') {
+    return target as any
+  }
+
+  const resolved = toValue(target as any)
+
+  if (!resolved) return null
+
+  if (isVueInstance(resolved)) {
+    return resolved.$el
   }
 
   return resolved

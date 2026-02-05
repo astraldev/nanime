@@ -2,10 +2,7 @@ import type { AutoLayoutParams, EasingParam, LayoutAnimationParams, WAAPIEasingP
 import type { VueInstance } from '@vueuse/core'
 import type { BaseTransitionProps } from 'vue'
 import type { TransitionDurationInput } from '../../utils/transitions/types'
-
-type Prettify<T> = {
-  [K in keyof T]: T[K]
-} & {}
+import type { Prettify } from '../../utils/normalizers/prettify'
 
 export type SharedTransitionProps = {
   duration?: TransitionDurationInput
