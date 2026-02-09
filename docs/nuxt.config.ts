@@ -5,6 +5,16 @@ export default defineNuxtConfig({
     global: true,
     dirs: ['~/components'],
   },
+  app: {
+    head: {
+      meta: [
+        {
+          name: 'google-site-verification',
+          content: 'k2rdqKBTN2zz6nvGRTA4DbeY0SUcq6lkEemQ_597FZs',
+        },
+      ],
+    },
+  },
   css: ['./app/assets/css/main.css'],
   site: {
     name: 'nanime',

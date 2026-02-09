@@ -53,7 +53,7 @@ export const useCodeBlockPreview = async (src: string) => {
 
   // Remove imports from script
   if (importsToRemove.length > 0) {
-    script = script.replace(importRegex, '')
+    script = script.replace(importRegex, '\n')
     script = script.trim()
   }
 
@@ -121,6 +121,7 @@ export const useCodeBlockPreview = async (src: string) => {
   // Determine component name for preview
   const filename = parseFilename(src.replace('.vue', ''))
   const componentName = kebabCase(filename || '')
+  const githubUrl = `https://github.com/astraldev/nanime/blob/main/docs/components/content/${src}`
 
   const md = `
 ::code-group
@@ -145,6 +146,18 @@ ${finalStyle.trim()}
 ::
 
 ::${kebabCase(componentName)}
+::
+
+::u-button
+---
+to: ${githubUrl}
+target: _blank
+variant: link
+color: neutral
+icon: i-simple-icons-github
+class: mt-2.5 pl-0.5
+---
+View on GitHub
 ::
 `
 

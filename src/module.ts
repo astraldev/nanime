@@ -63,7 +63,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     _nuxt.options.alias[`#${__configKey}/composables`] = resolver.resolve('./runtime/app/composables')
     _nuxt.options.alias[`#${__configKey}/components`] = resolver.resolve('./runtime/app/components')
-    _nuxt.options.alias[`#${__configKey}/utils`] = resolver.resolve('./runtime/app/utils')
+    _nuxt.options.alias[`#${__configKey}/types`] = resolver.resolve('./runtime/app/utils/types')
     _nuxt.options.alias[`#${__configKey}/easings`] = resolver.resolve('./runtime/app/utils/easings')
+    _nuxt.options.alias[`#${__configKey}/utils`] = resolver.resolve('./runtime/app/utils/index')
   },
 })
