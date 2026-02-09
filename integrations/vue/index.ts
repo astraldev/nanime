@@ -27,4 +27,4 @@ const AnimePlugin: Plugin<AnimePluginOptions> = {
   },
 }
 
-export default AnimePlugin
+export { AnimePlugin }
