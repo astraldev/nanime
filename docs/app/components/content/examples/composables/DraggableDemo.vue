@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { spring } from '#nanime/easings'
 import ExampleWrapper from '~/components/shared/ExampleWrapper.vue'
 
 const container = useTemplateRef('container')
@@ -7,6 +8,10 @@ const draggable = useTemplateRef('draggable')
 useDraggable(draggable, {
   container: container,
   containerPadding: 4,
+  releaseEase: spring({
+    bounce: 0.65,
+    duration: 400,
+  }),
   x: {
     snap: (draggable) => {
       const hw = (draggable?.dragArea || [0, 0, 0, 0])[2]
