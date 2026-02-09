@@ -12,6 +12,10 @@
     ".": {
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./vue": {
+      "import": "./dist/integrations/vue/index.mjs",
+      "types": "./dist/integrations/vue/index.d.mts"
     }
   },
   "main": "./dist/module.mjs",
