@@ -6,7 +6,7 @@ import { waapi, type WAAPIAnimation } from 'animejs/waapi'
 
 export function useWaapiAnimate(
   target: Parameters<typeof normalizeWaapiAnimeTarget>[0],
-  parameters?: MaybeRefOrGetter<WAAPIAnimationParams>,
+  params?: MaybeRefOrGetter<WAAPIAnimationParams>,
 ): WAAPIAnimation {
   const mounted = useMounted()
   const animation = shallowRef(waapi.animate([], {}))
@@ -15,7 +15,7 @@ export function useWaapiAnimate(
     const targets = normalizeWaapiAnimeTarget(target)
     if (!mounted.value || !targets) return
     if (animation.value) animation.value.revert()
-    const newAnimation = waapi.animate(targets, toValue(parameters) || {})
+    const newAnimation = waapi.animate(targets, toValue(params) || {})
     animation.value = newAnimation
   })
 

@@ -6,7 +6,7 @@ import { tryOnScopeDispose, useMounted } from '@vueuse/core'
 
 export function useAnimeLayout(
   target: MaybeRef<Parameters<typeof normalizeLayoutTarget>[0]>,
-  options?: MaybeRefOrGetter<AutoLayoutParams>,
+  params?: MaybeRefOrGetter<AutoLayoutParams>,
 ) {
   const mounted = useMounted()
   const layout = shallowRef<ReturnType<typeof createLayout> | null>(null)
@@ -15,7 +15,7 @@ export function useAnimeLayout(
     if (!mounted.value) return
     const wrapper = normalizeLayoutTarget(toValue(target))
     if (!wrapper) return
-    const newLayout = createLayout(wrapper, toValue(options) || {})
+    const newLayout = createLayout(wrapper, toValue(params) || {})
     layout.value = newLayout
   })
 

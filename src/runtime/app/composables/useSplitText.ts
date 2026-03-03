@@ -6,7 +6,7 @@ import { tryOnScopeDispose, useMounted } from '@vueuse/core'
 
 export function useSplitText(
   target: MaybeRef<Parameters<typeof normalizeSplitTextTarget>[0]>,
-  parameters?: MaybeRefOrGetter<Parameters<typeof splitText>[1]>,
+  params?: MaybeRefOrGetter<Parameters<typeof splitText>[1]>,
 ) {
   const mounted = useMounted()
   const splitter = ref<TextSplitter | null>(null)
@@ -28,7 +28,7 @@ export function useSplitText(
     if (!element) return
 
     if (splitter.value) splitter.value.revert()
-    const newSplitter = splitText(element, toValue(parameters))
+    const newSplitter = splitText(element, toValue(params))
     splitter.value = newSplitter
 
     newSplitter.addEffect(() => {

@@ -31,7 +31,7 @@ type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container
 
 export function useDraggable(
   target: DraggableTypes['target'],
-  options?: DraggableOptions,
+  params?: DraggableOptions,
 ): ProxyReturns<Draggable> {
   const mounted = useMounted()
   const dragController = shallowRef<Draggable | null>(null)
@@ -41,8 +41,8 @@ export function useDraggable(
   watch(
     [
       () => target,
-      () => options?.trigger,
-      () => options?.container,
+      () => params?.trigger,
+      () => params?.container,
       () => mounted.value,
     ],
     () => {
@@ -52,8 +52,8 @@ export function useDraggable(
       if (dragController.value) dragController.value.revert()
       oldTarget = targets
 
-      const trigger = normalizeLayoutTarget(toValue(options)?.trigger)
-      const container = normalizeDraggableContainer(toValue(options)?.container)
+      const trigger = normalizeLayoutTarget(toValue(params)?.trigger)
+      const container = normalizeDraggableContainer(toValue(params)?.container)
 
       const resolveAxis = <T extends DraggableOptions['x'] | DraggableOptions['y']>(axis: T) => {
         if (!axis || typeof axis !== 'object') return axis
@@ -63,21 +63,23 @@ export function useDraggable(
       }
 
       const dragEngine = createDraggable(targets, {
-        ...options,
+        ...params,
         trigger: trigger || undefined,
         container: container || undefined,
         ...(() => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const acc: any = {}
           REFFABLE_PROPS.forEach((key) => {
-            if (!options || !(key in options)) return
-            acc[key] = (d: Draggable) => normalizeReffable(options[key], d)
+            if (!params || !(key in params)) return
+            acc[key] = (d: Draggable) => normalizeReffable(params[key], d)
           })
           return acc
         })(),
-        x: resolveAxis(options?.x),
-        y: resolveAxis(options?.y),
+        x: resolveAxis(params?.x),
+        y: resolveAxis(params?.y),
       })
+
+      console.log('initializing')
 
       dragController.value = dragEngine
     }, {
@@ -85,19 +87,19 @@ export function useDraggable(
     })
 
   watchPostEffect(() => {
-    if (!options || !dragController.value) return
+    if (!params || !dragController.value) return
 
     // Access all refable values to register them as dependencies
     REFFABLE_PROPS.forEach((key) => {
-      if (key in options) toValue(options[key])
+      if (key in params) toValue(params[key])
     })
 
-    if (typeof options.x === 'object' && options.x !== null) {
-      toValue((options.x).snap)
+    if (typeof params.x === 'object' && params.x !== null) {
+      toValue((params.x).snap)
     }
 
-    if (typeof options.y === 'object' && options.y !== null) {
-      toValue((options.y).snap)
+    if (typeof params.y === 'object' && params.y !== null) {
+      toValue((params.y).snap)
     }
 
     nextTick(() => dragController.value?.refresh())
