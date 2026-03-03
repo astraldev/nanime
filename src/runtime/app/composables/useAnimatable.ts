@@ -6,7 +6,7 @@ import type { AnimatableObject, AnimatableParams, TargetsParam } from 'animejs'
 
 export function useAnimatable(
   target: Parameters<typeof normalizeAnimeTarget>[0],
-  options?: MaybeRefOrGetter<AnimatableParams>,
+  params?: MaybeRefOrGetter<AnimatableParams>,
 ): AnimatableObject {
   const mounted = useMounted()
   const animatable = shallowReactive(createAnimatable({}, {}))
@@ -17,7 +17,7 @@ export function useAnimatable(
     const targets = normalizeAnimeTarget(target)
     if (oldTarget === targets) return
     oldTarget = targets
-    const newAnimatable = createAnimatable(targets, toValue(options) || {})
+    const newAnimatable = createAnimatable(targets, toValue(params) || {})
     Object.assign(animatable, newAnimatable)
   })
 
