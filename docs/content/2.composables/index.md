@@ -39,9 +39,7 @@ navigation:
   :::
 ::
 
-## Instant play
-
-Composables marked with the :badge{icon="mage:zap-fill" size="sm" variant="soft" label="Instant Play"}
-badge support being called **instantly**.
-
-This means they can be called outside of a Vue component's `setup()` block (e.g., inside an event handler or a utility function), provided the component has already been mounted.
+::u-alert{icon="mage:zap-fill" title="Instant play" color="primary" variant="subtle"}
+#description
+Composables marked with the ::u-badge{icon="mage:zap-fill" size="md" variant="soft" label="Instant play"} badge can be called **instantly** outside of a Vue component's `setup()` block (e.g., inside an event handler or utility function), provided the component has already been mounted.
+::
