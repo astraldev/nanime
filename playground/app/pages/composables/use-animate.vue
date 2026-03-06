@@ -54,12 +54,31 @@
         />
       </PWrapper>
     </section>
+
+    <section>
+      <h2>Test for button interactions</h2>
+      <PWrapper extra-class="gap-2.5 flex">
+        <PItem
+          extra-class="w-fit px-2.5"
+          :label="JSON.stringify(jsTarget)"
+        />
+        <PItem
+          extra-class="w-fit px-2.5 bg-red-400"
+          :label="JSON.stringify(jsTarget2)"
+        />
+      </PWrapper>
+      <div>
+        <PButton @click="onJSTargetClick">
+          Start First Target
+        </PButton>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { AnimationParams } from 'animejs'
-import { stagger, random } from '#nanime/utils'
+import { stagger, random, round } from '#nanime/utils'
 
 // --- Section 1 ---
 const box1 = useTemplateRef('box1')
@@ -141,4 +160,18 @@ const activeOptions = computed((): AnimationParams => {
 })
 
 useAnimate(activeTarget, activeOptions)
+
+// --- Section 4 ---
+const jsTarget = reactive({ count: 0 })
+const jsTarget2 = reactive({ count: 100 })
+
+useAnimate(jsTarget2, {
+  count: { to: 0 },
+  modifier: round(1),
+  duration: 5000,
+})
+
+const onJSTargetClick = () => {
+  useAnimate(jsTarget, { count: { to: 100 } })
+}
 </script>

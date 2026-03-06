@@ -1,13 +1,20 @@
-import { computed, nextTick, ref, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRefOrGetter } from 'vue'
+import { computed, nextTick, ref, shallowRef, toValue, watchEffect, type ComputedRef, type MaybeRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { splitText, type TextSplitter } from 'animejs/text'
 import { normalizeSplitTextTarget } from '../utils/normalize-targets'
-import { extractNonFunctionProperties } from '../utils/extract-props'
+import { extractNonFunctionProperties, extractOnlyFunctionProperties, type NonFunctionProperties, type OnlyFunctionProperties } from '../utils/extract-props'
 import { tryOnScopeDispose, useMounted } from '@vueuse/core'
+
+type SplitText = {
+  [x in 'lines' | 'words' | 'chars']: Ref<HTMLElement[]>
+} & {
+  properties: ComputedRef<NonFunctionProperties<TextSplitter> | undefined>
+  methods: ComputedRef<OnlyFunctionProperties<TextSplitter> | undefined>
+}
 
 export function useSplitText(
   target: MaybeRef<Parameters<typeof normalizeSplitTextTarget>[0]>,
   parameters?: MaybeRefOrGetter<Parameters<typeof splitText>[1]>,
-) {
+): SplitText {
   const mounted = useMounted()
   const splitter = ref<TextSplitter | null>(null)
 
@@ -52,8 +59,6 @@ export function useSplitText(
     words,
     chars,
     properties: computed(() => splitter.value ? extractNonFunctionProperties(splitter.value) : undefined),
-    revert: () => splitter.value?.revert(),
-    split: () => splitter.value?.split(),
-    refresh: () => splitter.value?.refresh(),
+    methods: computed(() => splitter.value ? extractOnlyFunctionProperties(splitter.value) : undefined),
   }
 }

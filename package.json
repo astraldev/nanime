@@ -50,6 +50,12 @@
     "defu": "^6.1.4",
     "vue": "^3.5.27"
   },
+  "peerDependencies": {
+    "@vueuse/core": "^13.0.0",
+    "animejs": "^4.3.5",
+    "defu": "^6.1.4",
+    "vue": "^3.5.0"
+  },
   "devDependencies": {
     "@nuxt/devtools": "^3.1.1",
     "@nuxt/eslint-config": "^1.13.0",

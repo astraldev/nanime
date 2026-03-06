@@ -255,15 +255,17 @@ Use templates from [references/templates.md](references/templates.md).
 
 **CRITICAL: MDC Component Naming**
 
-All Nuxt UI components in MDC must use the `u-` prefix:
-
-| Correct | Wrong |
+| WRONG | CORRECT |
 |---------|-------|
 | `::u-page-hero` | `::page-hero` |
 | `::u-page-section` | `::page-section` |
 | `:::u-page-feature` | `:::page-feature` |
 | `:::u-button` | `:::button` |
 | `::::u-page-card` | `::::page-card` |
+| `::badge` | `:badge` (for inline) |
+
+**CRITICAL**: NEVER use the `u-` prefix for Nuxt UI components when using them as MDC components (e.g., `::u-alert`, `::u-badge`).
+This ensures they are correctly resolved by the Nuxt UI Pro or Docus layers.
 
 Without the `u-` prefix, Vue will fail to resolve the components.
 
