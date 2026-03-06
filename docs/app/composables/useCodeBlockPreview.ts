@@ -121,7 +121,7 @@ export const useCodeBlockPreview = async (src: string) => {
   // Determine component name for preview
   const filename = parseFilename(src.replace('.vue', ''))
   const componentName = kebabCase(filename || '')
-  const githubUrl = `https://github.com/astraldev/nanime/blob/main/docs/components/content/${src}`
+  const githubUrl = `https://github.com/astraldev/nanime/blob/main/docs/app/components/content/${src}`
 
   const md = `
 ::code-group
