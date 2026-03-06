@@ -1,6 +1,11 @@
 export default defineNuxtConfig({
   extends: ['docus'],
-  modules: process.env.NODE_ENV === 'development' ? ['../src/module'] : ['nanime'],
+  modules: [
+    'nuxt-studio',
+    ...(process.env.NODE_ENV === 'development'
+      ? ['../src/module']
+      : ['nanime']),
+  ],
   components: {
     global: true,
     dirs: ['~/components'],

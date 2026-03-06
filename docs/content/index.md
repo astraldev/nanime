@@ -1,30 +1,27 @@
 ---
 seo:
   title: Effortless animations with AnimeJS
-  description: Build SSR Safe animations for Nuxt without having to worry about
-    targets, hooks and component lifecycle.
+  description: Build SSR Safe animations for Nuxt without having to worry about targets, hooks and component lifecycle.
 ---
 
 ::u-page-hero
 ---
 orientation: horizontal
 ---
-  ::tabs
-    :::tabs-item{icon="i-lucide-eye" label="Preview"}
-      ::hero-animation
-      ::
-    :::
+  :::tabs
+    ::::tabs-item{icon="i-lucide-eye" label="Preview"}
+    :hero-animation
+    ::::
 
-    :::tabs-item{icon="i-lucide-code" label="Template"}
+    ::::tabs-item{icon="i-lucide-code" label="Template"}
     ```html
     <div class="boxes grid grid-cols-10 place-items-center gap-0.5 absolute inset-0 p-5">
       <div v-for="i in 40" :key="i" class="box size-9 rounded-sm bg-white/40 aspect-square" />
     </div>
     ```
+    ::::
 
-    :::
-
-    :::tabs-item{icon="i-lucide-file-code" label="Script"}
+    ::::tabs-item{icon="i-lucide-file-code" label="Script"}
     ```ts
     import { stagger } from '#nanime/utils'
 
@@ -40,8 +37,8 @@ orientation: horizontal
       }),
     })
     ```
-    :::
-  ::
+    ::::
+  :::
 
 #title
 Effortless animations with [AnimeJS]{.text-primary}
@@ -59,8 +56,7 @@ Create SSR Safe animations for Nuxt without having to worry about targets and co
   Get started
   :::
 
-  :::copy-code-input{source="npx nuxi module add nanime"}
-  :::
+:copy-code-input{source="npx nuxi module add nanime"}
 ::
 
 ::u-page-section
@@ -70,56 +66,56 @@ Shipped with many features
 #features
   :::u-page-card
   ---
-  icon: i-simple-icons-nuxt
   spotlight: true
+  icon: i-simple-icons-nuxt
   target: _blank
   to: https://nuxt.com
   ---
   #title
   Built with [Nuxt 4]{.text-primary}
-  
+
   #description
   Created with nuxt for nuxt
   :::
 
   :::u-page-card
   ---
-  icon: i-simple-icons-animedotjs
   spotlight: true
+  icon: i-simple-icons-animedotjs
   target: _blank
   to: https://animejs.com/
   ---
   #title
   Powered by [AnimeJS]{.text-primary}
-  
+
   #description
   Animation engine by `animejs`
   :::
 
   :::u-page-card
   ---
-  icon: i-tabler-server-cog
   spotlight: true
+  icon: i-tabler-server-cog
   target: _blank
   to: https://nuxt.com
   ---
   #title
   [SSR]{.text-primary} safe
-  
+
   #description
   Composables doesn't break ssr nor cause hydration issues
   :::
 
   :::u-page-card
   ---
-  icon: i-tabler-settings-bolt
   spotlight: true
+  icon: i-tabler-settings-bolt
   target: _blank
   to: https://nuxt.com/docs/guide/directory-structure/app-config
   ---
   #title
   Customizable
-  
+
   #description
   Enable or disable composables or components
   :::
