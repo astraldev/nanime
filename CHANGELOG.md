@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.0.8
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.0.7...v0.0.8)
+
+### 🚀 Enhancements
+
+- Instant play support for calling inside utility functions ([fb90c9e](https://github.com/astraldev/nanime/commit/fb90c9e))
+- Integrate nuxt studio ([7aa196a](https://github.com/astraldev/nanime/commit/7aa196a))
+
+### 🩹 Fixes
+
+- **#7:** Resolves wrong path ([cf81e9e](https://github.com/astraldev/nanime/commit/cf81e9e))
+
+### 💅 Refactors
+
+- Rename animation `options` to `parameters` and update related types and documentation. ([55d3874](https://github.com/astraldev/nanime/commit/55d3874))
+
+### 📖 Documentation
+
+- Improve documentation looks and links ([addde1b](https://github.com/astraldev/nanime/commit/addde1b))
+
+### 🏡 Chore
+
+- Pkg version updates ([8357b1a](https://github.com/astraldev/nanime/commit/8357b1a))
+
+### ❤️ Contributors
+
+- Ekure Edem
+
 ## v0.0.7
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.0.5-06...v0.0.7)
