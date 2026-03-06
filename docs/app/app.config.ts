@@ -5,4 +5,7 @@ export default defineAppConfig({
   header: {
     title: 'nanime',
   },
+  github: {
+    rootDir: 'docs',
+  },
 })
