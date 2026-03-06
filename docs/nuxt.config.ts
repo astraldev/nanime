@@ -1,11 +1,6 @@
 export default defineNuxtConfig({
   extends: ['docus'],
-  modules: [
-    'nuxt-studio',
-    ...(process.env.NODE_ENV === 'development'
-      ? ['../src/module']
-      : ['nanime']),
-  ],
+  modules: ['nuxt-studio', 'nanime'],
   components: {
     global: true,
     dirs: ['~/components'],
@@ -47,6 +42,15 @@ export default defineNuxtConfig({
         '@vue/devtools-core',
         '@vue/devtools-kit',
       ],
+    },
+  },
+  studio: {
+    repository: {
+      provider: 'github',
+      owner: 'astraldev',
+      repo: 'nanime',
+      branch: 'main',
+      rootDir: 'docs',
     },
   },
 })
