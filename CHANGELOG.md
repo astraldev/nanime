@@ -1,5 +1,61 @@
 # Changelog
 
+## v0.0.8
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.0.7...v0.0.8)
+
+### 🚀 Enhancements
+
+- Instant play support for calling inside utility functions ([fb90c9e](https://github.com/astraldev/nanime/commit/fb90c9e))
+- Integrate nuxt studio ([7aa196a](https://github.com/astraldev/nanime/commit/7aa196a))
+
+### 🩹 Fixes
+
+- **#7:** Resolves wrong path ([cf81e9e](https://github.com/astraldev/nanime/commit/cf81e9e))
+
+### 💅 Refactors
+
+- Rename animation `options` to `parameters` and update related types and documentation. ([55d3874](https://github.com/astraldev/nanime/commit/55d3874))
+
+### 📖 Documentation
+
+- Improve documentation looks and links ([addde1b](https://github.com/astraldev/nanime/commit/addde1b))
+
+### 🏡 Chore
+
+- Pkg version updates ([8357b1a](https://github.com/astraldev/nanime/commit/8357b1a))
+
+### ❤️ Contributors
+
+- Ekure Edem
+
+## v0.0.7
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.0.5-06...v0.0.7)
+
+### 📖 Documentation
+
+- Fix link issues on documentation pages ([4095c4d](https://github.com/astraldev/nanime/commit/4095c4d))
+- **useDraggable:** Update draggable release ease ([f3a23f3](https://github.com/astraldev/nanime/commit/f3a23f3))
+- Add view on github links for doc examples ([50d341e](https://github.com/astraldev/nanime/commit/50d341e))
+
+### 🏡 Chore
+
+- **release:** V0.0.6 ([71c4b92](https://github.com/astraldev/nanime/commit/71c4b92))
+- Disable sourcemaps for doc builds ([d21d99b](https://github.com/astraldev/nanime/commit/d21d99b))
+- Fix lint issues ([a983a22](https://github.com/astraldev/nanime/commit/a983a22))
+- **imports:** Use explicit imports for vue plugin support ([f9fc7f7](https://github.com/astraldev/nanime/commit/f9fc7f7))
+
+### 🤖 CI
+
+- Fix docs page build ([04ba7e1](https://github.com/astraldev/nanime/commit/04ba7e1))
+- Fix issue with nanime as built dep causing issues ([6cb2173](https://github.com/astraldev/nanime/commit/6cb2173))
+- Remove postinstall script from package json ([8bcc857](https://github.com/astraldev/nanime/commit/8bcc857))
+
+### ❤️ Contributors
+
+- Ekure Edem
+
 ## v0.0.6
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.0.5-06...v0.0.6)

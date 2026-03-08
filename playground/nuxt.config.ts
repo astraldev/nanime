@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   },
   compatibilityDate: 'latest',
   vite: {
+    /** @ts-expect-error tailwind doesn't seem to sync types with our version of vite */
     plugins: [tailwindcss()],
   },
 })

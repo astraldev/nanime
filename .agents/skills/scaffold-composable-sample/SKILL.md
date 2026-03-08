@@ -20,6 +20,13 @@ Standardize the creation of documentation samples for Nuxt AnimeJS composables. 
 ### 1. Frontmatter
 Standard Docus frontmatter with title, Description, and **navigation icon** (pick a unique semantic icon from Phosphor icons, e.g., `i-ph-lightning` for WAAPI).
 
+**Instant Play Badge**: If the composable supports being called outside a Vue instance (after mounting), include the following badge linked to the composables index:
+```markdown
+::nuxt-link{to="/composables#instant-play"}
+:badge{icon="mage:zap-fill" label="Instant Play" size="md" variant="soft"}
+::
+```
+
 ### 2. Type Definition & Arguments
 **Type Definition**: Include **ONLY** the function signature at the top.
 **Arguments**: Use `::field-group` and `::field` components. Use specific types extracted from `src/runtime/app/utils/normalize-targets.ts` (e.g., `AnimeTargets`, `WaapiTargets`) to ensure accuracy.

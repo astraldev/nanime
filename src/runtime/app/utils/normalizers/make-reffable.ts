@@ -1,4 +1,4 @@
-import { toValue, type MaybeRefOrGetter } from '#imports'
+import { toValue, type MaybeRefOrGetter } from 'vue'
 
 export type MaybeRefOrArgsGetter<T, Args> = MaybeRefOrGetter<T> | ((data: Args) => T)
 

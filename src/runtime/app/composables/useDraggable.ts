@@ -1,5 +1,5 @@
 import { tryOnScopeDispose, useMounted } from '@vueuse/core'
-import { nextTick, shallowRef, toValue, watch, watchPostEffect } from '#imports'
+import { nextTick, shallowRef, toValue, watch, watchPostEffect } from 'vue'
 import { normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, type DraggableTypes } from '../utils/normalize-targets'
 import type { Draggable, DraggableAxisParam, DraggableParams, TargetsParam } from 'animejs'
 import { createDraggable } from 'animejs/draggable'
@@ -78,8 +78,6 @@ export function useDraggable(
         x: resolveAxis(options?.x),
         y: resolveAxis(options?.y),
       })
-
-      console.log('initializing')
 
       dragController.value = dragEngine
     }, {

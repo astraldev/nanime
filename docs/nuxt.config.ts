@@ -1,9 +1,19 @@
 export default defineNuxtConfig({
   extends: ['docus'],
-  modules: process.env.NODE_ENV === 'development' ? ['../src/module'] : ['nanime'],
+  modules: ['nuxt-studio', 'nanime'],
   components: {
     global: true,
     dirs: ['~/components'],
+  },
+  app: {
+    head: {
+      meta: [
+        {
+          name: 'google-site-verification',
+          content: 'k2rdqKBTN2zz6nvGRTA4DbeY0SUcq6lkEemQ_597FZs',
+        },
+      ],
+    },
   },
   css: ['./app/assets/css/main.css'],
   site: {
@@ -32,6 +42,21 @@ export default defineNuxtConfig({
         '@vue/devtools-core',
         '@vue/devtools-kit',
       ],
+    },
+  },
+  studio: {
+    // @ts-expect-error from the docs
+    git: {
+      commit: {
+        messagePrefix: 'content:',
+      },
+    },
+    repository: {
+      provider: 'github',
+      owner: 'astraldev',
+      repo: 'nanime',
+      branch: process.env.STUDIO_BRANCH_NAME || 'main',
+      rootDir: 'docs',
     },
   },
 })

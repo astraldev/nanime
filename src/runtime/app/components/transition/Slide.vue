@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { TransitionGroup, Transition } from 'vue'
+import { TransitionGroup, Transition, nextTick, unref, useTemplateRef, computed } from 'vue'
 import { isStandardEase, isWaapiEase, type SharedTransitionProps } from './types'
 import { animate, utils, waapi } from 'animejs'
-import { nextTick, unref, useAnimeLayout, useTemplateRef, computed } from '#imports'
+import { useAnimeLayout } from '../../composables/useLayout'
 import type { TransitionOffsetInput } from '../../utils/transitions/types'
 import { normalizeAxis, normalizeDuration, normalizeOffset } from '../../utils/transitions/normalizers'
 

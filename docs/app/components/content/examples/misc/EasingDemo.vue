@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { spring } from '#nanime/easings'
 import ExampleWrapper from '../../../shared/ExampleWrapper.vue'
 
 const props = defineProps<{
@@ -9,9 +10,8 @@ const box = useTemplateRef('box')
 
 useAnimate(box, {
   x: [0, 300],
-  rotate: 90,
   duration: 1500,
-  ease: props.ease || 'linear',
+  ease: props.ease || spring({ bounce: 0.4 }),
   loop: true,
   direction: 'alternate',
 })

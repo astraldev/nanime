@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Ref, UnwrapNestedRefs } from 'vue'
-import { unref, isRef, reactive } from '#imports'
+import { unref, isRef, reactive } from 'vue'
 
 export type SafeFunctions<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => any

@@ -1,4 +1,4 @@
-import { computed, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRefOrGetter } from '#imports'
+import { computed, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRefOrGetter } from 'vue'
 import { createLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
 import { normalizeLayoutTarget } from '../utils/normalize-targets'
 import { extractNonFunctionProperties } from '../utils/extract-props'

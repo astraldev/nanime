@@ -1,4 +1,4 @@
-import { isReactive, toValue, type MaybeRef } from '#imports'
+import { isReactive, toValue, type MaybeRef } from 'vue'
 import type { MaybeElementRef, VueInstance } from '@vueuse/core'
 import type { TargetsParam, DOMTargetsParam, DOMTargetSelector, DraggableParams } from 'animejs'
 
