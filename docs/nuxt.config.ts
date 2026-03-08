@@ -45,11 +45,17 @@ export default defineNuxtConfig({
     },
   },
   studio: {
+    // @ts-expect-error from the docs
+    git: {
+      commit: {
+        messagePrefix: 'content:',
+      },
+    },
     repository: {
       provider: 'github',
       owner: 'astraldev',
       repo: 'nanime',
-      branch: 'main',
+      branch: process.env.STUDIO_BRANCH_NAME || 'main',
       rootDir: 'docs',
     },
   },
