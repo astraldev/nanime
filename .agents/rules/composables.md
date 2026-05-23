@@ -10,4 +10,5 @@ Key constraints (quick reference):
 - **Naming**: `use<Feature>.ts` exporting `function use<Feature>(...)`
 - **Reactivity**: `shallowRef` for anime instances, `toReactive` or `createProxy` for return values
 - **Targets**: Always normalize via helpers in `src/runtime/app/utils/normalize-targets`
+- **Imports**: Runtime values from submodule paths (`animejs/animation`, `animejs/utils`, etc.) — never the top-level `'animejs'` barrel. Type-only imports from `'animejs'` are fine.
 - **No registration needed**: `addImportsDir` auto-imports the composables directory

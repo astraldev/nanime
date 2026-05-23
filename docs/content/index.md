@@ -103,7 +103,7 @@ Shipped with many features
   [SSR]{.text-primary} safe
 
   #description
-  Composables doesn't break ssr nor cause hydration issues
+  Composables don't break SSR or cause hydration issues
   :::
 
   :::u-page-card

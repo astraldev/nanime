@@ -28,7 +28,7 @@ Before writing any code, determine whether the anime.js API you're wrapping exis
 | `createDraggable()` | `animejs/draggable` | 4.0.0 |
 | `splitText()` | `animejs/text` | 4.0.0 |
 | `waapi.animate()` | `animejs/waapi` | 4.0.0 |
-| `createLayout()` | `animejs/layout` | 4.3.0 |
+
 | `scrambleText()` | `animejs/text` (scramble) | 4.4.0 |
 | `globals`, `forEachChildren`, `addChild`, `removeChild` | `animejs` | 4.4.0 |
 
@@ -84,6 +84,30 @@ No registration needed — `addImportsDir` in `src/module.ts:60-62` auto-imports
 
 If the composable wraps a new anime submodule path (e.g., `animejs/text` for scramble), add it to the Vite `optimizeDeps` list in `src/module.ts:37-44`.
 
+### Import rules
+
+**Always import runtime values from submodule paths, never the top-level `'animejs'` barrel.**
+
+```ts
+// Correct — submodule paths
+import { animate } from 'animejs/animation'
+import { createAnimatable } from 'animejs/animatable'
+import { createDraggable } from 'animejs/draggable'
+
+import { splitText } from 'animejs/text'
+import { waapi } from 'animejs/waapi'
+import { set, stagger, round } from 'animejs/utils'
+
+// Wrong — top-level barrel
+import { animate, utils, waapi } from 'animejs'
+```
+
+**Type-only imports from `'animejs'` are fine** — they don't affect bundling:
+
+```ts
+import type { AnimationParams, TargetsParam } from 'animejs'
+```
+
 ---
 
 ## Step 2: SSR Safety
@@ -117,7 +141,7 @@ const instance = shallowRef(animate({}, {}))
 
 Pattern B is used by `useAnimate`, `useAnimatable`, `useWaapiAnimate` — the empty `animate({}, {})` creates a lightweight no-op. Use this when the composable returns `toReactive(instance)` since `toReactive(null)` would break.
 
-Pattern A is used by `useDraggable`, `useLayout`, `useSplitText` — they return custom objects, so `null` is safe as the initial value.
+Pattern A is used by `useDraggable`, `useSplitText` — they return custom objects, so `null` is safe as the initial value.
 
 ---
 
@@ -187,18 +211,18 @@ else {
 }
 ```
 
-Used by: `useAnimate`, `useAnimatable`, `useWaapiAnimate`
-Not used by: `useDraggable`, `useLayout`, `useSplitText` (always watchable)
+Used by: `useAnimate`, `useAnimatable`, `useScrambleText`, `useWaapiAnimate`
+Not used by: `useDraggable`, `useSplitText` (always watchable)
 
-Use dual-mode when the composable wraps a simple animate-like call. Skip it when the composable manages complex state (drag controllers, layout engines, text splitters).
+Use dual-mode when the composable wraps a simple animate-like call. Skip it when the composable manages complex state (drag controllers, text splitters).
 
 ### Return types
 
 | When returning | Pattern | Used by |
 |---|---|---|
-| The anime instance directly | `return toReactive(shallowRef)` | `useAnimate`, `useAnimatable`, `useWaapiAnimate` |
+| The anime instance directly | `return toReactive(shallowRef)` | `useAnimate`, `useAnimatable`, `useScrambleText`, `useWaapiAnimate` |
 | A proxy with methods | `return createProxy(shallowRef)` | `useDraggable` |
-| A custom object with refs | Return `{ ref1, ref2, computed1 }` | `useSplitText`, `useLayout` |
+| A custom object with refs | Return `{ ref1, ref2, computed1 }` | `useSplitText` |
 
 ### Target normalization
 
@@ -206,7 +230,7 @@ Always normalize targets through the helpers in `../utils/normalize-targets`:
 
 - `normalizeAnimeTarget` — for standard anime targets (string, ref, element)
 - `normalizeWaapiAnimeTarget` — for WAAPI targets
-- `normalizeLayoutTarget` — for layout/single-element targets
+
 - `normalizeSplitTextTarget` — for text splitting targets
 - `normalizeDraggableContainer` — for draggable containers
 
@@ -229,10 +253,12 @@ This lets users pass either a raw value or a `Ref`/getter for those props.
 ## Step 5: Integrate
 
 1. **Vite optimizeDeps** — If wrapping a new anime submodule, add to `src/module.ts:37-44`
-2. **Types** — Export any shared types from `src/runtime/app/utils/types.ts`
-3. **Docs** — Create a page in `docs/content/2.composables/` (use the `scaffold-composable-sample` skill)
-4. **Playground** — Create a test page in `playground/pages/` (use the `create-playground-page` skill)
-5. **Tests** — Write utility tests in `test/suites/utilities/` (use the `create-utility-tests` skill)
+2. **Types** — Re-export any new anime.js types used by the composable from `src/runtime/app/utils/types.ts`. This file is aliased as `#nanime/types` — users and example components import types from there, not directly from `'animejs'`.
+3. **Docs page** — Create in `docs/content/2.composables/` using the `scaffold-composable-sample` skill. This is **required**, not optional.
+4. **Example component** — Create a live demo in `docs/app/components/content/examples/composables/`. Referenced by the docs page via `::render-code-block-preview`. This is **required**.
+5. **Composables index card** — Add a card entry in `docs/content/2.composables/index.md` linking to the new docs page.
+6. **Playground** — Create a test page in `playground/pages/` (use the `create-playground-page` skill)
+7. **Tests** — Write utility tests in `test/suites/utilities/` (use the `create-utility-tests` skill)
 
 ---
 
@@ -275,6 +301,8 @@ Test SSR explicitly: load the playground page via full page refresh (server rend
 ### Deliverables
 - [ ] Composable in `src/runtime/app/composables/`
 - [ ] Docs page in `docs/content/2.composables/`
+- [ ] Example component in `docs/app/components/content/examples/composables/`
+- [ ] Card added to `docs/content/2.composables/index.md`
 - [ ] Playground page in `playground/pages/`
 - [ ] Tests in `test/suites/utilities/`
 - [ ] `pnpm test:types` and `pnpm test` pass

@@ -24,7 +24,7 @@ Anime.js lives at `anime-core/anime/` as a git submodule (`git@github.com:julian
 git submodule update --init
 ```
 
-The module imports anime via submodule paths — not the top-level `animejs` package:
+Runtime values must be imported from submodule paths — never the top-level `'animejs'` barrel. Type-only imports from `'animejs'` are fine.
 
 ```ts
 import { animate } from 'animejs/animation'
@@ -33,7 +33,8 @@ import { createDraggable } from 'animejs/draggable'
 import { createLayout } from 'animejs/layout'
 import { splitText } from 'animejs/text'
 import { waapi } from 'animejs/waapi'
-import * as utils from 'animejs/utils'
+import { set, stagger, round } from 'animejs/utils'
+import type { AnimationParams, TargetsParam } from 'animejs' // types OK
 ```
 
 These are pre-optimized via Vite in `src/module.ts` (lines 31–50).
@@ -84,7 +85,7 @@ Key conventions:
 - Clean up with `tryOnScopeDispose`
 - Return `toReactive(shallowRef)` for ergonomic destructuring
 
-Existing composables: `useAnimate`, `useAnimatable`, `useDraggable`, `useLayout`, `useSplitText`, `useWaapiAnimate`
+Existing composables: `useAnimate`, `useAnimatable`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`
 
 ## Components
 

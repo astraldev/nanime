@@ -58,6 +58,26 @@ Add an `## API` section with a `### Types` sub-section at the bottom of the file
     - **API**: Detailed types at the bottom.
 4.  **Review**: Ensure no generic types (like `Object`) are used where specific types exist.
 
+## Example File Conventions
+
+Demo Vue files live in `docs/app/components/content/examples/`. Structure:
+
+```
+examples/
+  composables/   # Composable demos
+  components/    # Component demos
+  misc/          # Utility/easing demos
+```
+
+### Rules for example files
+
+1. **Wrap content** in `ExampleWrapper` — import from `~/components/shared/ExampleWrapper.vue`
+2. **Shared CSS classes** (`simple-box`, `spot`) are defined globally in `ExampleWrapper.vue` — use them as template classes, **never via `@apply`** (they aren't Tailwind utilities)
+3. **Scoped styles** that need Tailwind: add `@reference "~/assets/css/main.css"` at the top of the `<style scoped>` block
+4. **Auto-imports** work — `ref`, `useTemplateRef`, composables like `useAnimate` don't need explicit imports
+5. **Module imports** use `#nanime/utils`, `#nanime/easings` aliases
+6. The `ExampleWrapper` tag and its import are **automatically stripped** from the displayed code in docs
+
 ## Examples
 
 ### Input
