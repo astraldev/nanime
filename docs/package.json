@@ -7,7 +7,7 @@
   "dependencies": {
     "better-sqlite3": "^12.6.2",
     "docus": "latest",
-    "nanime": "latest",
+    "nanime": "link:..",
     "nuxt": "^4.3.1",
     "nuxt-studio": "1.4.0",
     "prettier": "^3.8.1",
