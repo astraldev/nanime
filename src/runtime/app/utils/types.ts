@@ -1,9 +1,7 @@
 export type {
   AnimationParams,
   TargetsParam,
-  AutoLayoutParams,
   EasingParam,
-  LayoutAnimationParams,
   WAAPIEasingParam,
   Draggable,
   DraggableAxisParam,
@@ -13,4 +11,5 @@ export type {
   DOMTargetSelector,
   AnimatableObject,
   AnimatableParams,
+  ScrambleTextParams,
 } from 'animejs'

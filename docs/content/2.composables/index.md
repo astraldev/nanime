@@ -50,19 +50,17 @@ navigation:
   ---
   #description
   Wrapper for the [splitText]{.text-primary} utility
-
-  #header
   :::
 
   :::u-page-card
   ---
-  icon: i-ph-layout
-  title: useLayout
-  to: /composables/use-layout
+  icon: i-ph-shuffle
+  title: useScrambleText
+  to: /composables/use-scramble-text
   variant: soft
   ---
   #description
-  Wrapper for the [createLayout]{.text-primary} function
+  Reactive wrapper for the [scrambleText]{.text-primary} utility
   :::
 
   :::u-page-card
