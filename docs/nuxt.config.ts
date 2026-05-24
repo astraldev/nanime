@@ -36,6 +36,12 @@ export default defineNuxtConfig({
   devServer: {
     port: 3001,
   },
+  nitro: {
+    prerender: {
+      routes: ['/'],
+      crawlLinks: true,
+    },
+  },
   vite: {
     optimizeDeps: {
       include: [

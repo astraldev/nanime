@@ -103,6 +103,14 @@ bun add package-name
 ::
 ```
 
+### External Links
+
+All external links (URLs pointing outside the docs site) must open in a new tab. In MDC syntax, add `{target="_blank"}` after the link:
+
+```markdown
+[AnimeJS](https://animejs.com/){target="_blank"}
+```
+
 ### Best Practices
 
 - Include **working, copy-pasteable** examples

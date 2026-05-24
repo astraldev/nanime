@@ -28,10 +28,10 @@ src/runtime/app
 5. Depending on the component or composable being created, read from the anime-core/anime directory to see examples
    and how they are created
 
-   Do not however use examples with utilites not created, or provided in the modules. thus, the only valid examples
-   that can be created are those that use utilities already used in the module directory, i.e text, animate, animatable, layout.
+   Do not however use examples with utilites not created, or provided in the modules. Thus, the only valid examples
+   that can be created are those that use utilities already used in the module directory, i.e text, animate, animatable, timeline, layout.
 
-   createTimeline, create scope in examples ...etc can not be used
+   createScope in examples ...etc can not be used
 
 
 # IMPORTANT RULES TO FOLLOW

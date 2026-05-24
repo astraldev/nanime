@@ -22,7 +22,7 @@ Standard Docus frontmatter with title, Description, and **navigation icon** (pic
 
 **Instant Play Badge**: If the composable supports being called outside a Vue instance (after mounting), include the following badge linked to the composables index:
 ```markdown
-::nuxt-link{to="/composables#instant-play"}
+::nuxt-link{to="/composables/introduction#instant-play"}
 :badge{icon="mage:zap-fill" label="Instant Play" size="md" variant="soft"}
 ::
 ```
@@ -75,7 +75,7 @@ examples/
 2. **Shared CSS classes** (`simple-box`, `spot`) are defined globally in `ExampleWrapper.vue` — use them as template classes, **never via `@apply`** (they aren't Tailwind utilities)
 3. **Scoped styles** that need Tailwind: add `@reference "~/assets/css/main.css"` at the top of the `<style scoped>` block
 4. **Auto-imports** work — `ref`, `useTemplateRef`, composables like `useAnimate` don't need explicit imports
-5. **Module imports** use `#nanime/utils`, `#nanime/easings` aliases
+5. **Module imports** use `#nanime/utils`, `#nanime/easings`, `#nanime/proxies/text` aliases
 6. The `ExampleWrapper` tag and its import are **automatically stripped** from the displayed code in docs
 
 ## Examples
