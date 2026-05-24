@@ -50,16 +50,13 @@ jobs:
           registry-url: https://registry.npmjs.org/
           package-manager-cache: false 
 
-      - name: Install pnpm
-        run: npm i -g pnpm
-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm install --frozen-lockfile
 
       - name: Prepare module
-        run: pnpm run dev:prepare
+        run: npm run dev:prepare
 
       - name: Publish package
-        run: pnpm publish --no-git-checks
+        run: npm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
