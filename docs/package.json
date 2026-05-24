@@ -2,7 +2,8 @@
   "name": "docs",
   "scripts": {
     "dev": "nuxt dev",
-    "build": "nuxt build"
+    "build": "pnpm --dir .. build && nuxt build",
+    "prepare": "pnpm --dir .. build && nuxt prepare"
   },
   "dependencies": {
     "better-sqlite3": "^12.6.2",
