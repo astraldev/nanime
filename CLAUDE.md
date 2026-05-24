@@ -31,6 +31,7 @@ import { animate } from 'animejs/animation'
 import { createAnimatable } from 'animejs/animatable'
 import { createDraggable } from 'animejs/draggable'
 import { createLayout } from 'animejs/layout'
+import { createTimeline } from 'animejs/timeline'
 import { splitText } from 'animejs/text'
 import { waapi } from 'animejs/waapi'
 import { set, stagger, round } from 'animejs/utils'
@@ -48,6 +49,7 @@ Available throughout the Nuxt app:
 - `#nanime/types` — type definitions
 - `#nanime/easings` — easing utilities
 - `#nanime/utils` — re-exports of `animejs/utils`
+- `#nanime/proxies/text` — re-exports `scrambleText` from `animejs/text` (use inside composable params, not as a standalone API)
 
 ## Creating a New Composable
 
@@ -85,7 +87,7 @@ Key conventions:
 - Clean up with `tryOnScopeDispose`
 - Return `toReactive(shallowRef)` for ergonomic destructuring
 
-Existing composables: `useAnimate`, `useAnimatable`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`
+Existing composables: `useAnimate`, `useAnimatable`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`
 
 ## Components
 
