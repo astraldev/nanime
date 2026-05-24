@@ -12,4 +12,5 @@ export type {
   AnimatableObject,
   AnimatableParams,
   ScrambleTextParams,
+  TimelineParams,
 } from 'animejs'

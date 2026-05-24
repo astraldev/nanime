@@ -42,6 +42,7 @@ export default defineNuxtModule<ModuleOptions>({
           'animejs/layout',
           'animejs/text',
           'animejs/draggable',
+          'animejs/timeline',
           'tailwind-merge',
           '@vueuse/core',
           'lodash-es',
@@ -66,5 +67,6 @@ export default defineNuxtModule<ModuleOptions>({
     _nuxt.options.alias[`#${__configKey}/types`] = resolver.resolve('./runtime/app/utils/types')
     _nuxt.options.alias[`#${__configKey}/easings`] = resolver.resolve('./runtime/app/utils/easings')
     _nuxt.options.alias[`#${__configKey}/utils`] = resolver.resolve('./runtime/app/utils/index')
+    _nuxt.options.alias[`#${__configKey}/proxies/text`] = resolver.resolve('./runtime/app/utils/proxies/text')
   },
 })
