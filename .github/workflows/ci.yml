@@ -25,7 +25,7 @@ jobs:
         run: CI=true npx nypm@latest i
 
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
 
   test:
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
         run: CI=true npx nypm@latest i
 
       - name: Playground prepare
-        run: npm run dev:prepare
+        run: pnpm dev:prepare
 
       - name: Test
-        run: npm run test
+        run: pnpm test
