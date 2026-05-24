@@ -1,5 +1,35 @@
 # Changelog
 
+## v0.0.9
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.0.8...v0.0.9)
+
+### 🚀 Enhancements
+
+- Add useScrambleText composable, remove useLayout ([fab70c3](https://github.com/astraldev/nanime/commit/fab70c3))
+
+### 📖 Documentation
+
+- Update config for studio and only use published nanime package for docs ([ef86b66](https://github.com/astraldev/nanime/commit/ef86b66))
+- Update nuxt studio config ([009102c](https://github.com/astraldev/nanime/commit/009102c))
+- Update composables homepage ([b81540f](https://github.com/astraldev/nanime/commit/b81540f))
+- Update agent skills, rules, and documentation pages ([7fb6d67](https://github.com/astraldev/nanime/commit/7fb6d67))
+- Improve documentation page ([2aaa651](https://github.com/astraldev/nanime/commit/2aaa651))
+
+### 🏡 Chore
+
+- Add CLAUDE.md, agent rules, composable workflow, and anime submodule ([a70351a](https://github.com/astraldev/nanime/commit/a70351a))
+- Update dependencies and fix vueuse peer dep range ([6559962](https://github.com/astraldev/nanime/commit/6559962))
+
+### 🤖 CI
+
+- Issues again with linter ([fac98d9](https://github.com/astraldev/nanime/commit/fac98d9))
+- Issues again with linter II ([dcb3cd4](https://github.com/astraldev/nanime/commit/dcb3cd4))
+
+### ❤️ Contributors
+
+- Ekure Edem <ekureedem480@gmail.com>
+
 ## v0.0.8
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.0.7...v0.0.8)
