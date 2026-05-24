@@ -1,5 +1,48 @@
 # Changelog
 
+## v0.0.11
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.0.9...v0.0.11)
+
+### 🚀 Enhancements
+
+- **core:** Add NANIME_INSTANCE identification and createBufferedProxy utility ([085887b](https://github.com/astraldev/nanime/commit/085887b))
+- **core:** Mark existing composable returns with NANIME_INSTANCE ([a197520](https://github.com/astraldev/nanime/commit/a197520))
+- Add useAnimeTimeline composable and #nanime/proxies/text alias ([55686bd](https://github.com/astraldev/nanime/commit/55686bd))
+
+### 📖 Documentation
+
+- Update lockfile for nanime doc page builds ([2cad9f0](https://github.com/astraldev/nanime/commit/2cad9f0))
+- Add useAnimeTimeline documentation page and example components ([7ae49f5](https://github.com/astraldev/nanime/commit/7ae49f5))
+- Add animated AppHeaderLogo and rename misc index page ([6a7d1ff](https://github.com/astraldev/nanime/commit/6a7d1ff))
+- Add useAnimeTimeline to composables index and update project config ([277da72](https://github.com/astraldev/nanime/commit/277da72))
+- Open all external links in new tab ([8ff4ccc](https://github.com/astraldev/nanime/commit/8ff4ccc))
+- Add note for proxies and updated changelogs ([029b24c](https://github.com/astraldev/nanime/commit/029b24c))
+
+### 📦 Build
+
+- Update package jsons for improved build ([e3fafcc](https://github.com/astraldev/nanime/commit/e3fafcc))
+
+### 🏡 Chore
+
+- **release:** V0.0.10 ([421ef66](https://github.com/astraldev/nanime/commit/421ef66))
+- Update relevant agent skills + dedicated netlify build and prerender configs ([21ad739](https://github.com/astraldev/nanime/commit/21ad739))
+
+### 🤖 CI
+
+- Remove submodule requirement ([3f2eef0](https://github.com/astraldev/nanime/commit/3f2eef0))
+- Update build deps for docs ([6631a84](https://github.com/astraldev/nanime/commit/6631a84))
+- Update build deps for docs ([d0b7b51](https://github.com/astraldev/nanime/commit/d0b7b51))
+- Update ci config for publishing ([cc3be1e](https://github.com/astraldev/nanime/commit/cc3be1e))
+- Update ci config for publishing II ([f994404](https://github.com/astraldev/nanime/commit/f994404))
+- Update ci config for publishing III ([a00a100](https://github.com/astraldev/nanime/commit/a00a100))
+- Update ci config for publishing IV ([4052a58](https://github.com/astraldev/nanime/commit/4052a58))
+- Update linkings I ([c48da49](https://github.com/astraldev/nanime/commit/c48da49))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.0.10
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.0.9...v0.0.10)
