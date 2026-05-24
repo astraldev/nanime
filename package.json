@@ -52,7 +52,7 @@
   },
   "peerDependencies": {
     "@vueuse/core": ">=13.0.0",
-    "animejs": "^4.3.5",
+    "animejs": "^4.4.0",
     "defu": "^6.1.4",
     "vue": "^3.5.0"
   },

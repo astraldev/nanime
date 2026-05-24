@@ -8,21 +8,21 @@ const el = useTemplateRef('text')
 const index = ref(0)
 const texts = [
   'Hello from nanime!',
-  'Scramble text with Anime.js',
+  'Scramble text with animejs!',
   'Reactive composables rock',
+  'Care to star us on github? :)',
 ]
 
 const scrambleConfig = computed((): ScrambleTextParams => ({
   text: texts[index.value],
-  chars: 'braille',
-  cursor: '▌',
-  from: 'center',
+  chars: 'symbols',
   perturbation: 0.3,
-  settleDuration: 400,
-  revealRate: 40,
+  settleRate: 25,
+  settleDuration: 350,
+  revealRate: 20,
 }))
 
-useScrambleText(el, { duration: 2000 }, scrambleConfig)
+useScrambleText(el, { ease: 'inCirc', duration: 2500 }, scrambleConfig)
 
 useIntervalFn(() => {
   index.value = (index.value + 1) % texts.length

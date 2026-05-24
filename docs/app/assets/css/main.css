@@ -29,3 +29,27 @@
   --color-primary: var(--hex-red-1);
   --color-neutral: var(--hex-black-1);
 }
+
+:root {
+  animation: rotate-primary 120s steps(16) infinite;
+}
+
+@keyframes rotate-primary {
+  0%      { --color-primary: var(--hex-red-1); }
+  6.25%   { --color-primary: var(--hex-corail-1); }
+  12.5%   { --color-primary: var(--hex-orange-1); }
+  18.75%  { --color-primary: var(--hex-yellow-1); }
+  25%     { --color-primary: var(--hex-citrus-1); }
+  31.25%  { --color-primary: var(--hex-lime-1); }
+  37.5%   { --color-primary: var(--hex-green-1); }
+  43.75%  { --color-primary: var(--hex-turquoise-1); }
+  50%     { --color-primary: var(--hex-cyan-1); }
+  56.25%  { --color-primary: var(--hex-sky-1); }
+  62.5%   { --color-primary: var(--hex-sega-1); }
+  68.75%  { --color-primary: var(--hex-king-1); }
+  75%     { --color-primary: var(--hex-indigo-1); }
+  81.25%  { --color-primary: var(--hex-lavender-1); }
+  87.5%   { --color-primary: var(--hex-purple-1); }
+  93.75%  { --color-primary: var(--hex-magenta-1); }
+  100%    { --color-primary: var(--hex-red-1); }
+}

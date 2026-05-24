@@ -124,6 +124,9 @@ export const useCodeBlockPreview = async (src: string) => {
   const githubUrl = `https://github.com/astraldev/nanime/blob/main/docs/app/components/content/${src}`
 
   const md = `
+::${kebabCase(componentName)}
+::
+
 ::code-group
 ${finalScript
   ? `\`\`\`ts [Script]
@@ -143,9 +146,6 @@ ${finalStyle.trim()}
 \`\`\`
 `
   : ''}
-::
-
-::${kebabCase(componentName)}
 ::
 
 ::u-button

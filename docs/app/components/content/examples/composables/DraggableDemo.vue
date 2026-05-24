@@ -7,7 +7,6 @@ const draggable = useTemplateRef('draggable')
 
 useDraggable(draggable, {
   container: container,
-  containerPadding: 4,
   releaseEase: spring({
     bounce: 0.65,
     duration: 400,
@@ -26,7 +25,7 @@ useDraggable(draggable, {
   <ExampleWrapper>
     <div
       ref="container"
-      class="relative border border-primary/20 rounded-md border-dashed h-12"
+      class="relative rounded-md border-dashed h-10"
     >
       <div class="snap-positions">
         <div
@@ -50,7 +49,7 @@ useDraggable(draggable, {
       </div>
       <div
         ref="draggable"
-        class="simple-box w-12 h-10!"
+        class="simple-box w-12 h-10! draggable"
       />
     </div>
   </ExampleWrapper>
@@ -60,10 +59,14 @@ useDraggable(draggable, {
 @reference "~/assets/css/main.css";
 
 .snap-positions {
-  @apply absolute inset-1 pointer-events-none;
+  @apply absolute inset-0 pointer-events-none;
 }
 
 .snap-positions div {
-  @apply absolute top-0 inset-y-0 left-(--snap-x);
+  @apply absolute top-0 inset-y-0 left-(--snap-x) w-12 h-10;
+}
+
+.draggable {
+  @apply z-10 text-black relative;
 }
 </style>

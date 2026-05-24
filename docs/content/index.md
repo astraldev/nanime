@@ -68,6 +68,7 @@ Shipped with many features
   ---
   spotlight: true
   icon: i-simple-icons-nuxt
+  spotlightColor: var(--color-primary)
   target: _blank
   to: https://nuxt.com
   ---
@@ -82,6 +83,7 @@ Shipped with many features
   ---
   spotlight: true
   icon: i-simple-icons-animedotjs
+  spotlightColor: var(--color-primary)
   target: _blank
   to: https://animejs.com/
   ---
@@ -96,6 +98,7 @@ Shipped with many features
   ---
   spotlight: true
   icon: i-tabler-server-cog
+  spotlightColor: var(--color-primary)
   target: _blank
   to: https://nuxt.com
   ---
@@ -110,6 +113,7 @@ Shipped with many features
   ---
   spotlight: true
   icon: i-tabler-settings-bolt
+  spotlightColor: var(--color-primary)
   target: _blank
   to: https://nuxt.com/docs/guide/directory-structure/app-config
   ---
@@ -118,5 +122,98 @@ Shipped with many features
 
   #description
   Enable or disable composables or components
+  :::
+::
+
+::u-page-section
+#title
+Composables
+
+#description
+Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
+
+#features
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-play-circle
+  spotlightColor: var(--color-primary)
+  to: /composables/use-animate
+  ---
+  #title
+  useAnimate
+
+  #description
+  Core animation — CSS properties, transforms, SVG, and JS objects.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-lightning
+  spotlightColor: var(--color-primary)
+  to: /composables/use-waapi-animate
+  ---
+  #title
+  useWaapiAnimate
+
+  #description
+  Web Animations API — hardware-accelerated, off-main-thread animations.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-cube
+  spotlightColor: var(--color-primary)
+  to: /composables/use-animatable
+  ---
+  #title
+  useAnimatable
+
+  #description
+  Imperative property setters with built-in transitions.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-text-t
+  spotlightColor: var(--color-primary)
+  to: /composables/use-split-text
+  ---
+  #title
+  useSplitText
+
+  #description
+  Split text into lines, words, and characters for staggered animations.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-shuffle
+  spotlightColor: var(--color-primary)
+  to: /composables/use-scramble-text
+  ---
+  #title
+  useScrambleText :badge[New]{variant="subtle"}
+
+  #description
+  Text scramble and reveal effects with reactive text cycling.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-hand-grabbing
+  spotlightColor: var(--color-primary)
+  to: /composables/use-draggable
+  ---
+  #title
+  useDraggable
+
+  #description
+  Drag interactions with snap, bounds, and axis constraints.
   :::
 ::
