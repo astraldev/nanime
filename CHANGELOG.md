@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.0.10
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.0.9...v0.0.10)
+
+### 🤖 CI
+
+- Remove submodule requirement ([3f2eef0](https://github.com/astraldev/nanime/commit/3f2eef0))
+- Update build deps for docs ([6631a84](https://github.com/astraldev/nanime/commit/6631a84))
+- Update build deps for docs ([d0b7b51](https://github.com/astraldev/nanime/commit/d0b7b51))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.0.9
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.0.8...v0.0.9)
