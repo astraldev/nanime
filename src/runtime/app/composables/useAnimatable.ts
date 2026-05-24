@@ -4,6 +4,7 @@ import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } fro
 import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import type { AnimatableObject, AnimatableParams, TargetsParam } from 'animejs'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
+import { markNanimeInstance } from '../utils/create-proxy'
 
 export function useAnimatable(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -38,5 +39,7 @@ export function useAnimatable(
     })
   }
 
-  return toReactive(animatable)
+  const result = toReactive(animatable)
+  markNanimeInstance(result, animatable)
+  return result
 }

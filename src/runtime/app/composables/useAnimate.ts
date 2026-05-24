@@ -4,6 +4,7 @@ import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import type { AnimationParams, TargetsParam } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
+import { markNanimeInstance } from '../utils/create-proxy'
 
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -39,5 +40,7 @@ export function useAnimate(
     })
   }
 
-  return toReactive(animation)
+  const result = toReactive(animation)
+  markNanimeInstance(result, animation)
+  return result
 }

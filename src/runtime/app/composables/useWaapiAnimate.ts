@@ -4,6 +4,7 @@ import type { WAAPIAnimationParams } from 'animejs'
 import { normalizeWaapiAnimeTarget } from '../utils/normalize-targets'
 import { waapi, type WAAPIAnimation } from 'animejs/waapi'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
+import { markNanimeInstance } from '../utils/create-proxy'
 
 export function useWaapiAnimate(
   target: Parameters<typeof normalizeWaapiAnimeTarget>[0],
@@ -37,5 +38,7 @@ export function useWaapiAnimate(
     })
   }
 
-  return toReactive(animation)
+  const result = toReactive(animation)
+  markNanimeInstance(result, animation)
+  return result
 }

@@ -5,6 +5,7 @@ import type { AnimationParams, ScrambleTextParams } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { scrambleText } from 'animejs/text'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
+import { markNanimeInstance } from '../utils/create-proxy'
 
 export function useScrambleText(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -46,5 +47,7 @@ export function useScrambleText(
     })
   }
 
-  return toReactive(animation)
+  const result = toReactive(animation)
+  markNanimeInstance(result, animation)
+  return result
 }
