@@ -82,7 +82,7 @@ importers:
         specifier: latest
         version: 5.11.0(953536fa5a5fac990350870e21c3d854)
       nanime:
-        specifier: link:..
+        specifier: workspace:*
         version: link:..
       nuxt:
         specifier: ^4.3.1

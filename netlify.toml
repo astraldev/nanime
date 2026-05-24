@@ -1,8 +1,0 @@
-[build]
-  base = "/"
-  command = "corepack enable && pnpm install && pnpm prepack && cd docs && pnpm build"
-  publish = "docs/.output/public"
-
-[build.environment]
-  NODE_VERSION = "22"
-  CI = "true"
