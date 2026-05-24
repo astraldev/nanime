@@ -56,7 +56,7 @@ Create SSR Safe animations for Nuxt without having to worry about targets and co
   Get started
   :::
 
-:copy-code-input{source="npx nuxi module add nanime"}
+:copy-code-input{source="npx nuxt module add nanime"}
 ::
 
 ::u-page-section
