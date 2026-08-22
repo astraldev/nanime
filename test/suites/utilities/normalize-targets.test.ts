@@ -1,16 +1,24 @@
 import { ref } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
+import type { VueWrapper } from '@vue/test-utils'
 import TargetTemplates from './target-templates.vue'
 import { normalizeAnimeTarget, normalizeWaapiAnimeTarget, normalizeLayoutTarget } from '../../../src/runtime/app/utils/normalize-targets'
 
-describe('normalize-targets', async () => {
-  const wrapper = await mountSuspended(TargetTemplates)
-  const vm = wrapper.vm
+describe('normalize-targets', () => {
+  let wrapper: VueWrapper<InstanceType<typeof TargetTemplates>>
+  let vm: InstanceType<typeof TargetTemplates>
+  let singleElement: HTMLElement
+  let multipleElements: HTMLElement[]
+  let svgElement: SVGElement
 
-  const singleElement = wrapper.find('.single-target').element as HTMLElement
-  const multipleElements = wrapper.findAll('.multiple-target').map(w => w.element as HTMLElement)
-  const svgElement = wrapper.find('svg').element as SVGElement
+  beforeAll(async () => {
+    wrapper = await mountSuspended(TargetTemplates)
+    vm = wrapper.vm
+    singleElement = wrapper.find('.single-target').element as HTMLElement
+    multipleElements = wrapper.findAll('.multiple-target').map(w => w.element as HTMLElement)
+    svgElement = wrapper.find('svg').element as SVGElement
+  })
 
   // Functions to test common behavior against
   const normalizers = [

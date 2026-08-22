@@ -65,6 +65,7 @@
     "animejs": "catalog:runtime",
     "changelogen": "catalog:tooling",
     "eslint": "catalog:tooling",
+    "h3-next": "npm:h3@^2.0.1-rc.22",
     "happy-dom": "catalog:tooling",
     "lefthook": "catalog:tooling",
     "nuxt": "catalog:nuxt",
