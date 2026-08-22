@@ -20,13 +20,27 @@ const over = ref(false)
 const blend = reactive({ p: 0 })
 const blendTo = useAnimatable(blend, { p: 0, duration: 350, ease: 'outQuad' })
 
-type Box = { width: number, height: number, binWidth: number, binHeight: number }
-type Geometry = { x: number, y: number, grabX: number, grabY: number, bin: DOMRect }
+type Box = {
+  width: number
+  height: number
+  deltaW: number
+  deltaH: number
+  halfDeltaW: number
+  halfDeltaH: number
+}
 
-const box = ref<Box | null>(null)
+type Geometry = {
+  originX: number
+  originY: number
+  binCenterX: number
+  binCenterY: number
+  bin: DOMRect
+}
+
+const box = shallowRef<Box | null>(null)
 
 /** Vector from the handle's centre to the bin's centre, while over the bin. */
-const stick = ref({ x: 0, y: 0 })
+const stick = shallowRef({ x: 0, y: 0 })
 
 let geometry: Geometry | null = null
 
@@ -34,13 +48,14 @@ const style = computed(() => {
   // At rest the card takes its size from the handle, so no inline box can go stale.
   if (!box.value || !blend.p) return {}
 
-  const { width, height, binWidth, binHeight } = box.value
-  const w = width + blend.p * (binWidth - width)
-  const h = height + blend.p * (binHeight - height)
+  const { width, height, deltaW, deltaH, halfDeltaW, halfDeltaH } = box.value
+  const p = blend.p
+  const w = width + p * deltaW
+  const h = height + p * deltaH
 
-  // (width - w) / 2 keeps the card centred on the handle as it resizes.
-  const x = (width - w) / 2 + blend.p * stick.value.x
-  const y = (height - h) / 2 + blend.p * stick.value.y
+  // Keeps the card centred on the handle as it resizes toward the bin
+  const x = p * (stick.value.x - halfDeltaW)
+  const y = p * (stick.value.y - halfDeltaH)
 
   return {
     width: `${w}px`,
@@ -65,45 +80,48 @@ const draggable = useDraggable(el, {
 
     if (!node || !ghost || !props.bin) return
 
-    // Measured once per grab: nothing in the list moves until the card is released.
+    // Measured once per grab: ghost provides the static un-transformed rest origin
     const bin = props.bin.getBoundingClientRect()
     const rest = ghost.getBoundingClientRect()
-    const width = node.offsetWidth
-    const height = node.offsetHeight
+    const width = rest.width / 2
+    const height = rest.height
 
     if (!width || !height || !bin.width || !bin.height) return
+
+    const deltaW = bin.width - props.padding * 2 - width
+    const deltaH = bin.height - props.padding * 2 - height
 
     box.value = {
       width,
       height,
-      binWidth: bin.width - props.padding * 2,
-      binHeight: bin.height - props.padding * 2,
+      deltaW,
+      deltaH,
+      halfDeltaW: deltaW / 2,
+      halfDeltaH: deltaH / 2,
     }
 
-    // self.x is whatever translate already exists — it is not necessarily zero.
     geometry = {
-      x: rest.left + width / 2,
-      y: rest.top + height / 2,
-      grabX: self.x,
-      grabY: self.y,
+      originX: rest.left + width / 2 - self.x,
+      originY: rest.top + height / 2 - self.y,
+      binCenterX: bin.left + bin.width / 2,
+      binCenterY: bin.top + bin.height / 2,
       bin,
     }
   },
   onUpdate: (self) => {
     if (!geometry) return
 
-    const { x: restX, y: restY, grabX, grabY, bin } = geometry
-    const x = restX + (self.x - grabX)
-    const y = restY + (self.y - grabY)
+    const { originX, originY, binCenterX, binCenterY, bin } = geometry
+    const x = originX + self.x
+    const y = originY + self.y
     const isOver = x > bin.left && x < bin.right && y > bin.top && y < bin.bottom
 
     report(isOver)
 
-    // Only tracked while it matters — outside the bin the blend is zero anyway.
     if (isOver) {
       stick.value = {
-        x: bin.left + bin.width / 2 - x,
-        y: bin.top + bin.height / 2 - y,
+        x: binCenterX - x,
+        y: binCenterY - y,
       }
     }
   },
@@ -111,7 +129,6 @@ const draggable = useDraggable(el, {
     if (over.value) return emit('bin')
 
     report(false)
-    // reset() returns the handle instantly, so the offset has to go with it.
     blend.p = 0
     draggable.reset?.()
   },
@@ -145,14 +162,16 @@ watch(() => props.binned, (value) => {
 @reference "~/assets/css/main.css";
 
 .handle {
-  @apply absolute top-0 left-0 w-1/2 h-12;
+  @apply absolute top-0 left-0 w-1/2 h-12 select-none;
   @apply cursor-grab active:cursor-grabbing;
+  touch-action: none;
 }
 
 .card {
   @apply w-full h-full rounded-lg border border-primary/20 bg-primary/5;
   @apply grid place-items-center text-sm font-semibold text-highlighted select-none;
 
+  will-change: transform;
   transition: opacity var(--motion-standard) var(--motion-ease);
 }
 

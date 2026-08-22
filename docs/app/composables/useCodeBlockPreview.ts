@@ -9,7 +9,7 @@ import { parseFilename } from 'ufo'
 import type { Options } from 'prettier'
 import { consola as logger } from 'consola'
 
-export const useCodeBlockPreview = async (src: string) => {
+export const useCodeBlockPreview = async (src: string, code = true) => {
   const components = import.meta.glob('../components/content/examples/**/*.vue', {
     query: '?raw',
     import: 'default',
@@ -91,42 +91,42 @@ export const useCodeBlockPreview = async (src: string) => {
   let finalTemplate = `<template>${template}</template>`
   let finalStyle = style
 
-  finalScript = await format(script, {
-    ...formatOptions,
-    parser: 'typescript',
-    plugins: [parserTypeScript, parserBabel, prettierPluginEstree],
-  }).catch((err) => {
-    logger.warn(`Failed to parse script for: ${src}`, err)
-    return ''
-  })
+  // Preview-only callers never render these, so skip the formatting entirely.
+  if (code) {
+    finalScript = await format(script, {
+      ...formatOptions,
+      parser: 'typescript',
+      plugins: [parserTypeScript, parserBabel, prettierPluginEstree],
+    }).catch((err) => {
+      logger.warn(`Failed to parse script for: ${src}`, err)
+      return ''
+    })
 
-  finalTemplate = await format(finalTemplate, {
-    ...formatOptions,
-    parser: 'html',
-    plugins: [parserHtml],
-  }).catch((err) => {
-    logger.warn(`Failed to parse template for: ${src}`, err)
-    return ''
-  })
+    finalTemplate = await format(finalTemplate, {
+      ...formatOptions,
+      parser: 'html',
+      plugins: [parserHtml],
+    }).catch((err) => {
+      logger.warn(`Failed to parse template for: ${src}`, err)
+      return ''
+    })
 
-  finalStyle = await format(style, {
-    ...formatOptions,
-    parser: 'css',
-    plugins: [parserPostCss],
-  }).catch((err) => {
-    logger.warn(`Failed to parse style for: ${src}`, err)
-    return ''
-  })
+    finalStyle = await format(style, {
+      ...formatOptions,
+      parser: 'css',
+      plugins: [parserPostCss],
+    }).catch((err) => {
+      logger.warn(`Failed to parse style for: ${src}`, err)
+      return ''
+    })
+  }
 
   // Determine component name for preview
   const filename = parseFilename(src.replace('.vue', ''))
   const componentName = kebabCase(filename || '')
   const githubUrl = `https://github.com/astraldev/nanime/blob/main/docs/app/components/content/${src}`
 
-  const md = `
-::${kebabCase(componentName)}
-::
-
+  const codeGroup = `
 ::code-group
 ${finalScript
   ? `\`\`\`ts [Script]
@@ -147,6 +147,12 @@ ${finalStyle.trim()}
 `
   : ''}
 ::
+`
+
+  const md = `
+::${kebabCase(componentName)}
+::
+${code ? codeGroup : ''}
 
 ::u-button
 ---

@@ -15,8 +15,8 @@ orientation: horizontal
 
     ::::tabs-item{icon="i-lucide-code" label="Template"}
     ```html
-    <div class="boxes grid grid-cols-10 place-items-center gap-0.5 absolute inset-0 p-5">
-      <div v-for="i in 40" :key="i" class="box size-9 rounded-sm bg-white/40 aspect-square" />
+    <div class="grid grid-cols-10 place-items-center gap-0.5 absolute inset-0 p-5">
+      <div v-for="i in 40" :key="i" ref="boxes" class="size-9 rounded-sm bg-primary/30 aspect-square" />
     </div>
     ```
     ::::
@@ -25,7 +25,9 @@ orientation: horizontal
     ```ts
     import { stagger } from '#nanime/utils'
 
-    useAnimate('.boxes > .box', {
+    const boxes = useTemplateRef('boxes')
+
+    useAnimate(boxes, {
       scale: [{ to: [0, 1.25] }, { to: 0 }],
       boxShadow: [
         { to: '0 0 1rem 0 currentColor' },
@@ -35,6 +37,9 @@ orientation: horizontal
         grid: [10, 4],
         from: 'center',
       }),
+      duration: 1500,
+      playbackEase: 'outQuad',
+      loop: true,
     })
     ```
     ::::
@@ -54,6 +59,17 @@ Create SSR Safe animations for Nuxt without having to worry about targets and co
   to: /getting-started/installation
   ---
   Get started
+  :::
+
+  :::u-button
+  ---
+  icon: i-ph-shapes
+  size: xl
+  color: neutral
+  variant: subtle
+  to: /examples/introduction
+  ---
+  See examples
   :::
 
 :copy-code-input{source="npx nuxt module add nanime"}
@@ -215,5 +231,19 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
 
   #description
   Drag interactions with snap, bounds, and axis constraints.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-squares-four
+  spotlightColor: var(--color-primary)
+  to: /composables/use-anime-layout
+  ---
+  #title
+  useAnimeLayout
+
+  #description
+  Animate elements between two layouts, grid to list and back.
   :::
 ::
