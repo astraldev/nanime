@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { shallowRef, ref, isReactive } from 'vue'
-import { createProxy } from '../../../src/runtime/app/utils/create-proxy'
+import { createProxy, createBufferedProxy, resolveNanimeInstance } from '../../../src/runtime/app/utils/create-proxy'
 
 describe('createProxy', () => {
   it('should create a reactive proxy from an object ref', () => {
@@ -144,5 +144,39 @@ describe('createProxy', () => {
 
     // Should return undefined (user must safely access)
     expect(proxy.doSomething).toBeUndefined()
+  })
+})
+
+describe('createBufferedProxy', () => {
+  it('should buffer chainable method calls when ref is null and replay on flush', () => {
+    const objectRef = shallowRef<{ count: number, add: (n: number) => void } | null>(null)
+    const { proxy, flushBuffer } = createBufferedProxy(objectRef, {
+      chainableMethods: new Set(['add']),
+    })
+
+    // Call while ref is null — should be buffered
+    proxy.add(5)
+
+    const instance = {
+      count: 0,
+      add(n: number) {
+        this.count += n
+      },
+    }
+    objectRef.value = instance
+
+    // Replay buffer
+    flushBuffer()
+    expect(instance.count).toBe(5)
+  })
+
+  it('should resolve raw instance via resolveNanimeInstance', () => {
+    const instance = { id: 'anim-1' }
+    const objectRef = shallowRef(instance)
+    const { proxy } = createBufferedProxy(objectRef, {
+      chainableMethods: new Set(['add']),
+    })
+
+    expect(resolveNanimeInstance(proxy)).toBe(instance)
   })
 })

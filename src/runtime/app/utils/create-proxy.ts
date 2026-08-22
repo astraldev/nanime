@@ -34,7 +34,8 @@ export function resolveNanimeInstance<T>(value: unknown): T {
   if (value && typeof value === 'object') {
     // createProxy / createBufferedProxy path
     if (NANIME_INSTANCE in value) {
-      return (value as any)[NANIME_INSTANCE].value
+      const inst = (value as any)[NANIME_INSTANCE]
+      return (isRef(inst) ? inst.value : inst) as T
     }
     // toReactive path
     const ref = nanimeRegistry.get(value as object)
@@ -50,6 +51,13 @@ export type SafeFunctions<T> = {
 }
 
 export type ProxyReturns<T> = SafeFunctions<Exclude<UnwrapNestedRefs<T>, null | undefined>>
+
+/**
+ * Return type for `createBufferedProxy`. Methods stay callable because the
+ * proxy always hands back a real function — buffered before the instance
+ * exists, delegated once it does.
+ */
+export type BufferedProxyReturns<T> = Exclude<UnwrapNestedRefs<T>, null | undefined>
 
 /**
  * Converts the object to a reactive version, and stubs null / undefined values
@@ -98,7 +106,7 @@ export function createProxy<T = object | null>(
 }
 
 export interface BufferedProxyOptions {
-  /** Methods that support chaining and should be buffered when instance is null */
+  /** Methods that return `this` — buffered when instance is null, replayed on flush */
   chainableMethods: Set<string>
   /** Transform args before passing to the real method (e.g. normalize targets) */
   transformArgs?: (method: string, args: any[]) => any[]
@@ -113,7 +121,7 @@ export interface BufferedProxyOptions {
 export function createBufferedProxy<T>(
   objectRef: Ref<T | null>,
   options: BufferedProxyOptions,
-): { proxy: ProxyReturns<T>, flushBuffer: () => void } {
+): { proxy: BufferedProxyReturns<T>, flushBuffer: () => void } {
   const { chainableMethods, transformArgs } = options
   const buffer: Array<{ method: string, args: any[] }> = []
 
@@ -190,5 +198,5 @@ export function createBufferedProxy<T>(
     },
   })
 
-  return { proxy: reactive(proxy) as ProxyReturns<T>, flushBuffer }
+  return { proxy: reactive(proxy) as BufferedProxyReturns<T>, flushBuffer }
 }
