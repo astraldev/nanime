@@ -13,4 +13,11 @@ export type {
   AnimatableParams,
   ScrambleTextParams,
   TimelineParams,
+  JSAnimation,
+  Timer,
+  TimerParams,
+  TimerOptions,
+  DrawableSVGGeometry,
+  TextSplitterParams,
+  SplitTemplateParams,
 } from 'animejs'
