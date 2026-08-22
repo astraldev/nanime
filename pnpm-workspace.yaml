@@ -2,6 +2,9 @@ packages:
   - .
   - docs
 
+overrides:
+  h3: ^1.15.11
+
 catalogs:
   # Nuxt core — shared by the module (root) and the docs site
   nuxt:
