@@ -73,6 +73,7 @@ function report(value: boolean) {
 }
 
 const draggable = useDraggable(el, {
+  snap: [0],
   releaseEase: spring({ bounce: 0.2, duration: 500 }),
   onGrab: (self) => {
     const node = el.value
@@ -83,7 +84,7 @@ const draggable = useDraggable(el, {
     // Measured once per grab: ghost provides the static un-transformed rest origin
     const bin = props.bin.getBoundingClientRect()
     const rest = ghost.getBoundingClientRect()
-    const width = rest.width / 2
+    const width = rest.width
     const height = rest.height
 
     if (!width || !height || !bin.width || !bin.height) return
@@ -126,11 +127,10 @@ const draggable = useDraggable(el, {
     }
   },
   onRelease: () => {
-    if (over.value) return emit('bin')
-
-    report(false)
-    blend.p = 0
-    draggable.reset?.()
+    if (over.value) {
+      draggable.stop?.()
+      emit('bin')
+    }
   },
 })
 
@@ -162,17 +162,17 @@ watch(() => props.binned, (value) => {
 @reference "~/assets/css/main.css";
 
 .handle {
-  @apply absolute top-0 left-0 w-1/2 h-12 select-none;
+  @apply absolute top-0 left-0 w-full h-12 select-none;
   @apply cursor-grab active:cursor-grabbing;
   touch-action: none;
 }
 
 .card {
-  @apply w-full h-full rounded-lg border border-primary/20 bg-primary/5;
+  @apply w-full h-full rounded-lg border border-primary/20 bg-primary/5 backdrop-blur-md;
   @apply grid place-items-center text-sm font-semibold text-highlighted select-none;
 
   will-change: transform;
-  transition: opacity var(--motion-standard) var(--motion-ease);
+  transition: opacity 300ms ease-out;
 }
 
 :global(.is-binned) .card {

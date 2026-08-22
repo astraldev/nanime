@@ -12,14 +12,14 @@ const easePop = cubicBezier(0.34, 1.56, 0.64, 1)
 // Track 1: Card 01 — The High Jumper
 const tl1 = useAnimeTimeline({ autoplay: false })
 tl1
-  .add('.card-1 .story-mover', {
+  .add('.card-1 .story-box', {
     y: [
       { to: 8, duration: 180, ease: easeSmooth },
       { to: -52, duration: 420, ease: 'outQuad' },
       { to: 0, duration: 500, ease: 'outBounce' },
     ],
   })
-  .add('.card-1 .story-rotator', {
+  .add('.card-1 .story-box', {
     scaleX: [
       { to: 1.18, duration: 180, ease: easeSmooth },
       { to: 0.82, duration: 420, ease: 'outQuad' },
@@ -35,13 +35,13 @@ tl1
 // Track 2: Card 02 — The Acrobat 360 Spin
 const tl2 = useAnimeTimeline({ autoplay: false })
 tl2
-  .add('.card-2 .story-mover', {
+  .add('.card-2 .story-box', {
     y: [
       { to: -28, duration: 450, ease: 'outQuad' },
       { to: 0, duration: 450, ease: easePop },
     ],
   })
-  .add('.card-2 .story-rotator', {
+  .add('.card-2 .story-box', {
     rotate: [
       { to: -30, duration: 180, ease: easeSmooth },
       { to: 360, duration: 800, ease: easePop },
@@ -56,12 +56,12 @@ tl2
 // Track 3: Card 03 — The Zig-Zag Waver
 const tl3 = useAnimeTimeline({ autoplay: false })
 tl3
-  .add('.card-3 .story-mover', {
+  .add('.card-3 .story-box', {
     x: [0, -22, 22, -12, 12, 0],
     duration: 900,
     ease: easeSmooth,
   })
-  .add('.card-3 .story-rotator', {
+  .add('.card-3 .story-box', {
     rotate: [0, -24, 24, -12, 12, 0],
     scale: [1, 1.12, 0.95, 1.05, 1],
     duration: 900,
@@ -70,7 +70,7 @@ tl3
 
 // Track 4: Card 04 — The Morph Pulsar
 const tl4 = useAnimeTimeline({ autoplay: false })
-tl4.add('.card-4 .story-rotator', {
+tl4.add('.card-4 .story-box', {
   scale: [1, 1.32, 0.88, 1.15, 1],
   rotate: [0, 45, 90, 45, 0],
   duration: 950,
@@ -80,13 +80,13 @@ tl4.add('.card-4 .story-rotator', {
 // Track 5: Grand Finale — Synchronized Wave Ripple
 const tlFinale = useAnimeTimeline({ autoplay: false })
 tlFinale
-  .add('.story-mover', {
+  .add('.story-box', {
     y: [0, -20, 0],
     delay: stagger(90),
     duration: 600,
     ease: easeSmooth,
   })
-  .add('.story-rotator', {
+  .add('.story-box', {
     scale: [1, 1.1, 1],
     delay: stagger(90),
     duration: 600,
@@ -171,12 +171,9 @@ const status = computed(() => `${isPlaying.value ? 'playing' : 'paused'} · ${Ma
         <!-- Floor slot base with shaded grid pattern -->
         <div class="spot-station absolute inset-0 size-full rounded-xl" />
 
-        <!-- Position Mover Layer -->
-        <div class="story-mover absolute inset-0 size-full z-10">
-          <!-- Rotator & Box Face Layer -->
-          <div class="story-rotator size-full rounded-xl bg-primary text-black font-mono font-bold text-sm grid place-items-center shadow-md select-none">
-            0{{ i }}
-          </div>
+        <!-- Position + rotation + scale all animate on this one element -->
+        <div class="story-box">
+          0{{ i }}
         </div>
       </div>
     </div>
@@ -195,5 +192,10 @@ const status = computed(() => `${isPlaying.value ? 'playing' : 'paused'} · ${Ma
     transparent 1px,
     transparent 6px
   );
+}
+
+.story-box {
+  @apply absolute inset-0 z-10 size-full select-none rounded-xl bg-primary;
+  @apply grid place-items-center font-mono text-sm font-bold text-black shadow-md;
 }
 </style>

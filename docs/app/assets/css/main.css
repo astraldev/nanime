@@ -34,6 +34,13 @@
   animation: rotate-primary 120s steps(16) infinite;
 }
 
+/* Stopping the cycle reverts --color-primary to its @theme static value. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    animation: none;
+  }
+}
+
 @keyframes rotate-primary {
   0%      { --color-primary: var(--hex-red-1); }
   6.25%   { --color-primary: var(--hex-corail-1); }

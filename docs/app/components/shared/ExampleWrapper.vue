@@ -13,11 +13,21 @@ export type ExampleSlider = {
   onInput: (value: number) => void
 }
 
-defineProps<{
+const props = defineProps<{
   actions?: ExampleAction[]
   slider?: ExampleSlider
   status?: string
 }>()
+
+const statusEl = useTemplateRef('statusEl')
+
+useScrambleText(
+  statusEl,
+  { duration: 500, ease: 'outQuad' },
+  () => ({
+    text: props.status ?? '',
+  }),
+)
 
 function onSliderInput(event: Event, slider: ExampleSlider) {
   if (!(event.target instanceof HTMLInputElement)) return
@@ -50,6 +60,7 @@ function onSliderInput(event: Event, slider: ExampleSlider) {
 
       <span
         v-if="status"
+        ref="statusEl"
         class="font-mono text-primary/70"
       >
         {{ status }}
@@ -79,7 +90,7 @@ function onSliderInput(event: Event, slider: ExampleSlider) {
 .demo-button {
   @apply px-2.5 py-1 rounded border font-semibold cursor-pointer;
   @apply bg-primary/5 text-primary border-primary/20 hover:bg-primary/10;
-  transition: background-color var(--motion-quick) var(--motion-ease);
+  transition: background-color 150ms ease;
 }
 
 .demo-button-active {

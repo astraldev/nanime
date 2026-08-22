@@ -1,7 +1,9 @@
 ---
+title: nanime
+description: Nuxt module wrapping Anime.js v4 in SSR-safe Vue composables. Animate, drag, split and scramble text, and sync timelines without lifecycle headaches.
 seo:
-  title: Effortless animations with AnimeJS
-  description: Build SSR Safe animations for Nuxt without having to worry about targets, hooks and component lifecycle.
+  title: nanime - Anime.js Composables for Nuxt & Vue 3
+  description: Nuxt module wrapping Anime.js v4 in SSR-safe Vue composables. Animate, drag, split and scramble text, and sync timelines without lifecycle headaches.
 ---
 
 ::u-page-hero
@@ -137,7 +139,7 @@ Shipped with many features
   Customizable
 
   #description
-  Enable or disable composables or components
+  Enable or disable composables
   :::
 ::
 
@@ -236,14 +238,67 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
   :::u-page-card
   ---
   spotlight: true
-  icon: i-ph-squares-four
+  icon: i-ph-clock
   spotlightColor: var(--color-primary)
-  to: /composables/use-anime-layout
+  to: /composables/use-anime-timeline
   ---
   #title
-  useAnimeLayout
+  useAnimeTimeline
 
   #description
-  Animate elements between two layouts, grid to list and back.
+  Sequence and sync multiple timelines into one master composition, with full playback controls.
+  :::
+::
+
+::u-page-section
+#title
+The rest of the toolkit
+
+#description
+Easing curves, re-exported Anime.js utilities, and SVG/text proxies —
+the pieces that show up inside the composables above rather than standing
+on their own.
+
+#features
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-chart-line-up
+  spotlightColor: var(--color-primary)
+  to: /misc/easings
+  ---
+  #title
+  Easings
+
+  #description
+  Spring physics and custom cubicBezier curves, used throughout the showcase examples above.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-wrench
+  spotlightColor: var(--color-primary)
+  to: /misc/utils
+  ---
+  #title
+  Utils
+
+  #description
+  Stagger, targets, and other helpers re-exported directly from `animejs/utils`.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-plugs-connected
+  spotlightColor: var(--color-primary)
+  to: /misc/proxies
+  ---
+  #title
+  Proxies
+
+  #description
+  SVG morphing, motion paths, drawable strokes, and the text-scramble proxy.
   :::
 ::

@@ -24,8 +24,8 @@ const actions = [{
     :actions="actions"
     :status="`${remaining} left`"
   >
-    <div class="flex gap-4">
-      <div class="flex-1 flex flex-col">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <div class="flex-1 flex flex-col max-w-[310px]">
         <div
           v-for="card in cards"
           :key="card.label"
@@ -49,7 +49,7 @@ const actions = [{
       >
         <UIcon
           name="i-ph-trash"
-          class="size-6"
+          class="size-7"
         />
         <span class="text-xs">Drop here</span>
       </div>
@@ -64,12 +64,12 @@ const actions = [{
   height: 3rem;
   margin-bottom: 0.5rem;
   position: relative;
-  transition: all var(--motion-standard) var(--motion-ease);
+  transition: height 350ms cubic-bezier(0.25, 1, 0.5, 1), margin-bottom 350ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Marks the slot the card came from once it is dragged away. */
 .ghost::before {
-  @apply absolute inset-y-0 left-0 right-1/2 rounded-lg border border-dashed border-primary/20;
+  @apply absolute inset-0 rounded-lg border border-dashed border-primary/20;
   content: '';
 }
 
@@ -80,8 +80,8 @@ const actions = [{
 }
 
 .bin {
-  @apply w-40 rounded-lg border border-dashed border-primary/35 grid place-items-center gap-1 text-primary/70;
-  transition: all var(--motion-quick) var(--motion-ease);
+  @apply w-full sm:w-48 min-h-[6.5rem] rounded-lg border border-dashed border-primary/35 grid place-items-center gap-1 text-primary/70 shrink-0 self-stretch;
+  transition: all 150ms ease-out;
 }
 
 .bin.is-armed {
