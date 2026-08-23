@@ -128,7 +128,7 @@ const draggable = useDraggable(el, {
   },
   onRelease: () => {
     if (over.value) {
-      draggable.stop?.()
+      draggable.stop()
       emit('bin')
     }
   },
@@ -140,7 +140,7 @@ watch(() => props.binned, (value) => {
   report(false)
   blend.p = 0
   stick.value = { x: 0, y: 0 }
-  draggable.reset?.()
+  draggable.reset()
 })
 </script>
 
