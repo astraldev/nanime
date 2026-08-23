@@ -57,6 +57,7 @@ Add an `## API` section with a `### Types` sub-section at the bottom of the file
     - **Return Value**: Summary of return type + optional caution.
     - **API**: Detailed types at the bottom.
 4.  **Review**: Ensure no generic types (like `Object`) are used where specific types exist.
+5.  **Check the prose**: Every sentence on the page follows [../create-docs/references/prose-style.md](../create-docs/references/prose-style.md). No em dashes or semicolons, no filler or hype, reasons rather than bare rules, callouts reserved for real footguns.
 
 ## Example File Conventions
 

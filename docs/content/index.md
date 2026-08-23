@@ -48,7 +48,7 @@ orientation: horizontal
   :::
 
 #title
-Effortless animations with [AnimeJS]{.text-primary}
+Animate Nuxt with [AnimeJS]{.text-primary}
 
 #description
 Create SSR Safe animations for Nuxt without having to worry about targets and component lifecycle.
@@ -148,7 +148,7 @@ Shipped with many features
 Composables
 
 #description
-Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
+Wrappers around every AnimeJS utility, built for Vue reactivity.
 
 #features
   :::u-page-card
@@ -162,7 +162,7 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
   useAnimate
 
   #description
-  Core animation — CSS properties, transforms, SVG, and JS objects.
+  CSS properties, transforms, SVG and plain JS objects.
   :::
 
   :::u-page-card
@@ -176,7 +176,7 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
   useWaapiAnimate
 
   #description
-  Web Animations API — hardware-accelerated, off-main-thread animations.
+  Web Animations API, running off the main thread.
   :::
 
   :::u-page-card
@@ -190,7 +190,7 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
   useAnimatable
 
   #description
-  Imperative property setters with built-in transitions.
+  Property setters with built-in tweening, for fast updates.
   :::
 
   :::u-page-card
@@ -255,9 +255,9 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
 The rest of the toolkit
 
 #description
-Easing curves, re-exported Anime.js utilities, and SVG/text proxies —
-the pieces that show up inside the composables above rather than standing
-on their own.
+Easing curves, re-exported Anime.js utilities and SVG/text proxies. The
+pieces that show up inside the composables above rather than standing on
+their own.
 
 #features
   :::u-page-card

@@ -128,42 +128,19 @@ into prose a model can act on directly.
 
 ### Prose style
 
-Write like you're explaining what you built to a colleague who just asked
-"how does this work," not like copy trying to sell the demo. Concretely:
+Read [../create-docs/references/prose-style.md](../create-docs/references/prose-style.md)
+before writing. It is the shared voice for every page under
+`docs/content/`, and it covers punctuation, filler, sentence shapes to
+avoid, code-sample comments and line width.
 
-- **No em dashes, no semicolons.** If a sentence wants one, it's usually
-  trying to hold two separate thoughts — split it into two sentences
-  instead. A colon before a list is fine.
-- **Cut filler words on sight**: *just*, *really*, *actually*, *simply*,
-  *exactly*, *finally* (as an intensifier). Delete the word, reread the
-  sentence — it almost always still works.
-- **No hype adjectives**: *powerful*, *seamless*, *effortless*, *robust*.
-  Say what the thing does instead of asserting that it's good.
-- **No "reveal" sentences.** Watch for the shape "X is what turns Y into
-  Z" or "this is what makes it so [adjective]" — that's an advert
-  cadence, not an explanation. State the fact plainly: "staggering the
-  offsets makes the cards start one after another" beats "staggering the
-  offsets is what turns four cards into a sequence."
-- **No closing tails.** Don't end a section with a sentence that just
-  restates what it already said, or a congratulatory wrap-up. End on the
-  last real point.
-- **Include the boring reasoning.** "The goal was to test each card's
-  routine on its own, so each one gets its own timeline" is more useful
-  than a bare list of API calls with no motive attached — even when the
-  motive is unglamorous.
-- **Only state a technical claim you've actually checked.** If you're
-  about to write "we do X instead of Y because Z would break" (a
-  because-it-would-break claim, not a because-it's-simpler-to-read
-  claim), go verify Z actually breaks by reading the real source first.
-  A prior version of this skill's own page asserted that splitting a
-  card into two elements was required to avoid two animations
-  overwriting each other's `transform` — that turned out to be false
-  once someone actually read Anime.js's transform-caching code. Don't
-  repeat that mistake: an unverified "why" is worse than no "why" at
-  all, because it reads as authoritative and is wrong.
-- **Section headers name what the reader does or sees, not a bare noun.**
-  "What's happening" and "How it's built" work because they're framed as
-  the reader's two questions, not "Overview" and "Implementation."
+Two things matter more on a showcase page than anywhere else:
+
+- **Include the boring reasoning.** The reader is here for a mental model,
+  not an API list. "The goal was to test each card's routine on its own,
+  so each one gets its own timeline" is the sentence they came for.
+- **Section headers name the reader's two questions.** "What's happening"
+  and "How it's built" work for that reason. "Overview" and
+  "Implementation" do not.
 
 ## Step 4: the AI build prompt
 

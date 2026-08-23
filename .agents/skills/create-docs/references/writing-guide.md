@@ -6,7 +6,7 @@ Guidelines for writing effective documentation content.
 
 - [Action-Based Content](#action-based-content)
 - [Page Titles](#page-titles)
-- [Voice and Tone](#voice-and-tone)
+- [Voice and Tone](#voice-and-tone) (see also [prose-style.md](prose-style.md))
 - [Code Examples](#code-examples)
 
 ---
@@ -48,6 +48,10 @@ The action style lives in the **content headings**, not the page titles or file 
 ---
 
 ## Voice and Tone
+
+Sentence-level voice lives in [prose-style.md](prose-style.md): punctuation,
+filler words, sentence shapes to avoid, code-sample comments, line width.
+Read it alongside this section.
 
 ### Do
 
