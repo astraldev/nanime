@@ -6,7 +6,7 @@
 [![Nuxt][nuxt-src]][nuxt-href]
 [![release nanime][release-src]][release-href]
 
-This module provides a set of SSR safe composables and components to make it easier
+This module provides a set of SSR safe composables to make it easier
 to use [AnimeJS](https://animejs.com/) in your Nuxt application.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
@@ -15,11 +15,12 @@ to use [AnimeJS](https://animejs.com/) in your Nuxt application.
 
 ## Features
 
-- Help to integrate animejs into your project without the need for much boilerplate codes
-- SSR Safe components like `useAnimate`, `useWaapiAnimate`, ..etc
-- Provides a set of transition components created with the `waapi` utility
-- Doesn't include predefined animation settings other than `animejs` defaults
-- Zero-config setup needed
+- Helps integrate animejs into your project without boilerplate code
+- SSR-safe composables (`useAnimate`, `useWaapiAnimate`, `useAnimeTimeline`, `useSplitText`, `useScrambleText`, `useDraggable`, `useAnimatable`, `useAnimeLayout`)
+- Deep Vue reactivity with template refs, computed properties, and getters
+- Direct access to AnimeJS utilities, easings, SVG, and text proxies
+- Automatic lifecycle management and memory cleanup on unmount
+- Zero-config setup with auto-imports
 
 ## Quick Setup
 
@@ -42,44 +43,38 @@ Then add the module to the `modules` section of your `nuxt.config.ts`:
 ```ts
 export default defineNuxtConfig({
   modules: ['nanime'],
-  nanime: { ... },
 })
 ```
 
-That's it! You can now use the module in your application
+That's it! You can now use the module in your application.
 
+## Documentation
+
+Visit [https://nanimejs.netlify.app](https://nanimejs.netlify.app) for full documentation, composables API references, and interactive examples.
 
 ## Contribution
 
 <details>
   <summary>Local development</summary>
-  
+
   ```bash
   # Install dependencies
-  npm install
-  
+  pnpm install
+
   # Generate type stubs
-  npm run dev:prepare
-  
-  # Develop with the playground
-  npm run dev
-  
-  # Build the playground
-  npm run dev:build
-  
+  pnpm dev:prepare
+
+  # Start development server
+  pnpm dev
+
   # Run ESLint
-  npm run lint
-  
+  pnpm lint
+
   # Run Vitest
-  npm run test
-  npm run test:watch
-  
-  # Release new version
-  npm run release
+  pnpm test
   ```
 
 </details>
-
 
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/nanime/latest.svg?style=flat&colorA=020420&colorB=00DC82
@@ -96,3 +91,4 @@ That's it! You can now use the module in your application
 
 [release-src]: https://github.com/astraldev/nanime/actions/workflows/npm-publish.yml/badge.svg
 [release-href]: https://github.com/astraldev/nanime/actions/workflows/npm-publish.yml
+
