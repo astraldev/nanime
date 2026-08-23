@@ -2,7 +2,9 @@ name: Release
 
 on:
   release:
-    types: [created]
+    # published covers a draft being published, which created does not fire for
+    types: [created, published]
+  workflow_dispatch:
 
 env:
   CI: true
