@@ -13,21 +13,25 @@ export type ExampleSlider = {
   onInput: (value: number) => void
 }
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   actions?: ExampleAction[]
   slider?: ExampleSlider
   status?: string
-}>()
+  scrambleStatus?: boolean
+  resizable?: boolean
+}>(), { resizable: true })
 
 const statusEl = useTemplateRef('statusEl')
 
-useScrambleText(
-  statusEl,
-  { duration: 500, ease: 'outQuad' },
-  () => ({
-    text: props.status ?? '',
-  }),
-)
+if (props.scrambleStatus) {
+  useScrambleText(
+    statusEl,
+    { duration: 500, ease: 'outQuad' },
+    () => ({
+      text: props.status ?? '',
+    }),
+  )
+}
 
 function onSliderInput(event: Event, slider: ExampleSlider) {
   if (!(event.target instanceof HTMLInputElement)) return
@@ -36,7 +40,10 @@ function onSliderInput(event: Event, slider: ExampleSlider) {
 </script>
 
 <template>
-  <div class="example-wrapper p-4 rounded-lg flex flex-col gap-4 border border-primary/20 bg-primary/5">
+  <div
+    class="example-wrapper p-4 rounded-lg flex flex-col gap-4 border border-primary/20 bg-primary/5"
+    :class="{ 'is-resizable': resizable }"
+  >
     <slot />
 
     <div
@@ -82,6 +89,14 @@ function onSliderInput(event: Event, slider: ExampleSlider) {
 
 <style>
 @reference "~/assets/css/main.css";
+
+.example-wrapper.is-resizable {
+  resize: horizontal;
+  overflow: auto;
+  width: 100%;
+  min-width: 16rem;
+  max-width: 100%;
+}
 
 .simple-box {
   @apply rounded-md h-8 bg-primary grid place-items-center font-semibold backdrop-blur-md;

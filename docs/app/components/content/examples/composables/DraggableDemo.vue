@@ -22,7 +22,7 @@ useDraggable(draggable, {
 </script>
 
 <template>
-  <ExampleWrapper>
+  <ExampleWrapper :resizable="false">
     <div
       ref="container"
       class="relative rounded-md border-dashed h-10"

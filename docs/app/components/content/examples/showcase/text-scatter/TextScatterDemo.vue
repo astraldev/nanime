@@ -135,6 +135,7 @@ const status = computed(() => `${mode.value === 'repel' ? 'Repelling' : 'Attract
   <ExampleWrapper
     :actions="actions"
     :status="status"
+    scramble-status
   >
     <div
       ref="container"

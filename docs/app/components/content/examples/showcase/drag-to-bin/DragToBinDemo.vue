@@ -23,6 +23,7 @@ const actions = [{
   <ExampleWrapper
     :actions="actions"
     :status="`${remaining} left`"
+    scramble-status
   >
     <div class="flex flex-col sm:flex-row gap-4">
       <div class="flex-1 flex flex-col max-w-[310px]">
