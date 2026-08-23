@@ -1,5 +1,59 @@
 # Changelog
 
+## v0.1.12
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.0.11...v0.1.12)
+
+### 🚀 Enhancements
+
+- **useDraggable:** Return buffered proxy instead of optional-method proxy ([db7b2bc](https://github.com/astraldev/nanime/commit/db7b2bc))
+
+### 🔥 Performance
+
+- **docs:** Optimize bundle size and remove runtime prettier ([83682db](https://github.com/astraldev/nanime/commit/83682db))
+
+### 🩹 Fixes
+
+- Unwrap ref in resolveNanimeInstance, expand buffered timer/timeline chainable methods ([289e281](https://github.com/astraldev/nanime/commit/289e281))
+- Resolve h3-next module error, trailing comma, flaky mountSuspended test ([eef77a1](https://github.com/astraldev/nanime/commit/eef77a1))
+
+### 💅 Refactors
+
+- **src:** ⚠️  Drop transition components, add svg proxies + timer/animate utils ([7228931](https://github.com/astraldev/nanime/commit/7228931))
+- Drop @vueuse/core from the runtime, fix the release pipeline ([8b151e2](https://github.com/astraldev/nanime/commit/8b151e2))
+
+### 📖 Documentation
+
+- **ai:** Include motion design skill for better animations ([b31be61](https://github.com/astraldev/nanime/commit/b31be61))
+- Add drag-to-bin showcase example ([6e0b296](https://github.com/astraldev/nanime/commit/6e0b296))
+- Homepage/preview updates, timeline-storyboard demo, transition-slide page ([c24caf4](https://github.com/astraldev/nanime/commit/c24caf4))
+- Add examples showcase section, replacing components docs ([ff438aa](https://github.com/astraldev/nanime/commit/ff438aa))
+- Drop components/prefix config docs, add useDraggable caveats ([b7c7a16](https://github.com/astraldev/nanime/commit/b7c7a16))
+- Rewrite guides in a consistent prose voice, add performance page ([3c68ad3](https://github.com/astraldev/nanime/commit/3c68ad3))
+- Update README with streamlined structure and documentation links ([128b692](https://github.com/astraldev/nanime/commit/128b692))
+- Correct false claims in showcase pages, resizable example wrapper ([067eb43](https://github.com/astraldev/nanime/commit/067eb43))
+
+### 📦 Build
+
+- Update scripts for improved build II ([2cd56af](https://github.com/astraldev/nanime/commit/2cd56af))
+- Update scripts for improved build III ([cd2a5da](https://github.com/astraldev/nanime/commit/cd2a5da))
+- Migrate to pnpm catalogs and bump nuxt/test-utils ([329791d](https://github.com/astraldev/nanime/commit/329791d))
+- Override h3 to ^1.15.11 to fix module resolution ([3ae3304](https://github.com/astraldev/nanime/commit/3ae3304))
+
+### 🏡 Chore
+
+- Remove playground ([7b1827c](https://github.com/astraldev/nanime/commit/7b1827c))
+- **skills:** Update create-playground-page, add create-showcase-doc ([84fd7ce](https://github.com/astraldev/nanime/commit/84fd7ce))
+- Ignore .claude directory ([19d5b12](https://github.com/astraldev/nanime/commit/19d5b12))
+
+#### ⚠️ Breaking Changes
+
+- **src:** ⚠️  Drop transition components, add svg proxies + timer/animate utils ([7228931](https://github.com/astraldev/nanime/commit/7228931))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.0.11
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.0.9...v0.0.11)
