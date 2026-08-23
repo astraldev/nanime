@@ -6,9 +6,8 @@ const text = useTemplateRef('text')
 const tl = useAnimeTimeline({
   loop: true,
   autoplay: true,
-  ease: 'outElastic(1, .5)',
   duration: 60_000,
-  defaults: { delay: 5000 },
+  defaults: { delay: 5000, ease: 'outElastic(1, .5)' },
 })
 
 const animation = useAnimate(text, {

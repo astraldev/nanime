@@ -1,14 +1,115 @@
+<script setup lang="ts">
+export type ExampleAction = {
+  label: string
+  run: () => void
+  active?: boolean
+}
+
+export type ExampleSlider = {
+  value: number
+  min?: number
+  max?: number
+  step?: number
+  onInput: (value: number) => void
+}
+
+const props = withDefaults(defineProps<{
+  actions?: ExampleAction[]
+  slider?: ExampleSlider
+  status?: string
+  scrambleStatus?: boolean
+  resizable?: boolean
+}>(), { resizable: true })
+
+const statusEl = useTemplateRef('statusEl')
+
+if (props.scrambleStatus) {
+  useScrambleText(
+    statusEl,
+    { duration: 500, ease: 'outQuad' },
+    () => ({
+      text: props.status ?? '',
+    }),
+  )
+}
+
+function onSliderInput(event: Event, slider: ExampleSlider) {
+  if (!(event.target instanceof HTMLInputElement)) return
+  slider.onInput(Number.parseFloat(event.target.value))
+}
+</script>
+
 <template>
-  <div class="p-4 rounded-lg flex flex-col gap-4 border border-primary/20 bg-primary/5">
+  <div
+    class="example-wrapper p-4 rounded-lg flex flex-col gap-4 border border-primary/20 bg-primary/5"
+    :class="{ 'is-resizable': resizable }"
+  >
     <slot />
+
+    <div
+      v-if="actions?.length || slider || status"
+      class="flex flex-wrap gap-3 items-center justify-between text-xs"
+    >
+      <div
+        v-if="actions?.length"
+        class="flex gap-2"
+      >
+        <button
+          v-for="action in actions"
+          :key="action.label"
+          class="demo-button"
+          :class="{ 'demo-button-active': action.active }"
+          @click="action.run"
+        >
+          {{ action.label }}
+        </button>
+      </div>
+
+      <span
+        v-if="status"
+        ref="statusEl"
+        class="font-mono text-primary/70"
+      >
+        {{ status }}
+      </span>
+
+      <input
+        v-if="slider"
+        type="range"
+        :min="slider.min ?? 0"
+        :max="slider.max ?? 1"
+        :step="slider.step ?? 0.001"
+        :value="slider.value"
+        class="basis-full accent-primary cursor-pointer h-1.5 bg-primary/20 rounded-lg appearance-none"
+        @input="onSliderInput($event, slider)"
+      >
+    </div>
   </div>
 </template>
 
 <style>
 @reference "~/assets/css/main.css";
 
+.example-wrapper.is-resizable {
+  resize: horizontal;
+  overflow: auto;
+  width: 100%;
+  min-width: 16rem;
+  max-width: 100%;
+}
+
 .simple-box {
-  @apply rounded-md h-8 bg-primary grid place-items-center font-semibold;
+  @apply rounded-md h-8 bg-primary grid place-items-center font-semibold backdrop-blur-md;
+}
+
+.demo-button {
+  @apply px-2.5 py-1 rounded border font-semibold cursor-pointer;
+  @apply bg-primary/5 text-primary border-primary/20 hover:bg-primary/10;
+  transition: background-color 150ms ease;
+}
+
+.demo-button-active {
+  @apply bg-primary text-black border-primary hover:bg-primary;
 }
 
 .spot {

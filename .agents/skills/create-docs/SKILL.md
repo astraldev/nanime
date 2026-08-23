@@ -253,21 +253,19 @@ Or with directory path:
 
 Use templates from [references/templates.md](references/templates.md).
 
-**CRITICAL: MDC Component Naming**
+**MDC component naming**
 
-| WRONG | CORRECT |
-|---------|-------|
-| `::u-page-hero` | `::page-hero` |
-| `::u-page-section` | `::page-section` |
-| `:::u-page-feature` | `:::page-feature` |
-| `:::u-button` | `:::button` |
-| `::::u-page-card` | `::::page-card` |
-| `::badge` | `:badge` (for inline) |
+Nuxt UI components used as MDC blocks resolve both with and without the
+`u-` prefix on current Docus versions. This project's pages use the
+prefixed form (`::u-page-grid`, `:::u-page-card`, `::u-page-hero`), and
+they render correctly, so match whatever the surrounding pages already
+use rather than rewriting one form into the other.
 
-**CRITICAL**: NEVER use the `u-` prefix for Nuxt UI components when using them as MDC components (e.g., `::u-alert`, `::u-badge`).
-This ensures they are correctly resolved by the Nuxt UI Pro or Docus layers.
+Inline components take a single colon (`:badge{...}`), block components
+two or more depending on nesting depth.
 
-Without the `u-` prefix, Vue will fail to resolve the components.
+If a component silently fails to resolve, try the same tag without the
+`u-` prefix before assuming the page is wrong.
 
 ### Documentation Structure
 
@@ -295,7 +293,8 @@ content/
 3. **Installation** - Prerequisites, install commands
 4. **Guide pages** - Feature documentation with action-based H2 headings
 
-For writing style, see [references/writing-guide.md](references/writing-guide.md).
+For page structure and heading style, see [references/writing-guide.md](references/writing-guide.md).
+For prose voice (punctuation, filler, sentence shapes, code-sample comments), see [references/prose-style.md](references/prose-style.md).
 For MDC components, see [references/mdc-components.md](references/mdc-components.md).
 
 ---

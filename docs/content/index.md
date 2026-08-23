@@ -1,7 +1,9 @@
 ---
+title: nanime
+description: Nuxt module wrapping Anime.js v4 in SSR-safe Vue composables. Animate, drag, split and scramble text, and sync timelines without lifecycle headaches.
 seo:
-  title: Effortless animations with AnimeJS
-  description: Build SSR Safe animations for Nuxt without having to worry about targets, hooks and component lifecycle.
+  title: nanime - Anime.js Composables for Nuxt & Vue 3
+  description: Nuxt module wrapping Anime.js v4 in SSR-safe Vue composables. Animate, drag, split and scramble text, and sync timelines without lifecycle headaches.
 ---
 
 ::u-page-hero
@@ -15,8 +17,8 @@ orientation: horizontal
 
     ::::tabs-item{icon="i-lucide-code" label="Template"}
     ```html
-    <div class="boxes grid grid-cols-10 place-items-center gap-0.5 absolute inset-0 p-5">
-      <div v-for="i in 40" :key="i" class="box size-9 rounded-sm bg-white/40 aspect-square" />
+    <div class="grid grid-cols-10 place-items-center gap-0.5 absolute inset-0 p-5">
+      <div v-for="i in 40" :key="i" ref="boxes" class="size-9 rounded-sm bg-primary/30 aspect-square" />
     </div>
     ```
     ::::
@@ -25,7 +27,9 @@ orientation: horizontal
     ```ts
     import { stagger } from '#nanime/utils'
 
-    useAnimate('.boxes > .box', {
+    const boxes = useTemplateRef('boxes')
+
+    useAnimate(boxes, {
       scale: [{ to: [0, 1.25] }, { to: 0 }],
       boxShadow: [
         { to: '0 0 1rem 0 currentColor' },
@@ -35,13 +39,16 @@ orientation: horizontal
         grid: [10, 4],
         from: 'center',
       }),
+      duration: 1500,
+      playbackEase: 'outQuad',
+      loop: true,
     })
     ```
     ::::
   :::
 
 #title
-Effortless animations with [AnimeJS]{.text-primary}
+Animate Nuxt with [AnimeJS]{.text-primary}
 
 #description
 Create SSR Safe animations for Nuxt without having to worry about targets and component lifecycle.
@@ -54,6 +61,17 @@ Create SSR Safe animations for Nuxt without having to worry about targets and co
   to: /getting-started/installation
   ---
   Get started
+  :::
+
+  :::u-button
+  ---
+  icon: i-ph-shapes
+  size: xl
+  color: neutral
+  variant: subtle
+  to: /examples/introduction
+  ---
+  See examples
   :::
 
 :copy-code-input{source="npx nuxt module add nanime"}
@@ -121,7 +139,7 @@ Shipped with many features
   Customizable
 
   #description
-  Enable or disable composables or components
+  Enable or disable composables
   :::
 ::
 
@@ -130,7 +148,7 @@ Shipped with many features
 Composables
 
 #description
-Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
+Wrappers around every AnimeJS utility, built for Vue reactivity.
 
 #features
   :::u-page-card
@@ -144,7 +162,7 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
   useAnimate
 
   #description
-  Core animation — CSS properties, transforms, SVG, and JS objects.
+  CSS properties, transforms, SVG and plain JS objects.
   :::
 
   :::u-page-card
@@ -158,7 +176,7 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
   useWaapiAnimate
 
   #description
-  Web Animations API — hardware-accelerated, off-main-thread animations.
+  Web Animations API, running off the main thread.
   :::
 
   :::u-page-card
@@ -172,7 +190,7 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
   useAnimatable
 
   #description
-  Imperative property setters with built-in transitions.
+  Property setters with built-in tweening, for fast updates.
   :::
 
   :::u-page-card
@@ -215,5 +233,72 @@ Ready-to-use wrappers around every AnimeJS utility, built for Vue reactivity.
 
   #description
   Drag interactions with snap, bounds, and axis constraints.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-clock
+  spotlightColor: var(--color-primary)
+  to: /composables/use-anime-timeline
+  ---
+  #title
+  useAnimeTimeline
+
+  #description
+  Sequence and sync multiple timelines into one master composition, with full playback controls.
+  :::
+::
+
+::u-page-section
+#title
+The rest of the toolkit
+
+#description
+Easing curves, re-exported Anime.js utilities and SVG/text proxies. The
+pieces that show up inside the composables above rather than standing on
+their own.
+
+#features
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-chart-line-up
+  spotlightColor: var(--color-primary)
+  to: /misc/easings
+  ---
+  #title
+  Easings
+
+  #description
+  Spring physics and custom cubicBezier curves, used throughout the showcase examples above.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-wrench
+  spotlightColor: var(--color-primary)
+  to: /misc/utils
+  ---
+  #title
+  Utils
+
+  #description
+  Stagger, targets, and other helpers re-exported directly from `animejs/utils`.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-plugs-connected
+  spotlightColor: var(--color-primary)
+  to: /misc/proxies
+  ---
+  #title
+  Proxies
+
+  #description
+  SVG morphing, motion paths, drawable strokes, and the text-scramble proxy.
   :::
 ::

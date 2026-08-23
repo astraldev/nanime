@@ -2,7 +2,7 @@ import { computed, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRe
 import { createLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
 import { normalizeLayoutTarget } from '../utils/normalize-targets'
 import { extractNonFunctionProperties } from '../utils/extract-props'
-import { tryOnScopeDispose, useMounted } from '@vueuse/core'
+import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 
 export function useAnimeLayout(
   target: MaybeRef<Parameters<typeof normalizeLayoutTarget>[0]>,

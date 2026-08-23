@@ -1,12 +1,8 @@
-import { defineNuxtModule, createResolver, addImportsDir, addComponentsDir, addVitePlugin } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addImportsDir, addVitePlugin } from '@nuxt/kit'
 
 export interface ModuleOptions {
   /** Add composables for animejs */
   composables: boolean
-  /** Add custom transition components */
-  components: boolean
-  /** Prefix for components */
-  prefix: string
 }
 
 const __name = 'nanime'
@@ -22,8 +18,6 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     composables: true,
-    components: true,
-    prefix: 'A',
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -41,32 +35,26 @@ export default defineNuxtModule<ModuleOptions>({
           'animejs/waapi',
           'animejs/layout',
           'animejs/text',
+          'animejs/svg',
           'animejs/draggable',
           'animejs/timeline',
+          'animejs/timer',
           'tailwind-merge',
-          '@vueuse/core',
           'lodash-es',
         )
       },
     }))
-
-    if (_options.components) {
-      addComponentsDir({
-        prefix: _options.prefix,
-        path: resolver.resolve('./runtime/app/components'),
-        global: true,
-      })
-    }
 
     if (_options.composables) {
       addImportsDir(resolver.resolve('./runtime/app/composables'))
     }
 
     _nuxt.options.alias[`#${__configKey}/composables`] = resolver.resolve('./runtime/app/composables')
-    _nuxt.options.alias[`#${__configKey}/components`] = resolver.resolve('./runtime/app/components')
     _nuxt.options.alias[`#${__configKey}/types`] = resolver.resolve('./runtime/app/utils/types')
     _nuxt.options.alias[`#${__configKey}/easings`] = resolver.resolve('./runtime/app/utils/easings')
     _nuxt.options.alias[`#${__configKey}/utils`] = resolver.resolve('./runtime/app/utils/index')
     _nuxt.options.alias[`#${__configKey}/proxies/text`] = resolver.resolve('./runtime/app/utils/proxies/text')
+    _nuxt.options.alias[`#${__configKey}/proxies/svg`] = resolver.resolve('./runtime/app/utils/proxies/svg')
+    _nuxt.options.alias[`#${__configKey}/proxies`] = resolver.resolve('./runtime/app/utils/proxies/index')
   },
 })

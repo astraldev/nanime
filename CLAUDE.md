@@ -1,6 +1,6 @@
 # Nanime — Nuxt + Anime.js Module
 
-Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 reactivity. Auto-imports composables and transition components.
+Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 reactivity. Auto-imports composables.
 
 ## Quick Reference
 
@@ -8,7 +8,6 @@ Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 r
 |---|---|
 | Module entry | `src/module.ts` |
 | Composables | `src/runtime/app/composables/` |
-| Components | `src/runtime/app/components/transition/` |
 | Utilities / types | `src/runtime/app/utils/` |
 | Anime.js source | `anime-core/anime/` (git submodule, v4.4.1) |
 | Docs site (Docus) | `docs/` — dev on port 3001 |
@@ -45,11 +44,12 @@ These are pre-optimized via Vite in `src/module.ts` (lines 31–50).
 Available throughout the Nuxt app:
 
 - `#nanime/composables` — composables directory
-- `#nanime/components` — components directory
 - `#nanime/types` — type definitions
 - `#nanime/easings` — easing utilities
 - `#nanime/utils` — re-exports of `animejs/utils`
+- `#nanime/proxies` — root re-export of all animation parameter proxies (text, svg)
 - `#nanime/proxies/text` — re-exports `scrambleText` from `animejs/text` (use inside composable params, not as a standalone API)
+- `#nanime/proxies/svg` — re-exports `morphTo`, `createMotionPath`, `createDrawable` from `animejs/svg`
 
 ## Creating a New Composable
 
@@ -89,10 +89,6 @@ Key conventions:
 
 Existing composables: `useAnimate`, `useAnimatable`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`
 
-## Components
-
-Transition components in `src/runtime/app/components/transition/`. Prefixed with module prefix (default `A`), so `Slide.vue` becomes `<ATransitionSlide>`.
-
 ## Scripts
 
 ```sh
@@ -105,6 +101,16 @@ pnpm prepack          # Build module for publishing
 pnpm release          # Lint → test → build → changelog → publish → push tags
 ```
 
+Releases are **manually versioned**: set `version` in `package.json` yourself,
+then run `pnpm release`. `changelogen` writes `CHANGELOG.md` at that version,
+commits and tags it, but never bumps on its own — left to itself it demotes a
+breaking change to a minor on `0.x` and picks a version you didn't intend.
+
+Publishing must go through **pnpm**, never `npm publish`. Dependencies use pnpm
+catalog specifiers (`catalog:nuxt`), and only pnpm rewrites those into real
+ranges when packing. An `npm publish` ships `"animejs": "catalog:runtime"` and
+every install of it fails.
+
 ## Pre-commit Hooks (Lefthook)
 
 Runs sequentially before commit:
@@ -116,7 +122,6 @@ Runs sequentially before commit:
 Docus-based site in `docs/`. Content lives in `docs/content/`:
 - `1.getting-started/` — intro, installation, configuration
 - `2.composables/` — one page per composable
-- `3.components/` — component docs
 - `4.misc/` — easings, utils
 
 Run docs dev: `cd docs && pnpm dev` (port 3001).
@@ -147,4 +152,5 @@ Skills in `.agents/skills/` — each has a `SKILL.md` defining its workflow:
 | `scaffold-composable-sample` | Scaffold composable doc page with standard structure |
 | `create-playground-page` | Create playground test pages mirroring src structure |
 | `create-utility-tests` | Write vitest utility tests (Nuxt test-utils) |
+| `create-showcase-doc` | Write/rewrite a showcase example page (`docs/content/5.examples/`), including verifying its AI build prompt against a real independent agent |
 | `skill-creator` | Meta-skill for authoring new skills |

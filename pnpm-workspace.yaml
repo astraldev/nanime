@@ -1,7 +1,38 @@
 packages:
   - .
-  - playground
   - docs
+
+overrides:
+  h3: ^1.15.11
+
+catalogs:
+  # Nuxt core — shared by the module (root) and the docs site
+  nuxt:
+    '@nuxt/eslint-config': ^1.17.0
+    '@nuxt/kit': ^4.5.2
+    '@nuxt/module-builder': ^1.0.3
+    '@nuxt/schema': ^4.5.2
+    '@nuxt/test-utils': ^4.1.0
+    '@types/node': latest
+    '@vueuse/core': ^14.4.0
+    '@vueuse/nuxt': 14.4.0
+    nuxt: ^4.5.2
+    typescript: ~6.0.3
+    vue: ^3.5.41
+
+  # Everything else the module depends on
+  runtime:
+    animejs: ^4.5.0
+    defu: ^6.1.7
+
+  tooling:
+    '@vue/test-utils': ^2.4.11
+    changelogen: ^0.6.2
+    eslint: ^10.9.0
+    happy-dom: ^20.11.6
+    lefthook: ^2.1.10
+    vitest: ^4.1.11
+    vue-tsc: ^3.3.11
 
 onlyBuiltDependencies:
   - '@parcel/watcher'

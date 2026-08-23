@@ -34,7 +34,8 @@ export function resolveNanimeInstance<T>(value: unknown): T {
   if (value && typeof value === 'object') {
     // createProxy / createBufferedProxy path
     if (NANIME_INSTANCE in value) {
-      return (value as any)[NANIME_INSTANCE].value
+      const inst = (value as any)[NANIME_INSTANCE]
+      return (isRef(inst) ? inst.value : inst) as T
     }
     // toReactive path
     const ref = nanimeRegistry.get(value as object)
@@ -50,6 +51,50 @@ export type SafeFunctions<T> = {
 }
 
 export type ProxyReturns<T> = SafeFunctions<Exclude<UnwrapNestedRefs<T>, null | undefined>>
+
+/**
+ * Return type for `createBufferedProxy`. Methods stay callable because the
+ * proxy always hands back a real function — buffered before the instance
+ * exists, delegated once it does.
+ */
+export type BufferedProxyReturns<T> = Exclude<UnwrapNestedRefs<T>, null | undefined>
+
+/**
+ * Reactive view over a ref's current value. Reads and writes hit whatever the
+ * ref holds at the time, so swapping the instance keeps the returned object
+ * valid. Same contract as VueUse's `toReactive`, kept in-tree so the runtime
+ * carries no dependency for it.
+ */
+export function toReactive<T extends object>(objectRef: Ref<T>): UnwrapNestedRefs<T> {
+  const proxy = new Proxy({}, {
+    get(_, p, receiver) {
+      return unref(Reflect.get(objectRef.value, p, receiver))
+    },
+    set(_, p, value) {
+      const current = (objectRef.value as any)[p]
+      if (isRef(current) && !isRef(value)) current.value = value
+      else (objectRef.value as any)[p] = value
+      return true
+    },
+    deleteProperty(_, p) {
+      return Reflect.deleteProperty(objectRef.value, p)
+    },
+    has(_, p) {
+      return Reflect.has(objectRef.value, p)
+    },
+    ownKeys() {
+      return Object.keys(objectRef.value)
+    },
+    getOwnPropertyDescriptor() {
+      return {
+        enumerable: true,
+        configurable: true,
+      }
+    },
+  })
+
+  return reactive(proxy) as UnwrapNestedRefs<T>
+}
 
 /**
  * Converts the object to a reactive version, and stubs null / undefined values
@@ -98,7 +143,7 @@ export function createProxy<T = object | null>(
 }
 
 export interface BufferedProxyOptions {
-  /** Methods that support chaining and should be buffered when instance is null */
+  /** Methods that return `this` — buffered when instance is null, replayed on flush */
   chainableMethods: Set<string>
   /** Transform args before passing to the real method (e.g. normalize targets) */
   transformArgs?: (method: string, args: any[]) => any[]
@@ -113,7 +158,7 @@ export interface BufferedProxyOptions {
 export function createBufferedProxy<T>(
   objectRef: Ref<T | null>,
   options: BufferedProxyOptions,
-): { proxy: ProxyReturns<T>, flushBuffer: () => void } {
+): { proxy: BufferedProxyReturns<T>, flushBuffer: () => void } {
   const { chainableMethods, transformArgs } = options
   const buffer: Array<{ method: string, args: any[] }> = []
 
@@ -190,5 +235,5 @@ export function createBufferedProxy<T>(
     },
   })
 
-  return { proxy: reactive(proxy) as ProxyReturns<T>, flushBuffer }
+  return { proxy: reactive(proxy) as BufferedProxyReturns<T>, flushBuffer }
 }

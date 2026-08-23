@@ -15,19 +15,9 @@ export default defineNuxtConfig({
       ],
     },
   },
-  css: ['./app/assets/css/main.css'],
+  css: ['~/assets/css/main.css'],
   site: {
     name: 'nanime',
-  },
-  content: {
-    build: {
-      markdown: {
-        highlight: {
-          // @ts-expect-error type isn't properly inferred
-          noApiRoute: false,
-        },
-      },
-    },
   },
   sourcemap: {
     server: false,
@@ -47,12 +37,6 @@ export default defineNuxtConfig({
       include: [
         '@vue/devtools-core',
         '@vue/devtools-kit',
-        'prettier/plugins/babel',
-        'prettier/plugins/estree',
-        'prettier/plugins/html',
-        'prettier/plugins/postcss',
-        'prettier/plugins/typescript',
-        'prettier/standalone',
         'remark-emoji',
         'remark-mdc',
       ],
@@ -70,7 +54,6 @@ export default defineNuxtConfig({
       owner: 'astraldev',
       repo: 'nanime',
       branch: process.env.STUDIO_BRANCH_NAME || 'main',
-      rootDir: 'docs',
     },
   },
 })

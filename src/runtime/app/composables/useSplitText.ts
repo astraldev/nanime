@@ -2,7 +2,7 @@ import { computed, nextTick, ref, shallowRef, toValue, watchEffect, type Compute
 import { splitText, type TextSplitter } from 'animejs/text'
 import { normalizeSplitTextTarget } from '../utils/normalize-targets'
 import { extractNonFunctionProperties, extractOnlyFunctionProperties, type NonFunctionProperties, type OnlyFunctionProperties } from '../utils/extract-props'
-import { tryOnScopeDispose, useMounted } from '@vueuse/core'
+import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 
 type SplitText = {
   [x in 'lines' | 'words' | 'chars']: Ref<HTMLElement[]>

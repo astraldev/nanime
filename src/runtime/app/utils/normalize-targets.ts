@@ -1,5 +1,5 @@
 import { isReactive, toValue, type MaybeRef } from 'vue'
-import type { MaybeElementRef, VueInstance } from '@vueuse/core'
+import type { MaybeElementRef, VueInstance } from './vue-helpers'
 import type { TargetsParam, DOMTargetsParam, DOMTargetSelector, DraggableParams } from 'animejs'
 
 function isVueInstance(value: unknown): value is VueInstance {

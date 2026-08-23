@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { shallowRef, ref, isReactive } from 'vue'
-import { createProxy } from '../../../src/runtime/app/utils/create-proxy'
+import { createProxy, createBufferedProxy, resolveNanimeInstance, toReactive } from '../../../src/runtime/app/utils/create-proxy'
 
 describe('createProxy', () => {
   it('should create a reactive proxy from an object ref', () => {
@@ -144,5 +144,101 @@ describe('createProxy', () => {
 
     // Should return undefined (user must safely access)
     expect(proxy.doSomething).toBeUndefined()
+  })
+})
+
+describe('createBufferedProxy', () => {
+  it('should buffer chainable method calls when ref is null and replay on flush', () => {
+    const objectRef = shallowRef<{ count: number, add: (n: number) => void } | null>(null)
+    const { proxy, flushBuffer } = createBufferedProxy(objectRef, {
+      chainableMethods: new Set(['add']),
+    })
+
+    // Call while ref is null — should be buffered
+    proxy.add(5)
+
+    const instance = {
+      count: 0,
+      add(n: number) {
+        this.count += n
+      },
+    }
+    objectRef.value = instance
+
+    // Replay buffer
+    flushBuffer()
+    expect(instance.count).toBe(5)
+  })
+
+  it('should resolve raw instance via resolveNanimeInstance', () => {
+    const instance = { id: 'anim-1' }
+    const objectRef = shallowRef(instance)
+    const { proxy } = createBufferedProxy(objectRef, {
+      chainableMethods: new Set(['add']),
+    })
+
+    expect(resolveNanimeInstance(proxy)).toBe(instance)
+  })
+})
+
+describe('toReactive', () => {
+  it('should read through to the ref value', () => {
+    const objectRef = shallowRef({ a: 1, b: 'test' })
+    const proxy = toReactive(objectRef)
+
+    expect(isReactive(proxy)).toBe(true)
+    expect(proxy.a).toBe(1)
+    expect(proxy.b).toBe('test')
+  })
+
+  it('should follow the ref when the instance is swapped', () => {
+    const objectRef = shallowRef({ a: 1 })
+    const proxy = toReactive(objectRef)
+
+    objectRef.value = { a: 2 }
+    expect(proxy.a).toBe(2)
+  })
+
+  it('should write through to the current instance', () => {
+    const instance = { a: 1 }
+    const objectRef = shallowRef(instance)
+    const proxy = toReactive(objectRef)
+
+    proxy.a = 9
+    expect(instance.a).toBe(9)
+  })
+
+  it('should unwrap nested refs on read and assign through them on write', () => {
+    const objectRef = shallowRef({ count: ref(1) })
+    const proxy = toReactive(objectRef)
+
+    expect(proxy.count).toBe(1)
+
+    proxy.count = 4
+    expect(objectRef.value.count.value).toBe(4)
+  })
+
+  it('should support has, ownKeys and delete', () => {
+    const objectRef = shallowRef<Record<string, number>>({ a: 1, b: 2 })
+    const proxy = toReactive(objectRef)
+
+    expect('a' in proxy).toBe(true)
+    expect(Object.keys(proxy)).toEqual(['a', 'b'])
+
+    delete proxy.a
+    expect('a' in proxy).toBe(false)
+  })
+
+  it('should keep methods bound to the live instance', () => {
+    const objectRef = shallowRef({
+      count: 0,
+      bump(this: { count: number }) {
+        this.count += 1
+      },
+    })
+    const proxy = toReactive(objectRef)
+
+    proxy.bump()
+    expect(proxy.count).toBe(1)
   })
 })

@@ -1,6 +1,6 @@
 {
   "name": "nanime",
-  "version": "0.0.11",
+  "version": "0.1.12",
   "description": "Nuxt module for animejs integration and transitions",
   "repository": {
     "type": "git",
@@ -28,16 +28,13 @@
   "files": [
     "dist"
   ],
-  "workspaces": [
-    "playground",
-    "docs"
-  ],
   "scripts": {
     "prepack": "nuxt-module-build build",
-    "dev": "npm run dev:prepare && nuxi dev playground",
-    "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "dev": "pnpm dev:prepare && pnpm -C docs dev",
+    "dev:build": "pnpm -C docs build",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && pnpm -C docs prepare",
+    "release": "pnpm lint && pnpm test && pnpm prepack && pnpm release:changelog && pnpm publish --no-git-checks && git push --follow-tags",
+    "release:changelog": "changelogen --output CHANGELOG.md -r $npm_package_version && git add CHANGELOG.md package.json && git commit -m \"chore(release): v$npm_package_version\" && git tag -a \"v$npm_package_version\" -m \"v$npm_package_version\"",
     "build": "pnpm prepare && npm run prepack",
     "prepare": "nuxt-module-build prepare",
     "docs:build": "pnpm -C docs build",
@@ -46,38 +43,36 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:types": "nuxt typecheck",
-    "clean": "rm -rf playground/.nuxt docs/.nuxt playground/.output docs/.output .nuxt"
+    "clean": "rm -rf docs/.nuxt docs/.output .nuxt dist"
   },
   "dependencies": {
-    "@vueuse/core": "^14.3.0",
-    "animejs": "^4.4.1",
-    "defu": "^6.1.7",
-    "vue": "^3.5.34"
+    "@nuxt/kit": "catalog:nuxt",
+    "animejs": "catalog:runtime",
+    "defu": "catalog:runtime"
   },
   "peerDependencies": {
-    "@vueuse/core": ">=13.0.0",
-    "animejs": "^4.4.0",
-    "defu": "^6.1.4",
     "vue": "^3.5.0"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^3.2.4",
-    "@nuxt/eslint-config": "^1.15.2",
-    "@nuxt/kit": "^4.4.6",
-    "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.4.6",
-    "@nuxt/test-utils": "^3.23.0",
-    "@types/node": "latest",
-    "@vue/test-utils": "^2.4.10",
-    "@vueuse/nuxt": "14.1.0",
-    "changelogen": "^0.6.2",
-    "eslint": "^9.39.4",
-    "happy-dom": "^20.9.0",
-    "lefthook": "^2.1.8",
-    "nuxt": "^4.4.6",
-    "typescript": "~5.9.3",
-    "vitest": "^3.2.4",
-    "vue-tsc": "^3.3.1"
+    "@nuxt/eslint-config": "catalog:nuxt",
+    "@nuxt/module-builder": "catalog:nuxt",
+    "@nuxt/schema": "catalog:nuxt",
+    "@nuxt/test-utils": "catalog:nuxt",
+    "@types/node": "catalog:nuxt",
+    "@vue/test-utils": "catalog:tooling",
+    "@vueuse/core": "catalog:nuxt",
+    "@vueuse/nuxt": "catalog:nuxt",
+    "animejs": "catalog:runtime",
+    "changelogen": "catalog:tooling",
+    "eslint": "catalog:tooling",
+    "h3-next": "npm:h3@^2.0.1-rc.22",
+    "happy-dom": "catalog:tooling",
+    "lefthook": "catalog:tooling",
+    "nuxt": "catalog:nuxt",
+    "typescript": "catalog:nuxt",
+    "vitest": "catalog:tooling",
+    "vue": "catalog:nuxt",
+    "vue-tsc": "catalog:tooling"
   },
   "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b"
 }

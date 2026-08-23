@@ -1,9 +1,9 @@
-import { tryOnScopeDispose, useMounted } from '@vueuse/core'
+import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 import { nextTick, shallowRef, toValue, watch, watchPostEffect } from 'vue'
 import { normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, type DraggableTypes } from '../utils/normalize-targets'
 import type { Draggable, DraggableAxisParam, DraggableParams, TargetsParam } from 'animejs'
 import { createDraggable } from 'animejs/draggable'
-import { createProxy, type ProxyReturns } from '../utils/create-proxy'
+import { createBufferedProxy, type BufferedProxyReturns } from '../utils/create-proxy'
 import { normalizeReffable, type MakeRefable } from '../utils/normalizers/make-reffable'
 import type { Prettify } from '../utils/normalizers/prettify'
 import defu from 'defu'
@@ -22,6 +22,11 @@ const REFFABLE_PROPS = [
 
 type RefableProps = typeof REFFABLE_PROPS[number]
 
+const CHAINABLE_METHODS = new Set([
+  'disable', 'enable', 'reset', 'revert', 'stop',
+  'setX', 'setY', 'scrollInView', 'animateInView',
+])
+
 type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container' | 'x' | 'y'> & {
   trigger?: DraggableTypes['trigger']
   container?: DraggableTypes['container']
@@ -32,9 +37,13 @@ type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container
 export function useDraggable(
   target: DraggableTypes['target'],
   options?: DraggableOptions,
-): ProxyReturns<Draggable> {
+): BufferedProxyReturns<Draggable> {
   const mounted = useMounted()
   const dragController = shallowRef<Draggable | null>(null)
+
+  const { proxy, flushBuffer } = createBufferedProxy<Draggable>(dragController, {
+    chainableMethods: CHAINABLE_METHODS,
+  })
 
   let oldTarget: TargetsParam
 
@@ -80,6 +89,7 @@ export function useDraggable(
       })
 
       dragController.value = dragEngine
+      flushBuffer()
     }, {
       flush: 'post',
     })
@@ -107,5 +117,5 @@ export function useDraggable(
     dragController.value?.revert()
   })
 
-  return createProxy(dragController)
+  return proxy
 }
