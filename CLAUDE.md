@@ -101,6 +101,16 @@ pnpm prepack          # Build module for publishing
 pnpm release          # Lint → test → build → changelog → publish → push tags
 ```
 
+Releases are **manually versioned**: set `version` in `package.json` yourself,
+then run `pnpm release`. `changelogen` writes `CHANGELOG.md` at that version,
+commits and tags it, but never bumps on its own — left to itself it demotes a
+breaking change to a minor on `0.x` and picks a version you didn't intend.
+
+Publishing must go through **pnpm**, never `npm publish`. Dependencies use pnpm
+catalog specifiers (`catalog:nuxt`), and only pnpm rewrites those into real
+ranges when packing. An `npm publish` ships `"animejs": "catalog:runtime"` and
+every install of it fails.
+
 ## Pre-commit Hooks (Lefthook)
 
 Runs sequentially before commit:

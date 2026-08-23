@@ -1,4 +1,4 @@
-import { tryOnScopeDispose, useMounted } from '@vueuse/core'
+import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 import { shallowRef, toValue, watch, nextTick, type MaybeRefOrGetter } from 'vue'
 import type { TimelineParams } from 'animejs'
 import { createTimeline, type Timeline } from 'animejs/timeline'

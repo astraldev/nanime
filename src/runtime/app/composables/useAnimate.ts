@@ -1,10 +1,10 @@
-import { toReactive, tryOnScopeDispose, useMounted } from '@vueuse/core'
+import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
 import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import type { AnimationParams, TargetsParam } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
-import { markNanimeInstance } from '../utils/create-proxy'
+import { markNanimeInstance, toReactive } from '../utils/create-proxy'
 
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],

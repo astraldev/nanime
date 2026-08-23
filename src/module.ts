@@ -40,7 +40,6 @@ export default defineNuxtModule<ModuleOptions>({
           'animejs/timeline',
           'animejs/timer',
           'tailwind-merge',
-          '@vueuse/core',
           'lodash-es',
         )
       },

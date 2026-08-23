@@ -1,4 +1,4 @@
-import { tryOnScopeDispose, useMounted } from '@vueuse/core'
+import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 import { nextTick, shallowRef, toValue, watch, watchPostEffect } from 'vue'
 import { normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, type DraggableTypes } from '../utils/normalize-targets'
 import type { Draggable, DraggableAxisParam, DraggableParams, TargetsParam } from 'animejs'

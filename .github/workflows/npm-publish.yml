@@ -60,6 +60,6 @@ jobs:
         run: pnpm run dev:prepare
 
       - name: Publish package
-        run: npm publish --no-git-checks
+        run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

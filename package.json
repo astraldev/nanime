@@ -1,6 +1,6 @@
 {
   "name": "nanime",
-  "version": "0.0.11",
+  "version": "0.1.12",
   "description": "Nuxt module for animejs integration and transitions",
   "repository": {
     "type": "git",
@@ -33,7 +33,8 @@
     "dev": "pnpm dev:prepare && pnpm -C docs dev",
     "dev:build": "pnpm -C docs build",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && pnpm -C docs prepare",
-    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "release": "pnpm lint && pnpm test && pnpm prepack && pnpm release:changelog && pnpm publish --no-git-checks && git push --follow-tags",
+    "release:changelog": "changelogen --output CHANGELOG.md -r $npm_package_version && git add CHANGELOG.md package.json && git commit -m \"chore(release): v$npm_package_version\" && git tag -a \"v$npm_package_version\" -m \"v$npm_package_version\"",
     "build": "pnpm prepare && npm run prepack",
     "prepare": "nuxt-module-build prepare",
     "docs:build": "pnpm -C docs build",
@@ -46,11 +47,10 @@
   },
   "dependencies": {
     "@nuxt/kit": "catalog:nuxt",
+    "animejs": "catalog:runtime",
     "defu": "catalog:runtime"
   },
   "peerDependencies": {
-    "@vueuse/core": ">=13.0.0",
-    "animejs": "^4.4.0",
     "vue": "^3.5.0"
   },
   "devDependencies": {
