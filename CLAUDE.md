@@ -101,10 +101,10 @@ pnpm prepack          # Build module for publishing
 pnpm release          # Lint → test → build → changelog → publish → push tags
 ```
 
-Releases are **manually versioned**: set `version` in `package.json` yourself,
-then run `pnpm release`. `changelogen` writes `CHANGELOG.md` at that version,
-commits and tags it, but never bumps on its own — left to itself it demotes a
-breaking change to a minor on `0.x` and picks a version you didn't intend.
+`pnpm release` bumps the version itself, from the commits since the last tag.
+v0.1.12 was tagged by hand because there was no v0.0.11 tag to measure from,
+so `changelogen` would have read the range wrong. Every release after it works
+off `v0.1.12` normally, so leave the version alone and let the script set it.
 
 Publishing must go through **pnpm**, never `npm publish`. Dependencies use pnpm
 catalog specifiers (`catalog:nuxt`), and only pnpm rewrites those into real
