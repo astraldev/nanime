@@ -21,3 +21,13 @@ export type {
   TextSplitterParams,
   SplitTemplateParams,
 } from 'animejs'
+
+export interface NanimeInstanceOptions {
+  /**
+   * When reactive inputs change, the underlying anime.js instance is rebuilt.
+   * `true` (the default) carries the playhead over to the replacement, so the
+   * animation continues from where it was instead of restarting at zero.
+   * Set `false` to restart on every rebuild.
+   */
+  keepTime?: boolean
+}

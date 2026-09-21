@@ -242,3 +242,32 @@ describe('toReactive', () => {
     expect(proxy.count).toBe(1)
   })
 })
+
+describe('createBufferedProxy replayMethods', () => {
+  it('should re-apply content calls to every later instance, once each', () => {
+    const calls: string[] = []
+    const makeInstance = () => ({
+      add: (n: string) => calls.push(`add:${n}`),
+      play: (n: string) => calls.push(`play:${n}`),
+    })
+
+    const objectRef = shallowRef<ReturnType<typeof makeInstance> | null>(null)
+    const { proxy, flushBuffer } = createBufferedProxy(objectRef, {
+      chainableMethods: new Set(['add', 'play']),
+      replayMethods: new Set(['add']),
+    })
+
+    proxy.add('one')
+    proxy.play('one')
+
+    objectRef.value = makeInstance()
+    flushBuffer()
+    proxy.add('two')
+    expect(calls).toEqual(['add:one', 'play:one', 'add:two'])
+
+    calls.length = 0
+    objectRef.value = makeInstance()
+    flushBuffer()
+    expect(calls).toEqual(['add:one', 'add:two'])
+  })
+})

@@ -147,6 +147,8 @@ export interface BufferedProxyOptions {
   chainableMethods: Set<string>
   /** Transform args before passing to the real method (e.g. normalize targets) */
   transformArgs?: (method: string, args: any[]) => any[]
+  /** Methods whose calls are recorded and re-applied to every later instance */
+  replayMethods?: Set<string>
 }
 
 /**
@@ -159,8 +161,9 @@ export function createBufferedProxy<T>(
   objectRef: Ref<T | null>,
   options: BufferedProxyOptions,
 ): { proxy: BufferedProxyReturns<T>, flushBuffer: () => void } {
-  const { chainableMethods, transformArgs } = options
-  const buffer: Array<{ method: string, args: any[] }> = []
+  const { chainableMethods, transformArgs, replayMethods } = options
+  const pending: Array<{ method: string, args: any[] }> = []
+  const replayable: Array<{ method: string, args: any[] }> = []
 
   function applyMethod(instance: any, method: string, args: any[]) {
     const transformed = transformArgs ? transformArgs(method, args) : args
@@ -170,12 +173,22 @@ export function createBufferedProxy<T>(
     }
   }
 
+  function record(method: string, args: any[]) {
+    if (replayMethods?.has(method)) replayable.push({ method, args })
+  }
+
   function flushBuffer() {
-    if (!objectRef.value) return
-    for (const entry of buffer) {
-      applyMethod(objectRef.value, entry.method, entry.args)
+    const instance = objectRef.value
+    if (!instance) return
+
+    for (const entry of replayable) {
+      applyMethod(instance, entry.method, entry.args)
     }
-    buffer.length = 0
+    for (const entry of pending) {
+      applyMethod(instance, entry.method, entry.args)
+      record(entry.method, entry.args)
+    }
+    pending.length = 0
   }
 
   const proxy = new Proxy({}, {
@@ -190,10 +203,11 @@ export function createBufferedProxy<T>(
       if (chainableMethods.has(p)) {
         return (...args: any[]) => {
           if (!objectRef.value) {
-            buffer.push({ method: p, args })
+            pending.push({ method: p, args })
           }
           else {
             applyMethod(objectRef.value, p, args)
+            record(p, args)
           }
           return receiver
         }

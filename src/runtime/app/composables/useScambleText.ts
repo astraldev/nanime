@@ -3,6 +3,8 @@ import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } fro
 import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import type { AnimationParams, ScrambleTextParams } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
+import { keepTime } from 'animejs/utils'
+import type { NanimeInstanceOptions } from '../utils/types'
 import { scrambleText } from 'animejs/text'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
 import { markNanimeInstance, toReactive } from '../utils/create-proxy'
@@ -11,8 +13,15 @@ export function useScrambleText(
   target: Parameters<typeof normalizeAnimeTarget>[0],
   animationOptions?: MaybeRefOrGetter<AnimationParams>,
   scrambleOptions?: MaybeRefOrGetter<ScrambleTextParams>,
+  options?: NanimeInstanceOptions,
 ): JSAnimation {
   const flag = getAnimationComponentFlag()
+
+  const buildAnimation = (
+    targets: NonNullable<ReturnType<typeof normalizeAnimeTarget>>,
+    params: AnimationParams,
+  ) => animate(targets, params)
+  const rebuildAnimation = options?.keepTime === false ? buildAnimation : keepTime(buildAnimation)
 
   const animation = shallowRef(animate({}, {}))
   const mounted = useMounted()
@@ -31,8 +40,8 @@ export function useScrambleText(
       if (!mounted.value) return
       const targets = normalizeAnimeTarget(target)
       if (!targets) return
-      if (animation.value) animation.value.revert()
-      animation.value = animate(targets, buildParams())
+      if (options?.keepTime === false && animation.value) animation.value.revert()
+      animation.value = rebuildAnimation(targets, buildParams())
     })
 
     tryOnScopeDispose(() => {

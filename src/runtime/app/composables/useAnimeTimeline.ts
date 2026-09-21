@@ -2,20 +2,24 @@ import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 import { shallowRef, toValue, watch, nextTick, type MaybeRefOrGetter } from 'vue'
 import type { TimelineParams } from 'animejs'
 import { createTimeline, type Timeline } from 'animejs/timeline'
+import { keepTime } from 'animejs/utils'
+import type { NanimeInstanceOptions } from '../utils/types'
 import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import { createBufferedProxy, resolveNanimeInstance, type BufferedProxyReturns } from '../utils/create-proxy'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
 
-const CHAINABLE_METHODS = new Set([
-  // Timeline
-  'add', 'set', 'remove', 'call', 'label', 'sync',
-  'stretch', 'refresh', 'revert',
+const CONTENT_METHODS = new Set([
+  'add', 'set', 'remove', 'call', 'label', 'sync', 'stretch',
+])
 
-  // Timer controls
+const CONTROL_METHODS = new Set([
+  'refresh', 'revert',
   'play', 'pause', 'resume', 'restart', 'reset',
   'reverse', 'alternate', 'seek', 'cancel',
   'complete', 'init', 'resetTime',
 ])
+
+const CHAINABLE_METHODS = new Set([...CONTENT_METHODS, ...CONTROL_METHODS])
 const TARGET_METHODS = new Set(['set', 'remove'])
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -32,6 +36,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
  */
 export function useAnimeTimeline(
   parameters?: MaybeRefOrGetter<TimelineParams>,
+  options?: NanimeInstanceOptions,
 ): BufferedProxyReturns<Timeline> {
   const flag = getAnimationComponentFlag()
   const mounted = useMounted()
@@ -39,6 +44,7 @@ export function useAnimeTimeline(
 
   const { proxy, flushBuffer } = createBufferedProxy<Timeline>(timeline, {
     chainableMethods: CHAINABLE_METHODS,
+    replayMethods: CONTENT_METHODS,
     transformArgs: (method, args) => {
       // add(targets, animParams, position?) — normalize when second arg is AnimationParams
       if (method === 'add' && args.length >= 2 && isPlainObject(args[1])) {
@@ -56,22 +62,29 @@ export function useAnimeTimeline(
     },
   })
 
+  const resolveParameters = () => toValue(parameters) || {}
+
+  const buildTimeline = (params: TimelineParams) => createTimeline(params)
+  const createReplacement = options?.keepTime === false ? buildTimeline : keepTime(buildTimeline)
+
+  const rebuildTimeline = (params: TimelineParams) => {
+    if (options?.keepTime === false && timeline.value) timeline.value.revert()
+    timeline.value = createReplacement(params)
+    flushBuffer()
+  }
+
   if (flag === AnimationComponentFlags.Watchable) {
     watch(
-      [mounted, () => toValue(parameters)],
-      () => {
-        if (!mounted.value) return
-        if (timeline.value) timeline.value.revert()
-        timeline.value = createTimeline(toValue(parameters) || {})
-        flushBuffer()
+      [mounted, resolveParameters],
+      ([isMounted, params]) => {
+        if (!isMounted) return
+        rebuildTimeline(params)
       },
+      { immediate: true },
     )
   }
   else {
-    nextTick(() => {
-      timeline.value = createTimeline(toValue(parameters) || {})
-      flushBuffer()
-    })
+    nextTick(() => rebuildTimeline(resolveParameters()))
   }
 
   tryOnScopeDispose(() => {
