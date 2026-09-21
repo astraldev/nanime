@@ -1,0 +1,44 @@
+<template>
+  <g>
+    <rect
+      x="-30"
+      y="-14"
+      width="60"
+      height="28"
+      rx="9"
+      class="fill-current"
+    />
+    <path
+      d="M 8 -10 L 19 -6 L 19 6 L 8 10 Z"
+      class="fill-black/45"
+    />
+    <path
+      d="M -17 -9 L -8 -6 L -8 6 L -17 9 Z"
+      class="fill-black/35"
+    />
+    <rect
+      x="-7"
+      y="-10"
+      width="15"
+      height="20"
+      rx="4"
+      class="fill-black/15"
+    />
+    <rect
+      x="4"
+      y="-17"
+      width="7"
+      height="4"
+      rx="1.5"
+      class="fill-current"
+    />
+    <rect
+      x="4"
+      y="13"
+      width="7"
+      height="4"
+      rx="1.5"
+      class="fill-current"
+    />
+  </g>
+</template>
