@@ -26,7 +26,8 @@
     "provenance": true
   },
   "files": [
-    "dist"
+    "dist",
+    "skills"
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
