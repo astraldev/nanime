@@ -7,6 +7,7 @@ import type { NanimeInstanceOptions } from '../utils/types'
 import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import { createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/create-proxy'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
+import { resolveKeepTime } from '../utils/global-options'
 
 const CONTENT_METHODS = new Set([
   'add', 'set', 'remove', 'call', 'label', 'sync', 'stretch',
@@ -39,6 +40,7 @@ export function useAnimeTimeline(
   options?: NanimeInstanceOptions,
 ): BufferedProxyReturns<Timeline> {
   const flag = getAnimationComponentFlag()
+  const keepsTime = resolveKeepTime(options?.keepTime)
   const mounted = useMounted()
   const timeline = shallowRef<Timeline | null>(null)
 
@@ -65,10 +67,10 @@ export function useAnimeTimeline(
   const resolveParameters = () => unwrapNanimeProxies(toValue(parameters) || {})
 
   const buildTimeline = (params: TimelineParams) => createTimeline(params)
-  const createReplacement = options?.keepTime === false ? buildTimeline : keepTime(buildTimeline)
+  const createReplacement = keepsTime ? keepTime(buildTimeline) : buildTimeline
 
   const rebuildTimeline = (params: TimelineParams) => {
-    if (options?.keepTime === false && timeline.value) timeline.value.revert()
+    if (!keepsTime && timeline.value) timeline.value.revert()
     timeline.value = createReplacement(params)
     flushBuffer()
   }

@@ -1,8 +1,22 @@
 import { defineNuxtModule, createResolver, addImportsDir, addVitePlugin } from '@nuxt/kit'
+import { defu } from 'defu'
 
 export interface ModuleOptions {
   /** Add composables for animejs */
   composables: boolean
+  /**
+   * Default for every composable's `keepTime` option. `true` carries the
+   * playhead across rebuilds, so an animation continues instead of restarting
+   * when its reactive inputs change. A composable's own third argument still
+   * wins over this.
+   */
+  keepTime: boolean
+}
+
+declare module 'nuxt/schema' {
+  interface PublicRuntimeConfig {
+    nanime: { keepTime: boolean }
+  }
 }
 
 const __name = 'nanime'
@@ -18,6 +32,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     composables: true,
+    keepTime: true,
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -45,6 +60,11 @@ export default defineNuxtModule<ModuleOptions>({
         )
       },
     }))
+
+    _nuxt.options.runtimeConfig.public.nanime = defu(
+      _nuxt.options.runtimeConfig.public.nanime,
+      { keepTime: _options.keepTime },
+    )
 
     if (_options.composables) {
       addImportsDir(resolver.resolve('./runtime/app/composables'))

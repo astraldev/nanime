@@ -8,6 +8,7 @@ import type { NanimeInstanceOptions } from '../utils/types'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
 import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/create-proxy'
 import { shallowEqual } from '../utils/shallow-equal'
+import { resolveKeepTime } from '../utils/global-options'
 
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -18,8 +19,10 @@ export function useAnimate(
   const mounted = useMounted()
   const animation = shallowRef(animate({}, {}))
 
+  const keepsTime = resolveKeepTime(options?.keepTime)
+
   const create = (targets: TargetsParam, params: AnimationParams) => animate(targets, params)
-  const createKeepingTime = options?.keepTime === false ? create : keepTime(create)
+  const createKeepingTime = keepsTime ? keepTime(create) : create
 
   const resolveTargets = () => normalizeAnimeTarget(target)
   const resolveParameters = () => toValue(parameters) || {}
@@ -32,7 +35,7 @@ export function useAnimate(
       return
     }
 
-    if (options?.keepTime === false) animation.value?.revert()
+    if (!keepsTime) animation.value?.revert()
     animation.value = createKeepingTime(targets, params)
   }
 

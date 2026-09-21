@@ -8,6 +8,7 @@ import type { NanimeInstanceOptions } from '../utils/types'
 import { scrambleText } from 'animejs/text'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
 import { markNanimeInstance } from '../utils/create-proxy'
+import { resolveKeepTime } from '../utils/global-options'
 
 export function useScrambleText(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -16,12 +17,13 @@ export function useScrambleText(
   options?: NanimeInstanceOptions,
 ): JSAnimation {
   const flag = getAnimationComponentFlag()
+  const keepsTime = resolveKeepTime(options?.keepTime)
 
   const buildAnimation = (
     targets: NonNullable<ReturnType<typeof normalizeAnimeTarget>>,
     params: AnimationParams,
   ) => animate(targets, params)
-  const rebuildAnimation = options?.keepTime === false ? buildAnimation : keepTime(buildAnimation)
+  const rebuildAnimation = keepsTime ? keepTime(buildAnimation) : buildAnimation
 
   const animation = shallowRef(animate({}, {}))
   const mounted = useMounted()
@@ -40,7 +42,7 @@ export function useScrambleText(
       if (!mounted.value) return
       const targets = normalizeAnimeTarget(target)
       if (!targets) return
-      if (options?.keepTime === false && animation.value) animation.value.revert()
+      if (!keepsTime && animation.value) animation.value.revert()
       animation.value = rebuildAnimation(targets, buildParams())
     })
 
