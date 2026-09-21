@@ -14,6 +14,12 @@ export interface ModuleOptions {
 }
 
 declare module 'nuxt/schema' {
+  interface NuxtConfig {
+    nanime?: Partial<ModuleOptions>
+  }
+  interface NuxtOptions {
+    nanime: ModuleOptions
+  }
   interface PublicRuntimeConfig {
     nanime: { keepTime: boolean }
   }
