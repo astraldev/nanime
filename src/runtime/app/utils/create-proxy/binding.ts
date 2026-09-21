@@ -34,6 +34,11 @@ export function isNanimeProxy(value: unknown): value is object {
   return NANIME_INSTANCE in value || nanimeRegistry.has(value)
 }
 
+/** True when parameters carry an instance another composable owns. */
+export function hasNanimeProxy(parameters: object): boolean {
+  return Object.values(parameters).some(isNanimeProxy)
+}
+
 /** Unwraps nanime proxies in parameters, keyed off the marker so any key works. */
 export function unwrapNanimeProxies<T extends object>(parameters: T): T {
   const entries = Object.entries(parameters)
