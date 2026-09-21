@@ -20,6 +20,13 @@ export type {
   DrawableSVGGeometry,
   TextSplitterParams,
   SplitTemplateParams,
+  FunctionValue,
+  ScrollObserver,
+  ScrollObserverParams,
+  ScrollObserverAxisCallback,
+  ScrollThresholdParam,
+  ScrollThresholdValue,
+  ScrollThresholdCallback,
 } from 'animejs'
 
 export interface NanimeInstanceOptions {

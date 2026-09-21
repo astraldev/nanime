@@ -36,6 +36,7 @@ export default defineNuxtModule<ModuleOptions>({
           'animejs/layout',
           'animejs/text',
           'animejs/svg',
+          'animejs/events',
           'animejs/draggable',
           'animejs/timeline',
           'animejs/timer',
