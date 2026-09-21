@@ -80,8 +80,10 @@ default, such as watching the whole document instead of your element. The
 animation runs against the wrong thing and nothing reports it. A getter is read
 again once the element exists.
 
-Read `.value` yourself. Anime.js unwraps React and Angular refs but not Vue
-ones, so passing the ref itself has the same effect as passing nothing.
+Read `.value` yourself. Anime.js resolves no framework refs when it parses
+targets, so a ref object resolves to nothing and the option falls back to its
+default, which for a scroll observer's `container` and `target` is
+`document.body`.
 
 ### Never call a composable outside `setup`
 
