@@ -5,7 +5,7 @@ import { createTimeline, type Timeline } from 'animejs/timeline'
 import { keepTime } from 'animejs/utils'
 import type { NanimeInstanceOptions } from '../utils/types'
 import { normalizeAnimeTarget } from '../utils/normalize-targets'
-import { createBufferedProxy, resolveNanimeInstance, type BufferedProxyReturns } from '../utils/create-proxy'
+import { createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/create-proxy'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
 
 const CONTENT_METHODS = new Set([
@@ -62,7 +62,7 @@ export function useAnimeTimeline(
     },
   })
 
-  const resolveParameters = () => toValue(parameters) || {}
+  const resolveParameters = () => unwrapNanimeProxies(toValue(parameters) || {})
 
   const buildTimeline = (params: TimelineParams) => createTimeline(params)
   const createReplacement = options?.keepTime === false ? buildTimeline : keepTime(buildTimeline)

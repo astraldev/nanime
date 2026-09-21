@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { shallowRef, ref, isReactive } from 'vue'
-import { createProxy, createBufferedProxy, resolveNanimeInstance, toReactive } from '../../../src/runtime/app/utils/create-proxy'
+import { createProxy, createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, isNanimeProxy, markNanimeInstance } from '../../../src/runtime/app/utils/create-proxy'
+import { toReactive } from '../../../src/runtime/app/utils/vue-helpers'
 
 describe('createProxy', () => {
   it('should create a reactive proxy from an object ref', () => {
@@ -269,5 +270,36 @@ describe('createBufferedProxy replayMethods', () => {
     objectRef.value = makeInstance()
     flushBuffer()
     expect(calls).toEqual(['add:one', 'add:two'])
+  })
+})
+
+describe('unwrapNanimeProxies', () => {
+  it('should swap marked proxies for their instance, whatever the key', () => {
+    const instance = { id: 'observer' }
+    const objectRef = shallowRef(instance)
+    const proxy = createProxy(objectRef)
+
+    const params = { autoplay: proxy, someFutureBinding: proxy, duration: 500, easing: 'linear' }
+    const unwrapped = unwrapNanimeProxies(params)
+
+    expect(unwrapped.autoplay).toBe(instance)
+    expect(unwrapped.someFutureBinding).toBe(instance)
+    expect(unwrapped.duration).toBe(500)
+    expect(unwrapped.easing).toBe('linear')
+  })
+
+  it('should recognise toReactive-based proxies too', () => {
+    const instance = { id: 'animation' }
+    const objectRef = shallowRef(instance)
+    const proxy = toReactive(objectRef)
+    markNanimeInstance(proxy, objectRef)
+
+    expect(isNanimeProxy(proxy)).toBe(true)
+    expect(unwrapNanimeProxies({ autoplay: proxy }).autoplay).toBe(instance)
+  })
+
+  it('should return the same object when there is nothing to unwrap', () => {
+    const params = { autoplay: true, duration: 500 }
+    expect(unwrapNanimeProxies(params)).toBe(params)
   })
 })

@@ -1,4 +1,4 @@
-import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
+import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
 import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import type { AnimationParams, TargetsParam } from 'animejs'
@@ -6,7 +6,7 @@ import { animate, type JSAnimation } from 'animejs/animation'
 import { keepTime } from 'animejs/utils'
 import type { NanimeInstanceOptions } from '../utils/types'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
-import { markNanimeInstance, toReactive } from '../utils/create-proxy'
+import { markNanimeInstance, unwrapNanimeProxies } from '../utils/create-proxy'
 
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -28,7 +28,7 @@ export function useAnimate(
       if (oldTarget === targets) return
       if (options?.keepTime === false && animation.value) animation.value.revert()
       oldTarget = targets
-      animation.value = rebuildAnimation(targets, toValue(parameters) || {})
+      animation.value = rebuildAnimation(targets, unwrapNanimeProxies(toValue(parameters) || {}))
     })
 
     tryOnScopeDispose(() => {
@@ -39,7 +39,7 @@ export function useAnimate(
     nextTick(() => {
       const targets = normalizeAnimeTarget(target)
       if (!targets) return
-      const newAnimation = animate(targets, toValue(parameters) || {})
+      const newAnimation = animate(targets, unwrapNanimeProxies(toValue(parameters) || {}))
       animation.value = newAnimation
     })
   }
