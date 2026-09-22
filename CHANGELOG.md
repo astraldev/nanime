@@ -1,5 +1,60 @@
 # Changelog
 
+## v0.1.13
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.1.12...v0.1.13)
+
+### 🚀 Enhancements
+
+- **scroll:** Add useAnimeScroll ([ceddef1](https://github.com/astraldev/nanime/commit/ceddef1))
+- **config:** Make keepTime a module option ([eb5956e](https://github.com/astraldev/nanime/commit/eb5956e))
+
+### 🔥 Performance
+
+- **animate:** Rebuild only when targets or parameters actually change ([4621588](https://github.com/astraldev/nanime/commit/4621588))
+
+### 🩹 Fixes
+
+- **composables:** Preserve state across instance rebuilds ([16f6cbd](https://github.com/astraldev/nanime/commit/16f6cbd))
+- **config:** Revert keepTime module default to false ([e8b1d25](https://github.com/astraldev/nanime/commit/e8b1d25))
+
+### 💅 Refactors
+
+- **proxy:** Split create-proxy into modules ([0f0dc5c](https://github.com/astraldev/nanime/commit/0f0dc5c))
+
+### 📖 Documentation
+
+- Fix missing blank line before changelog packaging heading ([515094b](https://github.com/astraldev/nanime/commit/515094b))
+- **skill:** Ship a nanime skill for consumers ([dcdec7a](https://github.com/astraldev/nanime/commit/dcdec7a))
+- **skill:** Correct the ref-unwrapping claim ([942d368](https://github.com/astraldev/nanime/commit/942d368))
+- **examples:** Add the scroll road trip showcase ([5c3b5ef](https://github.com/astraldev/nanime/commit/5c3b5ef))
+- **scroll:** Add useAnimeScroll page and demo ([95cc57d](https://github.com/astraldev/nanime/commit/95cc57d))
+- **skill:** Add composable page spec ([f7ef38a](https://github.com/astraldev/nanime/commit/f7ef38a))
+- **composables:** Restructure pages, fix API claims ([611d68a](https://github.com/astraldev/nanime/commit/611d68a))
+- Rewrite guides, misc and examples for readability ([db146e9](https://github.com/astraldev/nanime/commit/db146e9))
+- **changelog:** Add the unreleased entries ([f9e0fb6](https://github.com/astraldev/nanime/commit/f9e0fb6))
+- **examples:** Fix prose issues across showcase pages ([a4d5c5c](https://github.com/astraldev/nanime/commit/a4d5c5c))
+- Fact-check composables, redesign changelog, audit prose style ([b59d988](https://github.com/astraldev/nanime/commit/b59d988))
+- **homepage:** Rework the hero demo into a responsive showcase box ([61f1f6b](https://github.com/astraldev/nanime/commit/61f1f6b))
+
+### 🏡 Chore
+
+- Restore automatic versioning in the release script ([e64af47](https://github.com/astraldev/nanime/commit/e64af47))
+- Add v0.1.12 announcement copy ([a4d0a23](https://github.com/astraldev/nanime/commit/a4d0a23))
+
+### ✅ Tests
+
+- **config:** Cover the keepTime module option ([e5a44f8](https://github.com/astraldev/nanime/commit/e5a44f8))
+
+### 🤖 CI
+
+- Trigger release on published, allow manual dispatch ([c0b5362](https://github.com/astraldev/nanime/commit/c0b5362))
+- Drop redundant comment on release trigger ([dad5e9a](https://github.com/astraldev/nanime/commit/dad5e9a))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.1.12
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.0.11...v0.1.12)
