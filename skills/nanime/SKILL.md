@@ -136,9 +136,8 @@ target types do not accept the former.
 When your reactive target or parameters change, the composable reverts the old
 instance and builds a new one. Two consequences:
 
-- The playhead carries over by default, so a duration change mid-flight
-  continues rather than restarting. Pass `{ keepTime: false }` as the third
-  argument to restart instead.
+- The animation restarts by default. Pass `{ keepTime: true }` as the third
+  argument so a duration change mid-flight continues rather than restarting.
 - Rebuilds are skipped when the new parameters are unchanged, so a getter
   returning a fresh but identical object each tick costs nothing.
 

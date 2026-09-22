@@ -38,7 +38,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     composables: true,
-    keepTime: true,
+    keepTime: false,
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)

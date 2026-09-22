@@ -37,7 +37,7 @@ export interface NanimeInstanceOptions {
    * restart on every rebuild.
    *
    * Left unset, this follows `nanime.keepTime` in `nuxt.config`, which
-   * defaults to `true`.
+   * defaults to `false`.
    */
   keepTime?: boolean
 }
