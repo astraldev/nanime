@@ -1,57 +1,22 @@
 ---
 title: nanime
-description: Anime.js v4 in SSR-safe Vue composables. Animate, drag, split text, and sync timelines in Nuxt.
+description: AnimeJS v4 in SSR-safe Vue composables. Animate, drag, split text, and sync timelines in Nuxt.
 seo:
-  title: nanime - Anime.js Composables for Nuxt & Vue 3
-  description: Anime.js v4 in SSR-safe Vue composables. Animate, drag, split text, and sync timelines in Nuxt.
+  title: nanime - AnimeJS Composables for Nuxt & Vue 3
+  description: AnimeJS v4 in SSR-safe Vue composables. Animate, drag, split text, and sync timelines in Nuxt.
 ---
 
 ::u-page-hero
 ---
 orientation: horizontal
 ---
-  :::tabs
-    ::::tabs-item{icon="i-lucide-eye" label="Preview"}
-    :hero-animation
-    ::::
-
-    ::::tabs-item{icon="i-lucide-code" label="Template"}
-    ```html
-    <div class="grid grid-cols-10 place-items-center gap-0.5 absolute inset-0 p-5">
-      <div v-for="i in 40" :key="i" ref="boxes" class="size-9 rounded-sm bg-primary/30 aspect-square" />
-    </div>
-    ```
-    ::::
-
-    ::::tabs-item{icon="i-lucide-file-code" label="Script"}
-    ```ts
-    import { stagger } from '#nanime/utils'
-
-    const boxes = useTemplateRef('boxes')
-
-    useAnimate(boxes, {
-      scale: [{ to: [0, 1.25] }, { to: 0 }],
-      boxShadow: [
-        { to: '0 0 1rem 0 currentColor' },
-        { to: '0 0 0rem 0 currentColor' }
-      ],
-      delay: stagger(100, {
-        grid: [10, 4],
-        from: 'center',
-      }),
-      duration: 1500,
-      playbackEase: 'outQuad',
-      loop: true,
-    })
-    ```
-    ::::
-  :::
+:render-code-block-preview{src="examples/misc/HeroDemo.vue" :code="false"}
 
 #title
 Animate Nuxt with [AnimeJS]{.text-primary}
 
 #description
-Anime.js wrapped in Vue composables. They resolve targets, skip server renders, and clean up on unmount.
+AnimeJS wrapped in Vue composables. They resolve targets, skip server renders, and clean up on unmount.
 
 #links
   :::u-button
@@ -65,11 +30,11 @@ Anime.js wrapped in Vue composables. They resolve targets, skip server renders, 
 
   :::u-button
   ---
+  color: neutral
   icon: i-ph-shapes
   size: xl
-  color: neutral
-  variant: subtle
   to: /examples/introduction
+  variant: subtle
   ---
   See examples
   :::
@@ -109,7 +74,7 @@ What you get
   Powered by [AnimeJS]{.text-primary}
 
   #description
-  All of Anime.js v4, wrapped directly with Vue reactivity
+  All of AnimeJS v4, wrapped directly with Vue reactivity
   :::
 
   :::u-page-card
@@ -148,7 +113,7 @@ What you get
 Composables
 
 #description
-One composable per Anime.js API, with a live demo on each page.
+One composable per AnimeJS API, with a live demo on each page.
 
 #features
   :::u-page-card
@@ -247,6 +212,20 @@ One composable per Anime.js API, with a live demo on each page.
 
   #description
   Several animations on one clock you can play, pause, and scrub.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-mouse-scroll
+  spotlightColor: var(--color-primary)
+  to: /composables/use-anime-scroll
+  ---
+  #title
+  useAnimeScroll
+
+  #description
+  Drive an animation from scroll position.
   :::
 ::
 
