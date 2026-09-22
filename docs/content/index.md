@@ -1,9 +1,9 @@
 ---
 title: nanime
-description: Nuxt module wrapping Anime.js v4 in SSR-safe Vue composables. Animate, drag, split and scramble text, and sync timelines without lifecycle headaches.
+description: Anime.js v4 in SSR-safe Vue composables. Animate, drag, split text, and sync timelines in Nuxt.
 seo:
   title: nanime - Anime.js Composables for Nuxt & Vue 3
-  description: Nuxt module wrapping Anime.js v4 in SSR-safe Vue composables. Animate, drag, split and scramble text, and sync timelines without lifecycle headaches.
+  description: Anime.js v4 in SSR-safe Vue composables. Animate, drag, split text, and sync timelines in Nuxt.
 ---
 
 ::u-page-hero
@@ -51,7 +51,7 @@ orientation: horizontal
 Animate Nuxt with [AnimeJS]{.text-primary}
 
 #description
-Create SSR Safe animations for Nuxt without having to worry about targets and component lifecycle.
+Anime.js wrapped in Vue composables. They resolve targets, skip server renders, and clean up on unmount.
 
 #links
   :::u-button
@@ -79,7 +79,7 @@ Create SSR Safe animations for Nuxt without having to worry about targets and co
 
 ::u-page-section
 #title
-Shipped with many features
+What you get
 
 #features
   :::u-page-card
@@ -94,7 +94,7 @@ Shipped with many features
   Built with [Nuxt 4]{.text-primary}
 
   #description
-  Created with nuxt for nuxt
+  Composables are auto-imported across your Nuxt app
   :::
 
   :::u-page-card
@@ -109,7 +109,7 @@ Shipped with many features
   Powered by [AnimeJS]{.text-primary}
 
   #description
-  Animation engine by `animejs`
+  All of Anime.js v4, wrapped directly with Vue reactivity
   :::
 
   :::u-page-card
@@ -124,7 +124,7 @@ Shipped with many features
   [SSR]{.text-primary} safe
 
   #description
-  Composables don't break SSR or cause hydration issues
+  Nothing runs on the server, so there is no hydration mismatch
   :::
 
   :::u-page-card
@@ -139,7 +139,7 @@ Shipped with many features
   Customizable
 
   #description
-  Enable or disable composables
+  Use auto-imports, or import from `#nanime/composables`
   :::
 ::
 
@@ -148,7 +148,7 @@ Shipped with many features
 Composables
 
 #description
-Wrappers around every AnimeJS utility, built for Vue reactivity.
+One composable per Anime.js API, with a live demo on each page.
 
 #features
   :::u-page-card
@@ -162,7 +162,7 @@ Wrappers around every AnimeJS utility, built for Vue reactivity.
   useAnimate
 
   #description
-  CSS properties, transforms, SVG and plain JS objects.
+  CSS properties, transforms, SVG, and plain JavaScript objects.
   :::
 
   :::u-page-card
@@ -176,7 +176,7 @@ Wrappers around every AnimeJS utility, built for Vue reactivity.
   useWaapiAnimate
 
   #description
-  Web Animations API, running off the main thread.
+  The Web Animations API, running off the main thread.
   :::
 
   :::u-page-card
@@ -190,7 +190,7 @@ Wrappers around every AnimeJS utility, built for Vue reactivity.
   useAnimatable
 
   #description
-  Property setters with built-in tweening, for fast updates.
+  Setters that tween, for values that change many times a second.
   :::
 
   :::u-page-card
@@ -204,7 +204,7 @@ Wrappers around every AnimeJS utility, built for Vue reactivity.
   useSplitText
 
   #description
-  Split text into lines, words, and characters for staggered animations.
+  Text as lines, words, or characters, ready to stagger.
   :::
 
   :::u-page-card
@@ -218,7 +218,7 @@ Wrappers around every AnimeJS utility, built for Vue reactivity.
   useScrambleText :badge[New]{variant="subtle"}
 
   #description
-  Text scramble and reveal effects with reactive text cycling.
+  Scramble and reveal, driven by reactive text.
   :::
 
   :::u-page-card
@@ -232,7 +232,7 @@ Wrappers around every AnimeJS utility, built for Vue reactivity.
   useDraggable
 
   #description
-  Drag interactions with snap, bounds, and axis constraints.
+  Dragging with snapping, bounds, and axis constraints.
   :::
 
   :::u-page-card
@@ -246,7 +246,7 @@ Wrappers around every AnimeJS utility, built for Vue reactivity.
   useAnimeTimeline
 
   #description
-  Sequence and sync multiple timelines into one master composition, with full playback controls.
+  Several animations on one clock you can play, pause, and scrub.
   :::
 ::
 
@@ -255,9 +255,7 @@ Wrappers around every AnimeJS utility, built for Vue reactivity.
 The rest of the toolkit
 
 #description
-Easing curves, re-exported Anime.js utilities and SVG/text proxies. The
-pieces that show up inside the composables above rather than standing on
-their own.
+Easings, utilities, and proxies to use inside composable parameters.
 
 #features
   :::u-page-card
@@ -271,7 +269,7 @@ their own.
   Easings
 
   #description
-  Spring physics and custom cubicBezier curves, used throughout the showcase examples above.
+  Spring physics and custom cubic Bézier curves.
   :::
 
   :::u-page-card
@@ -285,7 +283,7 @@ their own.
   Utils
 
   #description
-  Stagger, targets, and other helpers re-exported directly from `animejs/utils`.
+  Stagger, snap, lerp, and helpers from `animejs/utils`.
   :::
 
   :::u-page-card
@@ -299,6 +297,6 @@ their own.
   Proxies
 
   #description
-  SVG morphing, motion paths, drawable strokes, and the text-scramble proxy.
+  SVG morphing, motion paths, drawable strokes, and text scrambling.
   :::
 ::
