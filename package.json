@@ -1,6 +1,6 @@
 {
   "name": "nanime",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Nuxt module for animejs integration and transitions",
   "repository": {
     "type": "git",
@@ -26,7 +26,8 @@
     "provenance": true
   },
   "files": [
-    "dist"
+    "dist",
+    "skills"
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",

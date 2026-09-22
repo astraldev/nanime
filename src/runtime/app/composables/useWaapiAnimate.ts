@@ -1,10 +1,10 @@
-import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
+import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
 import type { WAAPIAnimationParams } from 'animejs'
 import { normalizeWaapiAnimeTarget } from '../utils/normalize-targets'
 import { waapi, type WAAPIAnimation } from 'animejs/waapi'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
-import { markNanimeInstance, toReactive } from '../utils/create-proxy'
+import { markNanimeInstance, unwrapNanimeProxies } from '../utils/create-proxy'
 
 export function useWaapiAnimate(
   target: Parameters<typeof normalizeWaapiAnimeTarget>[0],
@@ -20,7 +20,7 @@ export function useWaapiAnimate(
       const targets = normalizeWaapiAnimeTarget(target)
       if (!mounted.value || !targets) return
       if (animation.value) animation.value.revert()
-      const newAnimation = waapi.animate(targets, toValue(parameters) || {})
+      const newAnimation = waapi.animate(targets, unwrapNanimeProxies(toValue(parameters) || {}))
       animation.value = newAnimation
     })
 
@@ -33,7 +33,7 @@ export function useWaapiAnimate(
       const targets = normalizeWaapiAnimeTarget(target)
       if (!targets) return
       if (animation.value) animation.value.revert()
-      const newAnimation = waapi.animate(targets, toValue(parameters) || {})
+      const newAnimation = waapi.animate(targets, unwrapNanimeProxies(toValue(parameters) || {}))
       animation.value = newAnimation
     })
   }

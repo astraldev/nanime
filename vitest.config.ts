@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 import { defineVitestProject } from '@nuxt/test-utils/config'
 
@@ -23,6 +24,18 @@ export default defineConfig({
           name: 'full-nuxt-apps',
           include: ['test/fixtures/**/*.{test,spec}.ts'],
           environment: 'nuxt',
+        },
+      }),
+      await defineVitestProject({
+        test: {
+          name: 'config',
+          include: ['test/config/**/*.{test,spec}.ts'],
+          environment: 'nuxt',
+          environmentOptions: {
+            nuxt: {
+              rootDir: fileURLToPath(new URL('./test/fixtures/keep-time', import.meta.url)),
+            },
+          },
         },
       }),
       await defineVitestProject({
