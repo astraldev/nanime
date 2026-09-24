@@ -1,215 +1,269 @@
 <script setup lang="ts">
-import { tryOnScopeDispose } from '@vueuse/core'
+import { spring } from '#nanime/easings'
 import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleWrapper.vue'
 
-const DEFAULT_DELAY = 500 // fallback pause after text has fully scrambled
+type BuildState = 'idle' | 'running' | 'done'
 
-interface SequenceStep {
-  text: string
-  delay?: number // custom pause mimicking work time
+interface BuildStep {
+  label: string
+  delay: number
 }
 
-const steps: SequenceStep[] = [
-  { text: 'Initializing build context...', delay: 400 },
-  { text: 'Resolving module graph...', delay: 800 },
-  { text: 'Scanning plugins & hooks...', delay: 500 },
-  { text: 'Transforming Vue SFC templates...', delay: 1200 },
-  { text: 'Compiling TypeScript definitions...', delay: 1500 },
-  { text: 'Tree-shaking unused exports...', delay: 600 },
-  { text: 'Bundling client & server chunks...', delay: 2000 },
-  { text: 'Optimizing CSS & assets...', delay: 1000 },
-  { text: 'Generating route manifests...', delay: 400 },
-  { text: 'Emitting production build...', delay: 1200 },
+const steps: BuildStep[] = [
+  { label: 'Resolve module graph', delay: 800 },
+  { label: 'Scan plugins and hooks', delay: 500 },
+  { label: 'Transform Vue templates', delay: 1200 },
+  { label: 'Compile TypeScript', delay: 1500 },
+  { label: 'Tree-shake unused exports', delay: 600 },
+  { label: 'Bundle client and server', delay: 2000 },
+  { label: 'Optimize CSS and assets', delay: 1000 },
+  { label: 'Emit production build', delay: 1200 },
 ]
 
-const state = ref<'idle' | 'loading' | 'success'>('idle')
-const isPaused = ref(false)
-const currentStepIndex = ref(-1)
-const currentText = ref('Ready to build')
+const logLength = 3
+const readyText = 'Ready to build'
+const scrambleChars = '0123456789abcdef'
+const revealRate = 50
+const settleDuration = 300
 
-const spinner = useTemplateRef('spinner')
-const successMark = useTemplateRef('successMark')
-const statusEl = useTemplateRef('statusEl')
+const iconEnter = {
+  opacity: [0, 1],
+  scale: [0.4, 1],
+  ease: spring({ bounce: 0.5, duration: 400 }),
+}
 
-const spinnerAnimation = useWaapiAnimate(spinner, {
+const iconLeave = {
+  opacity: 0,
+  scale: 0.4,
+  duration: 150,
+  ease: 'in(2)',
+}
+
+const logEnter = {
+  opacity: [0, 1],
+  y: [10, 0],
+  ease: spring({ bounce: 0.2, duration: 400 }),
+}
+
+const logLeave = {
+  opacity: 0,
+  duration: 150,
+  ease: 'out(2)',
+}
+
+const logMove = {
+  ease: spring({ bounce: 0.2, duration: 400 }),
+}
+
+const spinParams = {
   rotate: { to: 360 },
   duration: 800,
   ease: 'linear',
   loop: true,
-})
+}
 
-useAnimate(successMark, {
-  opacity: [0, 1],
-  scale: [0.8, 1],
-  duration: 300,
-  ease: 'outQuad',
-})
+const state = ref<BuildState>('idle')
+const paused = ref(false)
+const stepIndex = ref(-1)
+const statusText = ref(readyText)
 
-// With revealRate: 50, interval is 1000/50 = 20ms per character
-const getScrambleDuration = (text: string) => Math.max(0, text.length - 1) * 20 + 300
+const spinner = useTemplateRef('spinner')
+const statusLine = useTemplateRef('statusLine')
 
-const scrambleConfig = computed(() => ({
-  text: currentText.value,
-  chars: '0123456789abcdef',
-  settleDuration: 300,
-  revealRate: 50,
+const spin = useWaapiAnimate(spinner, spinParams)
+
+useScrambleText(statusLine, {}, () => ({
+  text: statusText.value,
+  chars: scrambleChars,
+  settleDuration,
+  revealRate,
 }))
 
-useScrambleText(statusEl, {}, scrambleConfig)
+const finishedSteps = computed(() => steps.slice(Math.max(0, stepIndex.value - logLength), Math.max(0, stepIndex.value)))
+
+const status = computed(() => {
+  if (state.value === 'done') return 'Build complete'
+  const next = steps[stepIndex.value + 1]?.label ?? 'Done'
+  if (state.value === 'idle') return `Ready → next: ${next}`
+  if (paused.value) return `Paused → next: ${next}`
+  return `${stepIndex.value + 1}/${steps.length} → next: ${next}`
+})
+
+function scrambleDuration(text: string) {
+  return Math.max(0, text.length - 1) * (1000 / revealRate) + settleDuration
+}
+
+function currentStepWait() {
+  return scrambleDuration(statusText.value) + (steps[stepIndex.value]?.delay ?? 0)
+}
+
+function showStep(index: number) {
+  stepIndex.value = index
+  statusText.value = `[${index + 1}/${steps.length}] ${steps[index]?.label}...`
+}
+
+function finish() {
+  stepIndex.value = steps.length
+  state.value = 'done'
+  statusText.value = `Built ${steps.length} steps`
+}
+
+function resetState() {
+  state.value = 'idle'
+  paused.value = false
+  stepIndex.value = -1
+  statusText.value = readyText
+}
 
 let timer: ReturnType<typeof setTimeout> | undefined
 
-function advanceStep() {
-  currentStepIndex.value++
-
-  if (currentStepIndex.value < steps.length) {
-    const current = steps[currentStepIndex.value]!
-    currentText.value = `[${currentStepIndex.value + 1}/${steps.length}] ${current.text}`
-
-    const duration = getScrambleDuration(currentText.value)
-    const stepDelay = current.delay ?? DEFAULT_DELAY
-    // Wait for full sentence scramble + step delay before next step
-    timer = setTimeout(advanceStep, duration + stepDelay)
-  }
-  else {
-    state.value = 'success'
-    currentText.value = `Built in 11.5s (${steps.length} steps)`
-  }
+function scheduleNextStep() {
+  clearTimeout(timer)
+  timer = setTimeout(advance, currentStepWait())
 }
 
-function runSequence() {
-  if (state.value === 'success') {
-    reset()
-    return
-  }
+function advance() {
+  const next = stepIndex.value + 1
+  if (next >= steps.length) return finish()
+  showStep(next)
+  scheduleNextStep()
+}
 
-  if (state.value !== 'idle') return
+function run() {
+  resetState()
+  state.value = 'running'
+  advance()
+}
 
-  state.value = 'loading'
-  isPaused.value = false
-  advanceStep()
+function pause() {
+  paused.value = true
+  clearTimeout(timer)
+  spin.pause()
+}
+
+function resume() {
+  paused.value = false
+  spin.play()
+  scheduleNextStep()
 }
 
 function togglePause() {
-  if (state.value !== 'loading') return
-  isPaused.value = !isPaused.value
-
-  if (isPaused.value) {
-    clearTimeout(timer)
-    spinnerAnimation?.pause()
-  }
-  else {
-    spinnerAnimation?.play()
-    const current = steps[currentStepIndex.value]
-    const duration = getScrambleDuration(currentText.value)
-    const stepDelay = current?.delay ?? DEFAULT_DELAY
-    timer = setTimeout(advanceStep, duration + stepDelay)
-  }
+  if (paused.value) resume()
+  else pause()
 }
 
 function reset() {
   clearTimeout(timer)
-  state.value = 'idle'
-  isPaused.value = false
-  currentStepIndex.value = -1
-  currentText.value = 'Ready to build'
-  spinnerAnimation?.play()
+  resetState()
 }
 
-tryOnScopeDispose(() => {
-  clearTimeout(timer)
-})
+onBeforeUnmount(() => clearTimeout(timer))
 
 const actions = computed<ExampleAction[]>(() => {
-  if (state.value === 'idle') {
+  if (state.value === 'running') {
     return [
-      {
-        label: 'Run Build',
-        run: runSequence,
-      },
+      { label: paused.value ? 'Resume' : 'Pause', run: togglePause, active: paused.value },
+      { label: 'Reset', run: reset },
     ]
   }
-
-  if (state.value === 'loading') {
+  if (state.value === 'done') {
     return [
-      {
-        label: isPaused.value ? 'Resume' : 'Pause',
-        run: togglePause,
-        active: isPaused.value,
-      },
-      {
-        label: `[${currentStepIndex.value + 1}/${steps.length}]`,
-        run: () => {},
-        active: true,
-      },
-      {
-        label: 'Reset',
-        run: reset,
-      },
+      { label: 'Run again', run },
+      { label: 'Reset', run: reset },
     ]
   }
-
-  return [
-    {
-      label: 'Reset',
-      run: reset,
-    },
-    {
-      label: 'Re-run',
-      run: runSequence,
-    },
-  ]
+  return [{ label: 'Run build', run }]
 })
 </script>
 
 <template>
-  <ExampleWrapper :actions="actions">
-    <div class="w-full font-mono text-xs sm:text-sm space-y-1.5 py-1 select-none">
-      <div class="text-muted flex items-center justify-between">
+  <ExampleWrapper
+    :actions="actions"
+    :status="status"
+  >
+    <div class="flex h-36 w-full flex-col font-mono text-xs select-none sm:text-sm">
+      <div class="flex items-center justify-between text-muted">
         <div class="flex items-center gap-2">
-          <span class="text-primary font-bold">$</span>
+          <span class="font-bold text-primary">$</span>
           <span>nanime build</span>
         </div>
-        <span
-          v-if="isPaused"
-          class="text-[10px] text-amber-500 font-bold uppercase tracking-wider"
-        >
-          [paused]
-        </span>
+        <AnimeTransition>
+          <span
+            v-if="paused"
+            class="text-[10px] font-bold tracking-wider text-primary uppercase"
+          >
+            [paused]
+          </span>
+        </AnimeTransition>
       </div>
 
-      <div class="flex items-center gap-2 text-highlighted">
-        <span
-          v-if="state === 'idle'"
-          class="text-muted w-4 shrink-0 font-bold"
-        >
-          &gt;
-        </span>
-
-        <span
-          v-if="state === 'loading'"
-          ref="spinner"
-          class="w-4 h-4 shrink-0 flex items-center justify-center text-primary"
+      <AnimeTransitionGroup
+        tag="ul"
+        class="relative mt-auto flex flex-col gap-1.5"
+        :enter-animation="logEnter"
+        :leave-animation="logLeave"
+        :move-animation="logMove"
+      >
+        <li
+          v-for="step in finishedSteps"
+          :key="step.label"
+          class="flex items-center gap-2 text-muted"
         >
           <UIcon
-            name="i-ph-spinner-gap"
-            class="size-4"
+            name="i-ph-check-bold"
+            class="size-4 shrink-0 text-primary"
           />
-        </span>
+          <span class="truncate">{{ step.label }}</span>
+        </li>
+      </AnimeTransitionGroup>
+
+      <div class="mt-1.5 flex items-center gap-2 text-highlighted">
+        <div class="grid size-4 shrink-0 place-items-center">
+          <AnimeTransition
+            mode="out-in"
+            :enter-animation="iconEnter"
+            :leave-animation="iconLeave"
+          >
+            <span
+              v-if="state === 'running'"
+              class="flex text-primary"
+            >
+              <span
+                ref="spinner"
+                class="flex"
+              >
+                <UIcon
+                  name="i-ph-spinner-gap"
+                  class="size-4"
+                />
+              </span>
+            </span>
+            <span
+              v-else-if="state === 'done'"
+              class="flex text-primary"
+            >
+              <UIcon
+                name="i-ph-check-circle-fill"
+                class="size-4"
+              />
+            </span>
+            <span
+              v-else
+              class="flex text-muted"
+            >
+              <UIcon
+                name="i-ph-caret-right-bold"
+                class="size-4"
+              />
+            </span>
+          </AnimeTransition>
+        </div>
 
         <span
-          v-if="state === 'success'"
-          ref="successMark"
-          class="w-4 shrink-0 text-primary font-bold"
-        >
-          ✔
-        </span>
-
-        <span
-          ref="statusEl"
+          ref="statusLine"
           class="truncate"
         >
-          Ready to build
+          {{ readyText }}
         </span>
       </div>
     </div>
