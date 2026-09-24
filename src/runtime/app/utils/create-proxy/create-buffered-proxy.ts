@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Ref } from 'vue'
-import { unref, isRef } from 'vue'
+import { unref, isRef, reactive } from 'vue'
 import { NANIME_INSTANCE } from './binding'
 import type { BufferedProxyReturns } from './types'
 
