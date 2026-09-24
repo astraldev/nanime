@@ -113,6 +113,17 @@ View on GitHub
 ::
 `
 
-  // Parse Markdown (auto-imported)
-  return md
+  // Parse Markdown using local highlighter to bypass missing API endpoint
+  let highlighter
+  if (import.meta.server) {
+    try {
+      highlighter = await import('#mdc-highlighter').then(m => m.default)
+    }
+    catch (e) {
+      console.error('[useCodeBlockPreview] Failed to import #mdc-highlighter', e)
+    }
+  }
+
+  const parseOptions = highlighter ? { highlight: { highlighter } } : {}
+  return await parseMarkdown(md, parseOptions)
 }
