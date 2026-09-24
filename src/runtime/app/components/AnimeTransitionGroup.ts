@@ -65,6 +65,12 @@ function setStyles(el: StyledElement, styles: Styles): Styles {
   return previous
 }
 
+function readLeafDisplays(root: Element) {
+  return [...root.querySelectorAll('*')].flatMap(el => el instanceof HTMLElement && !el.firstElementChild
+    ? [{ el, value: el.style.getPropertyValue('display'), priority: el.style.getPropertyPriority('display') }]
+    : [])
+}
+
 const pinnedStyles = (el: HTMLElement): Styles => ({
   'position': 'absolute',
   'left': `${el.offsetLeft}px`,
@@ -107,11 +113,13 @@ export default defineComponent(
       },
     })
 
-    function hideTransitionsFromLayout(layoutCall: () => void) {
+    function runLayout(root: Element, layoutCall: () => void) {
       const blank = Object.fromEntries(transitionStyles().map(prop => [prop, '']))
       const hidden = [...runner.running()].map(el => ({ el, styles: setStyles(el, blank) }))
+      const leafDisplays = readLeafDisplays(root)
       layoutCall()
       for (const { el, styles } of hidden) setStyles(el, styles)
+      for (const { el, value, priority } of leafDisplays) el.style.setProperty('display', value, priority)
       restoreEndedDuringMove()
     }
 
@@ -135,7 +143,7 @@ export default defineComponent(
       const root = instance?.subTree.el
       if (moveParams() === false || !(root instanceof HTMLElement)) return dropLayout()
       if (layout?.root !== root) dropLayout()
-      hideTransitionsFromLayout(() => {
+      runLayout(root, () => {
         layout ??= createLayout(root, { enterFrom: {}, leaveTo: {} })
         layout.record()
       })
@@ -151,7 +159,7 @@ export default defineComponent(
         restoreEndedDuringMove()
         runner.refresh()
       }
-      hideTransitionsFromLayout(() => current.animate({ duration, delay, ease, onComplete }))
+      runLayout(current.root, () => current.animate({ duration, delay, ease, onComplete }))
       hiddenFromMove = new Set(runner.running())
       endedDuringMove.clear()
     })
