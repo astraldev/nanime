@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.1.14
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.1.13...v0.1.14)
+
+### 🩹 Fixes
+
+- **proxy:** Import reactive in the buffered proxy ([8b5c7bd](https://github.com/astraldev/nanime/commit/8b5c7bd))
+
+### 💅 Refactors
+
+- **composables:** Fix useScrambleText filename typo ([9617631](https://github.com/astraldev/nanime/commit/9617631))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.1.13
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.1.12...v0.1.13)
