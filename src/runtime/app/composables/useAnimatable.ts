@@ -1,10 +1,10 @@
 import { createAnimatable } from 'animejs/animatable'
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
-import { normalizeAnimeTarget } from '../utils/normalize-targets'
+import { normalizeAnimeTarget } from '../utils/targets'
 import type { AnimatableObject, AnimatableParams, TargetsParam } from 'animejs'
-import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
-import { markNanimeInstance } from '../utils/create-proxy'
+import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
+import { markNanimeInstance } from '../utils/proxy'
 
 export function useAnimatable(
   target: Parameters<typeof normalizeAnimeTarget>[0],

@@ -3,13 +3,13 @@ import { shallowRef, toValue, watch, nextTick, type MaybeRefOrGetter } from 'vue
 import type { TimelineParams } from 'animejs'
 import { createTimeline, type Timeline } from 'animejs/timeline'
 import { keepTime } from 'animejs/utils'
-import type { NanimeInstanceOptions } from '../utils/types'
-import { normalizeAnimeTarget } from '../utils/normalize-targets'
-import { createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/create-proxy'
-import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
+import type { NanimeInstanceOptions } from '../public/types'
+import { normalizeAnimeTarget } from '../utils/targets'
+import { createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/proxy'
+import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { resolveKeepTime } from '../utils/global-options'
 import { deepEqualWithSkip } from '../utils/deep-equal'
-import { SHARED_ANIME_JS_CALLBACKS } from '../utils/normalizers/shared-callbacks'
+import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
 const CONTENT_METHODS = new Set([
   'add', 'set', 'remove', 'call', 'label', 'sync', 'stretch',
@@ -80,11 +80,14 @@ export function useAnimeTimeline(
   }
 
   if (flag === AnimationComponentFlags.Watchable) {
+    let previous: TimelineParams | null = null
+
     watch(
       [mounted, resolveParameters],
-      ([isMounted, params], [, oldParams]) => {
+      ([isMounted, params]) => {
         if (!isMounted) return
-        if (oldParams && deepEqualWithSkip(oldParams, params, callbacks)) return
+        if (previous && deepEqualWithSkip(previous, params, callbacks)) return
+        previous = params
         rebuildTimeline(params)
       },
       { immediate: true },

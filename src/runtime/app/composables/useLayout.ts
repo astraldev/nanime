@@ -1,41 +1,72 @@
-import { computed, shallowRef, toValue, watchEffect, type MaybeRef, type MaybeRefOrGetter } from 'vue'
-import { createLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
-import { normalizeLayoutTarget } from '../utils/normalize-targets'
-import { extractNonFunctionProperties } from '../utils/extract-props'
+import { nextTick, shallowRef, toValue, watch, type MaybeRef, type MaybeRefOrGetter } from 'vue'
+import { createLayout, type AutoLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
+import type { DOMTargetSelector, Timeline } from 'animejs'
+import { normalizeLayoutTarget } from '../utils/targets'
+import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
+import { deepEqualWithSkip } from '../utils/deep-equal'
+import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
+
+const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
+
+type NanimeLayout = AutoLayout & {
+  patch: (callback: () => unknown, params?: LayoutAnimationParams) => Promise<Timeline>
+}
+
+function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams): NanimeLayout {
+  const layout = createLayout(root, params)
+  return Object.assign(layout, {
+    async patch(callback: () => unknown, animationParams?: LayoutAnimationParams) {
+      layout.record()
+      await callback()
+      await nextTick()
+      return layout.animate(animationParams)
+    },
+  })
+}
 
 export function useAnimeLayout(
   target: MaybeRef<Parameters<typeof normalizeLayoutTarget>[0]>,
-  options?: MaybeRefOrGetter<AutoLayoutParams>,
-) {
+  parameters?: MaybeRefOrGetter<AutoLayoutParams>,
+): BufferedProxyReturns<NanimeLayout> {
   const mounted = useMounted()
-  const layout = shallowRef<ReturnType<typeof createLayout> | null>(null)
+  const layout = shallowRef<NanimeLayout | null>(null)
 
-  watchEffect(() => {
-    if (!mounted.value) return
-    const wrapper = normalizeLayoutTarget(toValue(target))
-    if (!wrapper) return
-    const newLayout = createLayout(wrapper, toValue(options) || {})
-    layout.value = newLayout
+  const { proxy, flushBuffer } = createBufferedProxy<NanimeLayout>(layout, {
+    chainableMethods: new Set(['record']),
   })
+
+  const resolveRoot = () => normalizeLayoutTarget(toValue(target))
+  const resolveParameters = () => toValue(parameters) || {}
+
+  const rebuildLayout = (root: DOMTargetSelector, params: AutoLayoutParams) => {
+    layout.value?.revert()
+    layout.value = createNanimeLayout(root, params)
+    flushBuffer()
+  }
+
+  let previous: { root: DOMTargetSelector, params: AutoLayoutParams } | null = null
+
+  watch(
+    [mounted, resolveRoot, resolveParameters],
+    ([isMounted, root, params]) => {
+      if (!isMounted || !root) return
+      if (
+        previous
+        && previous.root === root
+        && deepEqualWithSkip(previous.params, params, callbacks)
+      ) return
+
+      previous = { root, params }
+      rebuildLayout(root, params)
+    },
+    { immediate: true },
+  )
 
   tryOnScopeDispose(() => {
     layout.value?.revert()
     layout.value = null
   })
 
-  return {
-    properties: computed(() => layout.value ? extractNonFunctionProperties(layout.value) : undefined),
-    record: () => layout.value?.record(),
-    revert: () => layout.value?.revert(),
-    animate: (options?: LayoutAnimationParams, cb?: () => void) => {
-      const animation = layout.value?.animate(options || {})
-      if (!animation && cb) return cb()
-      if (!animation) return
-      animation.play()
-      animation.then(() => cb?.())
-      if (animation.completed) return cb?.()
-      return animation
-    },
-  }
+  return proxy
 }

@@ -3,7 +3,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, it, expect, beforeAll } from 'vitest'
 import type { VueWrapper } from '@vue/test-utils'
 import TargetTemplates from './target-templates.vue'
-import { normalizeAnimeTarget, normalizeWaapiAnimeTarget, normalizeLayoutTarget } from '../../../src/runtime/app/utils/normalize-targets'
+import { normalizeAnimeTarget, normalizeWaapiAnimeTarget, normalizeLayoutTarget } from '../../../src/runtime/app/utils/targets'
 
 describe('normalize-targets', () => {
   let wrapper: VueWrapper<InstanceType<typeof TargetTemplates>>

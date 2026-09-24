@@ -1,10 +1,10 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
 import type { WAAPIAnimationParams } from 'animejs'
-import { normalizeWaapiAnimeTarget } from '../utils/normalize-targets'
+import { normalizeWaapiAnimeTarget } from '../utils/targets'
 import { waapi, type WAAPIAnimation } from 'animejs/waapi'
-import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
-import { markNanimeInstance, unwrapNanimeProxies } from '../utils/create-proxy'
+import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
+import { markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 
 export function useWaapiAnimate(
   target: Parameters<typeof normalizeWaapiAnimeTarget>[0],

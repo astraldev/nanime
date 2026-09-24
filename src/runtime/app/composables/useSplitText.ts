@@ -1,6 +1,6 @@
 import { computed, nextTick, shallowRef, toValue, watch, type ComputedRef, type MaybeRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { splitText, type TextSplitter } from 'animejs/text'
-import { normalizeSplitTextTarget } from '../utils/normalize-targets'
+import { normalizeSplitTextTarget } from '../utils/targets'
 import {
   extractNonFunctionProperties,
   extractOnlyFunctionProperties,

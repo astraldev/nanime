@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
 import { useAnimate } from '../../src/runtime/app/composables/useAnimate'
-import type { NanimeInstanceOptions } from '../../src/runtime/app/utils/types'
+import type { NanimeInstanceOptions } from '../../src/runtime/app/public/types'
 
 const props = defineProps<{ options?: NanimeInstanceOptions }>()
 

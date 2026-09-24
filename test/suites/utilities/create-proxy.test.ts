@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { shallowRef, ref, isReactive } from 'vue'
-import { createProxy, createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, isNanimeProxy, markNanimeInstance } from '../../../src/runtime/app/utils/create-proxy'
+import { createProxy, createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, isNanimeProxy, markNanimeInstance } from '../../../src/runtime/app/utils/proxy'
 import { toReactive } from '../../../src/runtime/app/utils/vue-helpers'
 
 describe('createProxy', () => {

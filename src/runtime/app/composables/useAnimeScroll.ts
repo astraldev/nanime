@@ -1,7 +1,7 @@
 import { shallowRef, toValue, watch, type MaybeRefOrGetter } from 'vue'
 import { onScroll } from 'animejs/events'
 import type { ScrollObserver, ScrollObserverParams } from 'animejs'
-import { createBufferedProxy, type BufferedProxyReturns } from '../utils/create-proxy'
+import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 
 const CHAINABLE_METHODS = new Set(['link', 'refresh', 'revert'])

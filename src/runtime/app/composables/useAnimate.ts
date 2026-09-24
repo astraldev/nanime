@@ -1,15 +1,15 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
-import { normalizeAnimeTarget } from '../utils/normalize-targets'
+import { normalizeAnimeTarget } from '../utils/targets'
 import type { AnimationParams, TargetsParam } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { keepTime } from 'animejs/utils'
-import type { NanimeInstanceOptions } from '../utils/types'
-import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
-import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/create-proxy'
+import type { NanimeInstanceOptions } from '../public/types'
+import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
+import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { resolveKeepTime } from '../utils/global-options'
-import { SHARED_ANIME_JS_CALLBACKS } from '../utils/normalizers/shared-callbacks'
+import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
