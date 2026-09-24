@@ -8,6 +8,8 @@ import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import { createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/create-proxy'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
 import { resolveKeepTime } from '../utils/global-options'
+import { deepEqualWithSkip } from '../utils/deep-equal'
+import { SHARED_ANIME_JS_CALLBACKS } from '../utils/normalizers/shared-callbacks'
 
 const CONTENT_METHODS = new Set([
   'add', 'set', 'remove', 'call', 'label', 'sync', 'stretch',
@@ -22,6 +24,8 @@ const CONTROL_METHODS = new Set([
 
 const CHAINABLE_METHODS = new Set([...CONTENT_METHODS, ...CONTROL_METHODS])
 const TARGET_METHODS = new Set(['set', 'remove'])
+
+const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -78,8 +82,9 @@ export function useAnimeTimeline(
   if (flag === AnimationComponentFlags.Watchable) {
     watch(
       [mounted, resolveParameters],
-      ([isMounted, params]) => {
+      ([isMounted, params], [, oldParams]) => {
         if (!isMounted) return
+        if (oldParams && deepEqualWithSkip(oldParams, params, callbacks)) return
         rebuildTimeline(params)
       },
       { immediate: true },

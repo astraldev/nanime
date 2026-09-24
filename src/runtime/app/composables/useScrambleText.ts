@@ -1,5 +1,5 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
-import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
+import { shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
 import { normalizeAnimeTarget } from '../utils/normalize-targets'
 import type { AnimationParams, ScrambleTextParams } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
@@ -9,6 +9,10 @@ import { scrambleText } from 'animejs/text'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
 import { markNanimeInstance } from '../utils/create-proxy'
 import { resolveKeepTime } from '../utils/global-options'
+import { deepEqualWithSkip } from '../utils/deep-equal'
+import { SHARED_ANIME_JS_CALLBACKS } from '../utils/normalizers/shared-callbacks'
+
+const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
 export function useScrambleText(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -28,23 +32,37 @@ export function useScrambleText(
   const animation = shallowRef(animate({}, {}))
   const mounted = useMounted()
 
-  function buildParams(): AnimationParams {
-    const anim = toValue(animationOptions) || {}
-    const scramble = toValue(scrambleOptions) || {}
-    return {
-      ...anim,
-      innerHTML: scrambleText(scramble),
-    }
-  }
+  const resolveTargets = () => normalizeAnimeTarget(target)
+  const resolveAnimationOptions = () => toValue(animationOptions) || {}
+  const resolveScrambleOptions = () => toValue(scrambleOptions) || {}
 
   if (flag === AnimationComponentFlags.Watchable) {
-    watchEffect(() => {
-      if (!mounted.value) return
-      const targets = normalizeAnimeTarget(target)
-      if (!targets) return
-      if (!keepsTime && animation.value) animation.value.revert()
-      animation.value = rebuildAnimation(targets, buildParams())
-    })
+    let previous: {
+      targets: NonNullable<ReturnType<typeof normalizeAnimeTarget>>
+      animOptions: AnimationParams
+      scrambleOpts: ScrambleTextParams
+    } | null = null
+
+    watch(
+      [mounted, resolveTargets, resolveAnimationOptions, resolveScrambleOptions],
+      ([isMounted, targets, animOptions, scrambleOpts]) => {
+        if (!isMounted || !targets) return
+        if (
+          previous
+          && previous.targets === targets
+          && deepEqualWithSkip(previous.animOptions, animOptions, callbacks)
+          && deepEqualWithSkip(previous.scrambleOpts, scrambleOpts)
+        ) return
+
+        previous = { targets, animOptions, scrambleOpts }
+        if (!keepsTime && animation.value) animation.value.revert()
+        animation.value = rebuildAnimation(targets, {
+          ...animOptions,
+          innerHTML: scrambleText(scrambleOpts),
+        })
+      },
+      { immediate: true },
+    )
 
     tryOnScopeDispose(() => {
       animation.value?.revert()
@@ -52,9 +70,12 @@ export function useScrambleText(
   }
   else {
     nextTick(() => {
-      const targets = normalizeAnimeTarget(target)
+      const targets = resolveTargets()
       if (!targets) return
-      animation.value = animate(targets, buildParams())
+      animation.value = animate(targets, {
+        ...resolveAnimationOptions(),
+        innerHTML: scrambleText(resolveScrambleOptions()),
+      })
     })
   }
 

@@ -7,8 +7,11 @@ import { keepTime } from 'animejs/utils'
 import type { NanimeInstanceOptions } from '../utils/types'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
 import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/create-proxy'
-import { shallowEqual } from '../utils/shallow-equal'
+import { deepEqualWithSkip } from '../utils/deep-equal'
 import { resolveKeepTime } from '../utils/global-options'
+import { SHARED_ANIME_JS_CALLBACKS } from '../utils/normalizers/shared-callbacks'
+
+const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -46,7 +49,11 @@ export function useAnimate(
       [mounted, resolveTargets, resolveBoundParameters],
       ([isMounted, targets, params]) => {
         if (!isMounted) return
-        if (previous && previous.targets === targets && shallowEqual(previous.params, params)) return
+        if (
+          previous
+          && previous.targets === targets
+          && deepEqualWithSkip(previous.params, params, callbacks)
+        ) return
 
         previous = { targets, params }
         rebuildAnimation(targets, params)
