@@ -101,7 +101,9 @@ latter.
 Always "AnimeJS" in prose and in AI build prompts, never "Anime.js" or
 "anime.js". (The npm package name `animejs` and import paths like
 `animejs/animation` are the one exception. Those stay as written in
-code.) Always `` `nanime` `` (lowercase, backticked) as a sentence
+code.) Search-facing text is the other exception: `seo.title`,
+`seo.description` and the homepage `<h1>` write "Anime.js", because that
+is what people search for. Always `` `nanime` `` (lowercase, backticked) as a sentence
 subject, never "Nanime".
 
 ## Calibrate against the real docs
@@ -252,7 +254,8 @@ offending sentence when a check fails. "Sounds fine" is not a pass.
 
 **Naming**
 - [ ] "AnimeJS" is spelled the same way everywhere in prose and in AI
-      build prompts (never "Anime.js" or "anime.js").
+      build prompts (never "Anime.js" or "anime.js"), except the SEO
+      frontmatter and the homepage `<h1>`, which write "Anime.js".
 - [ ] `` `nanime` `` is lowercase and backticked everywhere it's a
       sentence subject (never "Nanime").
 

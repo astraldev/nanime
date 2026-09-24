@@ -35,13 +35,13 @@ import { set, stagger, round } from 'animejs/utils'
 import type { AnimationParams, TargetsParam } from 'animejs' // types OK
 ```
 
-These are pre-optimized via Vite in `src/module.ts` (lines 31–50).
+These are pre-optimized via Vite (`optimizeDeps.include` in `src/module.ts`).
 
 ## Module Aliases
 
 Available throughout the Nuxt app:
 
-- `#nanime/composables` — composables directory
+- `#nanime/composables` — every composable, re-exported from `public/composables.ts` (for `composables: false`)
 - `#nanime/types` — type definitions
 - `#nanime/easings` — easing utilities
 - `#nanime/utils` — re-exports of `animejs/utils`
@@ -53,7 +53,8 @@ Available throughout the Nuxt app:
 
 1. Create `src/runtime/app/composables/use<Name>.ts`
 2. Export a named function `use<Name>` — follows Vue composable convention
-3. Auto-imported via `addImportsDir` in `src/module.ts:60-62` — no manual registration needed
+3. Auto-imported via `addImportsDir` in `src/module.ts` — no manual registration needed
+4. Add its re-export to `src/runtime/app/public/composables.ts` so `#nanime/composables` exposes it
 
 **Pattern to follow** (see existing composables for reference):
 
@@ -120,9 +121,13 @@ Runs sequentially before commit:
 ## Docs
 
 Docus-based site in `docs/`. Content lives in `docs/content/`:
-- `1.getting-started/` — intro, installation, configuration
-- `2.composables/` — one page per composable
-- `4.misc/` — easings, utils
+- `1.getting-started/` — intro, installation, configuration, performance, comparison (vs) pages
+- `2.composables/` — one page per composable, plus `99.utilities.md` (easings, utils, proxies)
+- `3.components/` — transitions and transition styles
+- `5.examples/` — showcase examples
+- `6.changes/` — changelog
+
+Prose rules live in `.agents/skills/create-docs/references/prose-style.md`: "AnimeJS" in prose, "Anime.js" only in SEO frontmatter and the homepage `<h1>`.
 
 Run docs dev: `cd docs && pnpm dev` (port 3001).
 
@@ -135,11 +140,12 @@ Run docs dev: `cd docs && pnpm dev` (port 3001).
 
 ## Testing
 
-4 vitest projects configured in `vitest.config.ts`:
-- **unit** — `test/unit/`
-- **e2e** — `test/e2e/`
+Vitest projects in `vitest.config.ts`:
 - **full-nuxt-apps** — `test/fixtures/`
+- **config** — `test/config/` (runs against the `keep-time` fixture)
 - **suites** — `test/suites/` (component tests via `mountSuspended`, real components, no mocks)
+
+`unit` and `e2e` projects are configured but their folders are empty. Tests are moving to a private repo.
 
 ## Agent Skills
 

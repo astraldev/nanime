@@ -120,7 +120,7 @@ Both take a [transition style](https://nanimejs.netlify.app/components/transitio
 
 - **Nuxt**: `^3.13.5` or `^4.0.0`
 - **Vue**: `^3.5.0`
-- **Anime.js**: `^4.0.0` (bundled / managed as runtime dependency)
+- **Anime.js**: `^4.5.0` (installed as a dependency of `nanime`)
 
 ---
 
@@ -156,7 +156,7 @@ Visit the official documentation site at **[https://nanimejs.netlify.app](https:
 
 ## License
 
-[MIT](./LICENSE) &copy; 2026 Ekure Edem
+[MIT](https://github.com/astraldev/nanime/blob/main/LICENSE) &copy; 2026 Ekure Edem
 
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/nanime/latest.svg?style=flat&colorA=020420&colorB=00DC82
