@@ -12,6 +12,13 @@ export default defineNuxtConfig({
           name: 'google-site-verification',
           content: 'k2rdqKBTN2zz6nvGRTA4DbeY0SUcq6lkEemQ_597FZs',
         },
+        { name: 'theme-color', content: '#252423' },
+      ],
+      link: [
+        { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+        { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+        { rel: 'manifest', href: '/site.webmanifest' },
       ],
     },
   },
@@ -62,6 +69,9 @@ export default defineNuxtConfig({
         'remark-mdc',
       ],
     },
+  },
+  icon: {
+    customCollections: [{ prefix: 'nanime', dir: './app/assets/icons' }],
   },
   llms: {
     domain: 'https://nanimejs.netlify.app',
