@@ -101,8 +101,8 @@ Both take a [transition style](https://nanimejs.netlify.app/components/transitio
 
 ## Comparison with Alternatives
 
-- **[vs Nuxt Modules](https://nanimejs.netlify.app/getting-started/vs-nuxt-modules)**: Compare `nanime` with `@hypernym/nuxt-anime` and raw Anime.js.
-- **[vs Vue Packages](https://nanimejs.netlify.app/getting-started/vs-vue-packages)**: Compare `nanime` with `vue-animejs` and `v-anime`.
+- **[Compared with Nuxt modules](https://nanimejs.netlify.app/getting-started/vs-nuxt-modules)**: Compare `nanime` with `@hypernym/nuxt-anime` and raw Anime.js.
+- **[Compared with Vue packages](https://nanimejs.netlify.app/getting-started/vs-vue-packages)**: Compare `nanime` with `vue-animejs` and `v-anime`.
 
 ---
 

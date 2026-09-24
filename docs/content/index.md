@@ -176,12 +176,11 @@ What you get
 ::
 
 ::u-page-section
-  :::spring-grid-demo
-  :::
+:spring-grid-demo
 
 #title
 See it in action
 
 #description
-Tiles spring in at the centre while the rest shift outwards, one after another. `<AnimeTransitionGroup>` runs all of it, with no CSS.
+Dashboards that rearrange, feeds that grow, panels that open and close. Change your data, and every element springs to its new place.
 ::
