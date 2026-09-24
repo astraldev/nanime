@@ -18,6 +18,19 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   site: {
     name: 'nanime',
+    url: 'https://nanimejs.netlify.app',
+  },
+  mdc: {
+    highlight: {
+      noApiRoute: false,
+    },
+  },
+  routeRules: {
+    '/composables': { redirect: { to: '/composables/introduction', statusCode: 301 } },
+    '/getting-started': { redirect: { to: '/getting-started/introduction', statusCode: 301 } },
+    '/misc': { redirect: { to: '/misc/introduction', statusCode: 301 } },
+    '/examples': { redirect: { to: '/examples/introduction', statusCode: 301 } },
+    '/changes': { redirect: { to: '/changes/changelog', statusCode: 301 } },
   },
   sourcemap: {
     server: false,
@@ -28,8 +41,9 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/'],
+      routes: ['/', '/404.html'],
       crawlLinks: true,
+      failOnError: false,
     },
   },
   vite: {
@@ -41,6 +55,13 @@ export default defineNuxtConfig({
         'remark-mdc',
       ],
     },
+  },
+  llms: {
+    domain: 'https://nanimejs.netlify.app',
+  },
+  sitemap: {
+    autoLastmod: true,
+    defaults: { changefreq: 'weekly', priority: 0.7 },
   },
   studio: {
     // @ts-expect-error from the docs

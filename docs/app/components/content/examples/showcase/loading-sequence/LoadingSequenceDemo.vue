@@ -2,25 +2,24 @@
 import { tryOnScopeDispose } from '@vueuse/core'
 import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleWrapper.vue'
 
-const SCRAMBLE_DURATION = 600
-const STEP_DELAY = 500 // 500ms pause after text has fully scrambled
+const DEFAULT_DELAY = 500 // fallback pause after text has fully scrambled
 
 interface SequenceStep {
   text: string
-  scrambleDuration?: number
+  delay?: number // custom pause mimicking work time
 }
 
 const steps: SequenceStep[] = [
-  { text: 'Initializing build context...' },
-  { text: 'Resolving module graph...', scrambleDuration: 750 },
-  { text: 'Scanning plugins & hooks...' },
-  { text: 'Transforming Vue SFC templates...', scrambleDuration: 800 },
-  { text: 'Compiling TypeScript definitions...', scrambleDuration: 700 },
-  { text: 'Tree-shaking unused exports...' },
-  { text: 'Bundling client & server chunks...', scrambleDuration: 800 },
-  { text: 'Optimizing CSS & assets...' },
-  { text: 'Generating route manifests...' },
-  { text: 'Emitting production build...' },
+  { text: 'Initializing build context...', delay: 400 },
+  { text: 'Resolving module graph...', delay: 800 },
+  { text: 'Scanning plugins & hooks...', delay: 500 },
+  { text: 'Transforming Vue SFC templates...', delay: 1200 },
+  { text: 'Compiling TypeScript definitions...', delay: 1500 },
+  { text: 'Tree-shaking unused exports...', delay: 600 },
+  { text: 'Bundling client & server chunks...', delay: 2000 },
+  { text: 'Optimizing CSS & assets...', delay: 1000 },
+  { text: 'Generating route manifests...', delay: 400 },
+  { text: 'Emitting production build...', delay: 1200 },
 ]
 
 const state = ref<'idle' | 'loading' | 'success'>('idle')
@@ -46,21 +45,17 @@ useAnimate(successMark, {
   ease: 'outQuad',
 })
 
-const scrambleDuration = computed(() => {
-  if (currentStepIndex.value >= 0 && currentStepIndex.value < steps.length) {
-    return steps[currentStepIndex.value]?.scrambleDuration ?? SCRAMBLE_DURATION
-  }
-  return SCRAMBLE_DURATION
-})
+// With revealRate: 50, interval is 1000/50 = 20ms per character
+const getScrambleDuration = (text: string) => Math.max(0, text.length - 1) * 20 + 300
 
 const scrambleConfig = computed(() => ({
   text: currentText.value,
   chars: '0123456789abcdef',
   settleDuration: 300,
-  revealRate: 20,
+  revealRate: 50,
 }))
 
-useScrambleText(statusEl, { duration: () => scrambleDuration.value }, scrambleConfig)
+useScrambleText(statusEl, {}, scrambleConfig)
 
 let timer: ReturnType<typeof setTimeout> | undefined
 
@@ -71,9 +66,10 @@ function advanceStep() {
     const current = steps[currentStepIndex.value]!
     currentText.value = `[${currentStepIndex.value + 1}/${steps.length}] ${current.text}`
 
-    const duration = current.scrambleDuration ?? SCRAMBLE_DURATION
-    // Wait for full sentence scramble + 500ms reading pause before next step
-    timer = setTimeout(advanceStep, duration + STEP_DELAY)
+    const duration = getScrambleDuration(currentText.value)
+    const stepDelay = current.delay ?? DEFAULT_DELAY
+    // Wait for full sentence scramble + step delay before next step
+    timer = setTimeout(advanceStep, duration + stepDelay)
   }
   else {
     state.value = 'success'
@@ -105,8 +101,9 @@ function togglePause() {
   else {
     spinnerAnimation?.play()
     const current = steps[currentStepIndex.value]
-    const duration = current?.scrambleDuration ?? SCRAMBLE_DURATION
-    timer = setTimeout(advanceStep, duration + STEP_DELAY)
+    const duration = getScrambleDuration(currentText.value)
+    const stepDelay = current?.delay ?? DEFAULT_DELAY
+    timer = setTimeout(advanceStep, duration + stepDelay)
   }
 }
 

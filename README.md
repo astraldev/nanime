@@ -6,51 +6,118 @@
 [![Nuxt][nuxt-src]][nuxt-href]
 [![release nanime][release-src]][release-href]
 
-This module provides a set of SSR safe composables to make it easier
-to use [AnimeJS](https://animejs.com/) in your Nuxt application.
+**Anime.js v4 composables for Nuxt and Vue 3. SSR-safe, reactive, auto-imported.**
 
-- [✨ &nbsp;Release Notes](/CHANGELOG.md)
-- [📖 &nbsp;Documentation](https://nanimejs.netlify.app)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/my-module?file=playground%2Fapp.vue) -->
+`nanime` (Anime.js for Nuxt) brings [Anime.js](https://animejs.com/) v4 into Vue 3 and Nuxt with idiomatic Composition API composables. They resolve element targets automatically, skip execution on the server to prevent hydration mismatches, and clean up animations on component unmount.
+
+- 📖 **Documentation**: [https://nanimejs.netlify.app](https://nanimejs.netlify.app)
+- 🎬 **Showcase Examples**: [https://nanimejs.netlify.app/examples/introduction](https://nanimejs.netlify.app/examples/introduction)
+- ✨ **Release Notes**: [https://github.com/astraldev/nanime/blob/main/CHANGELOG.md](https://github.com/astraldev/nanime/blob/main/CHANGELOG.md)
+
+---
 
 ## Features
 
-- Helps integrate animejs into your project without boilerplate code
-- SSR-safe composables (`useAnimate`, `useWaapiAnimate`, `useAnimeTimeline`, `useSplitText`, `useScrambleText`, `useDraggable`, `useAnimatable`, `useAnimeLayout`)
-- Deep Vue reactivity with template refs, computed properties, and getters
-- Direct access to AnimeJS utilities, easings, SVG, and text proxies
-- Automatic lifecycle management and memory cleanup on unmount
-- Zero-config setup with auto-imports
+- **SSR-safe by default**: animations initialize only on the client DOM, preventing hydration mismatches.
+- **Deep Vue reactivity**: watches template refs, reactive objects, and getters, rebuilding or carrying playheads across updates with `keepTime`.
+- **8 Auto-imported composables**: covering Anime.js animation, timeline, WAAPI, scroll, dragging, and text effects.
+- **Full Anime.js v4 power**: access utilities, springs, custom easings, SVG morphing, and text scramble proxies.
+- **Zero-config lifecycle**: automatic memory cleanup and event detachment on component unmount.
+
+---
 
 ## Quick Setup
 
-### Installation with `nuxt module` command
+### 1. Install module
 
-Install the module to your Nuxt application with one command:
+Install with Nuxt CLI:
 
 ```bash
 npx nuxt module add nanime
 ```
 
-### Manual install
+Or install via package manager:
 
 ```bash
-npm install nanime
+pnpm add nanime
 ```
 
-Then add the module to the `modules` section of your `nuxt.config.ts`:
+### 2. Register module (if installed manually)
 
-```ts
+```ts [nuxt.config.ts]
 export default defineNuxtConfig({
   modules: ['nanime'],
 })
 ```
 
-That's it! You can now use the module in your application.
+### 3. Usage
 
-## Documentation
+Composables are auto-imported and ready to use in any Vue component:
 
-Visit [https://nanimejs.netlify.app](https://nanimejs.netlify.app) for full documentation, composables API references, and interactive examples.
+```vue
+<script setup lang="ts">
+const box = useTemplateRef('box')
+
+useAnimate(box, {
+  translateX: 200,
+  ease: 'outExpo',
+  loop: true,
+  alternate: true,
+})
+</script>
+
+<template>
+  <div ref="box" class="box" />
+</template>
+```
+
+---
+
+## Composables
+
+| Composable | Wraps | Description |
+| :--- | :--- | :--- |
+| [`useAnimate`](https://nanimejs.netlify.app/composables/use-animate) | `animate()` | Animate CSS properties, transforms, SVG attributes, and plain JS objects. |
+| [`useWaapiAnimate`](https://nanimejs.netlify.app/composables/use-waapi-animate) | `waapi.animate()` | Off-main-thread Web Animations API for high-performance transforms and opacity. |
+| [`useAnimatable`](https://nanimejs.netlify.app/composables/use-animatable) | `createAnimatable()` | Property setters that tween, ideal for high-frequency cursor or pointer events. |
+| [`useSplitText`](https://nanimejs.netlify.app/composables/use-split-text) | `splitText()` | Split text into lines, words, and characters for staggered typography animations. |
+| [`useScrambleText`](https://nanimejs.netlify.app/composables/use-scramble-text) | `scrambleText()` | Scramble and reveal characters driven by reactive text strings. |
+| [`useDraggable`](https://nanimejs.netlify.app/composables/use-draggable) | `createDraggable()` | Physics-based dragging with boundary constraints, snapping, and axis locks. |
+| [`useAnimeTimeline`](https://nanimejs.netlify.app/composables/use-anime-timeline) | `createTimeline()` | Chain and synchronize multiple animations on a shared master clock. |
+| [`useAnimeScroll`](https://nanimejs.netlify.app/composables/use-anime-scroll) | `onScroll()` | Drive animations directly from page or container scroll progress. |
+
+---
+
+## Comparison with Alternatives
+
+- **[vs Nuxt Modules](https://nanimejs.netlify.app/getting-started/vs-nuxt-modules)**: Compare `nanime` with `@hypernym/nuxt-anime` and raw Anime.js.
+- **[vs Vue Packages](https://nanimejs.netlify.app/getting-started/vs-vue-packages)**: Compare `nanime` with `vue-animejs` and `v-anime`.
+
+---
+
+## AI Agents & LLM Discoverability
+
+`nanime` includes dedicated support for AI agents and LLM-assisted development:
+
+- **llms.txt**: Structured markdown documentation feed for LLMs is available at [https://nanimejs.netlify.app/llms.txt](https://nanimejs.netlify.app/llms.txt) and [llms-full.txt](https://nanimejs.netlify.app/llms-full.txt).
+- **MCP Server**: Query documentation programmatically via the Model Context Protocol endpoint at `https://nanimejs.netlify.app/mcp`.
+- **Bundled Agent Skills**: The npm package includes agent skill definitions in `skills/nanime` for Claude Code, Cursor, and related agent environments.
+
+---
+
+## Requirements
+
+- **Nuxt**: `^3.13.5` or `^4.0.0`
+- **Vue**: `^3.5.0`
+- **Anime.js**: `^4.0.0` (bundled / managed as runtime dependency)
+
+---
+
+## Documentation & Demos
+
+Visit the official documentation site at **[https://nanimejs.netlify.app](https://nanimejs.netlify.app)** for interactive live demos, full API references, and step-by-step guides.
+
+---
 
 ## Contribution
 
@@ -76,6 +143,10 @@ Visit [https://nanimejs.netlify.app](https://nanimejs.netlify.app) for full docu
 
 </details>
 
+## License
+
+[MIT](./LICENSE) &copy; 2026 Ekure Edem
+
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/nanime/latest.svg?style=flat&colorA=020420&colorB=00DC82
 [npm-version-href]: https://npmjs.com/package/nanime
@@ -84,11 +155,10 @@ Visit [https://nanimejs.netlify.app](https://nanimejs.netlify.app) for full docu
 [npm-downloads-href]: https://npm.chart.dev/nanime
 
 [license-src]: https://img.shields.io/npm/l/nanime.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/nanime
+[license-href]: https://github.com/astraldev/nanime/blob/main/LICENSE
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt
 [nuxt-href]: https://nuxt.com
 
 [release-src]: https://github.com/astraldev/nanime/actions/workflows/npm-publish.yml/badge.svg
 [release-href]: https://github.com/astraldev/nanime/actions/workflows/npm-publish.yml
-
