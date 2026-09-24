@@ -45,7 +45,8 @@ No other top-level headings.
 
 ## `## Usage`
 
-- Single `:render-code-block-preview{src="examples/composables/<Name>Demo.vue"}`
+- Single `:render-code-block-preview{src="examples/composables/<Name>Demo.vue"}`,
+  written to [demo-spec.md](demo-spec.md)
 - At most one paragraph after, only for behaviour the demo cannot show
 - Everything else belongs in Caveats
 
@@ -103,8 +104,8 @@ Appendix rules.
 - Contains only Nanime-owned aliases appearing in this page's signature
 - AnimeJS-owned types are linked, never re-declared
 - Shared aliases (`AnimeTargets`, `BufferedProxyReturns`, `NanimeInstanceOptions`)
-  live in `docs/content/4.misc/` and are included once that page exists; until then
-  copy verbatim from `src/runtime/app/utils/types.ts`
+  are copied verbatim from `src/runtime/app/public/types.ts` (the `#nanime/types`
+  alias) or `src/runtime/app/utils/targets.ts`
 
 ## `## See also`
 
@@ -154,6 +155,8 @@ Decides callout vs Caveat. Applies to all four levels.
 - A type name appears in prose at most once per page; elsewhere it is in a `type=`
   attribute, a signature, or a table cell
 - `{lang="ts-type"}` on every inline type in prose
+- No `|` inside a table cell, escaped or not. Nuxt Studio strips `\|` on save
+  and splits the cell. Write unions as code spans joined by "or"
 - Prose wraps at 80 columns; code blocks unwrapped
 - Second person, present tense
 - No "simply", "just", "easily"; no emoji

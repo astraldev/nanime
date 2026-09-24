@@ -29,7 +29,7 @@ Standard Docus frontmatter with title, Description, and **navigation icon** (pic
 
 ### 2. Type Definition & Arguments
 **Type Definition**: Include **ONLY** the function signature at the top.
-**Arguments**: Use `::field-group` and `::field` components. Use specific types extracted from `src/runtime/app/utils/normalize-targets.ts` (e.g., `AnimeTargets`, `WaapiTargets`) to ensure accuracy.
+**Arguments**: Use `::field-group` and `::field` components. Use specific types extracted from `src/runtime/app/utils/targets.ts` (e.g., `AnimeTargets`, `WaapiTargets`) to ensure accuracy.
 
 ### 3. Usage Section
 Use `::render-code-block-preview` component pointing to a demo component in `examples/composables/`.
@@ -49,7 +49,7 @@ Add an `## API` section with a `### Types` sub-section at the bottom of the file
 ## Workflow
 
 1.  **Analyze Source**: Read the composable source file to determine input types and return structure.
-2.  **Determine Targets**: Check `normalize-targets.ts` for accepted target types.
+2.  **Determine Targets**: Check `utils/targets.ts` for accepted target types.
 3.  **Draft Content**:
     - **Frontmatter**: Include semantic `icon`.
     - **Type Definition**: Function signature only.
@@ -72,12 +72,14 @@ examples/
 
 ### Rules for example files
 
+Follow [../create-docs/references/demo-spec.md](../create-docs/references/demo-spec.md). The key points: every control goes through `ExampleWrapper`'s `actions` prop, handlers are named functions, randomness comes from `#nanime/utils`, boxes are compact `rounded-lg bg-primary`, and there are no comments.
+
 1. **Wrap content** in `ExampleWrapper` — import from `~/components/shared/ExampleWrapper.vue`
 2. **Shared CSS classes** (`simple-box`, `spot`) are defined globally in `ExampleWrapper.vue` — use them as template classes, **never via `@apply`** (they aren't Tailwind utilities)
 3. **Scoped styles** that need Tailwind: add `@reference "~/assets/css/main.css"` at the top of the `<style scoped>` block
 4. **Auto-imports** work — `ref`, `useTemplateRef`, composables like `useAnimate` don't need explicit imports
 5. **Module imports** use `#nanime/utils`, `#nanime/easings`, `#nanime/proxies/text` aliases
-6. The `ExampleWrapper` tag and its import are **automatically stripped** from the displayed code in docs
+6. The `ExampleWrapper` tag and its import are **automatically stripped** from the displayed code in docs. So are the top-level `const actions` declaration and any `function <name>Action` helper. The named handlers they call stay visible.
 
 ## Examples
 
@@ -128,7 +130,7 @@ Returns a `ReturnType` object.
 ### Types
 
 \`\`\`ts
-type MyAnimationTargets = ... // from normalize-targets.ts
+type MyAnimationTargets = ... // from utils/targets.ts
 type Options = ...
 \`\`\`
 ```

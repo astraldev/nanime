@@ -297,6 +297,8 @@ For page structure and heading style, see [references/writing-guide.md](referenc
 For prose voice (punctuation, filler, sentence shapes, code-sample comments), see [references/prose-style.md](references/prose-style.md).
 For MDC components, see [references/mdc-components.md](references/mdc-components.md).
 For composable API pages (`docs/content/2.composables/`), follow [references/composable-page-spec.md](references/composable-page-spec.md) — it overrides the general page structure.
+For component pages (`docs/content/3.components/`), follow [references/component-page-spec.md](references/component-page-spec.md).
+For every live demo in `docs/app/components/content/examples/`, follow [references/demo-spec.md](references/demo-spec.md).
 
 ---
 

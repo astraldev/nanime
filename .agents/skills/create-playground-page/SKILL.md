@@ -1,74 +1,56 @@
 ---
 name: Create Playground Pages
-description: Guide for creating pages in the playground for the module
+description: Guide for creating test pages for a composable or component in the docs app's playground routes
 ---
 
 # When to use
 
-Use this skill when you need to create a page in the playground for testings
+Use this skill to build a page for testing a composable or component by
+hand, including edge cases that don't belong in the docs.
 
+# Where pages live
+
+There is no separate `playground/` app. Test pages live in the docs app
+under `docs/app/pages/playground/`, e.g.
+`docs/app/pages/playground/transitions.vue`. They are served at
+`/playground/<name>` by `pnpm dev` (port 3001) and are not linked from the
+docs navigation.
+
+The docs app loads the module's built `dist/`, not `src/`. After changing
+`src/`, restart `pnpm dev`, which rebuilds the module, before testing.
 
 # How to create a page
 
-Playground pages reflect the same structure of files at
+1. Read the source under `src/runtime/app/` (`composables/`,
+   `components/`) to learn the props, parameters and return values.
+2. Create `docs/app/pages/playground/<name>.vue`. Add
+   `useSeoMeta({ title: '<Name> playground', robots: 'noindex, nofollow' })`.
+3. Use Nuxt UI components (`UContainer`, `UButton`), which the docs app
+   already has.
+4. Cover the normal cases, then add an "Edge cases" section. Each case gets
+   its own small block with a one-line caption saying what to watch for:
+   rapid clicking, user CSS transitions on the element, user inline styles,
+   centred content (`grid place-items-center`), siblings next to the
+   target, reverts on unmount.
+5. For Anime.js reference behaviour, read
+   `node_modules/animejs/dist/modules/<module>/`. There is no `anime-core`
+   submodule. Use only APIs the module exposes.
 
-```
-src/runtime/app
-```
+# Rules
 
-1. Confirm the structure of the composable you want to create a page for
-   e.g useSplitText which is at `src/runtime/app/composables/useSplitText.ts`
-2. Create a page (a vue file) at the `playground/pages` directory, under the `composables` route
-   e.g `playground/app/pages/composables/useSplitText.vue`
-3. Use the premade components at `playground/app/components` to create the page. The components
-   are already styled and ready to use. You do not need to import them. you can use it as PWrapper, PButton, ...etc
-4. Depending on the composable being created, read from the anime-core/anime directory to see examples
-   and how they are created
-
-   Do not however use examples with utilites not created, or provided in the modules. Thus, the only valid examples
-   that can be created are those that use utilities already used in the module directory, i.e text, animate, animatable, timeline, layout.
-
-   createScope in examples ...etc can not be used
-
-
-# IMPORTANT RULES TO FOLLOW
-
-1. **IMPORTANT** Ensure that "as" is not being used for props and data and composable returns and no data is casted
-2. Do not modify the structure of the already created composable
-3. After a page is created, add a section to the index.vue file at `playground/app/pages/index.vue`
-4. Ensure that no components are created multiple times, always use the components from the `playground/app/components` directory or create one there
-   if it doesn't exist and is absolutely needed
-5. When creating the page for composables, ensure that the examples are fully structured, and cover the special props in the used composable
-
-# Best Practices
-
-## VueUse Composables
-- Prefer VueUse composables over manual event handling when available
-- Common use cases: `useMouseInElement`, `useElementSize`, `useIntersectionObserver`, `useResizeObserver`
-- Use reactive properties like `isOutside` for conditional logic
-
-## TypeScript Safety
-- Always use optional chaining (`?.()`) when calling methods on dynamically created objects
-- Avoid using `as` type assertions unless absolutely necessary (e.g., edge cases with library type definitions)
-- Let TypeScript infer types when possible
-
-## Reactive Patterns
-- Use `watchEffect` for side effects that depend on multiple reactive values
-- Guard reactive effects with early returns when conditions aren't met
-- Example: `if (isOutside.value) return` to limit execution scope
-
-## Example: Mouse Tracking Pattern
-```vue
-const containerRef = useTemplateRef('container')
-const { elementX, elementY, isOutside } = useMouseInElement(containerRef)
-
-watchEffect(() => {
-  if (isOutside.value) return
-  // Your logic here using elementX.value, elementY.value
-})
-```
+1. No `as` casts and no `any`.
+2. No comments.
+3. Don't change the composable or component to make the page work. If the
+   page exposes a bug, report it.
+4. Verify in a visible browser. The in-app browser pane often reports
+   `document.visibilityState === 'hidden'`. When hidden,
+   `requestAnimationFrame` doesn't fire and Anime.js pauses, so nothing
+   animates. Say plainly that visual checks were not possible rather than
+   guessing. Inline styles written synchronously (e.g. by layout at the
+   start of a move) can still be read with `javascript_tool`.
 
 # Verification
 
-1. ensure `pnpm test:types` passes
-2. ensure `pnpm test` passes
+1. `pnpm lint` passes
+2. `pnpm test:types` passes
+3. The route returns 200 from the running dev server
