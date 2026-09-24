@@ -285,7 +285,7 @@ Enter, leave and list animations in the template, with no CSS to write.
   to: /components/transition-styles
   ---
   #title
-  Transition styles
+  Transition styles :badge[New]{variant="subtle"}
 
   #description
   Seven built-in styles, plus your own in `app.config.ts`.
@@ -308,7 +308,7 @@ An agent skill and machine-readable docs, kept in the same repository as the mod
   to: /getting-started/installation#use-with-ai-agents
   ---
   #title
-  Agent skill
+  Agent skill :badge[New]{variant="subtle"}
 
   #description
   Install with `npx skills add astraldev/nanime --skill nanime`.
