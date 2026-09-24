@@ -6,6 +6,11 @@ import type { AnimatableObject, AnimatableParams, TargetsParam } from 'animejs'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
 
+/**
+ * Creates an Anime.js `createAnimatable()` for `target` once it is mounted.
+ * The animatable is rebuilt when the resolved target changes, and reverted
+ * when the scope is disposed.
+ */
 export function useAnimatable(
   target: Parameters<typeof normalizeAnimeTarget>[0],
   options?: MaybeRefOrGetter<AnimatableParams>,

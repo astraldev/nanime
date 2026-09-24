@@ -14,6 +14,11 @@ import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
+/**
+ * Scrambles the text of `target` with Anime.js `scrambleText()`. The
+ * animation is rebuilt when the target or either options object changes,
+ * and reverted when the scope is disposed.
+ */
 export function useScrambleText(
   target: Parameters<typeof normalizeAnimeTarget>[0],
   animationOptions?: MaybeRefOrGetter<AnimationParams>,

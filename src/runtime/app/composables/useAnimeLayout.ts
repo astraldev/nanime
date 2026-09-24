@@ -10,6 +10,10 @@ import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
 type NanimeLayout = AutoLayout & {
+  /**
+   * Records the layout, runs `callback`, waits for Vue to patch the DOM, then
+   * animates. Resolves with the Anime.js timeline of the animation.
+   */
   patch: (callback: () => unknown, params?: LayoutAnimationParams) => Promise<Timeline>
 }
 
@@ -25,6 +29,11 @@ function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams): 
   })
 }
 
+/**
+ * Animates position and size changes of a container's children with Anime.js
+ * `createLayout()`. The layout is rebuilt when `target` or `parameters` change,
+ * and reverted when the scope is disposed. Calls made before mount are buffered.
+ */
 export function useAnimeLayout(
   target: MaybeRef<Parameters<typeof normalizeLayoutTarget>[0]>,
   parameters?: MaybeRefOrGetter<AutoLayoutParams>,

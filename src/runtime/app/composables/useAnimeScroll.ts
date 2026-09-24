@@ -6,6 +6,11 @@ import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 
 const CHAINABLE_METHODS = new Set(['link', 'refresh', 'revert'])
 
+/**
+ * Creates an Anime.js `onScroll()` observer once the component is mounted.
+ * The observer is rebuilt when `parameters` change, and reverted when the
+ * scope is disposed. Calls made before mount are buffered.
+ */
 export function useAnimeScroll(
   parameters?: MaybeRefOrGetter<ScrollObserverParams>,
 ): BufferedProxyReturns<ScrollObserver> {

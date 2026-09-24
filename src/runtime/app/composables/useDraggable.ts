@@ -34,6 +34,12 @@ type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container
   y?: boolean | Prettify<MakeRefable<DraggableAxisParam, 'snap', Draggable>>
 }, RefableProps, Draggable>
 
+/**
+ * Makes `target` draggable with Anime.js `createDraggable()` once it is
+ * mounted. Refs in `options` update the draggable in place, and a new
+ * target, trigger or container rebuilds it. Calls made before mount are
+ * buffered.
+ */
 export function useDraggable(
   target: DraggableTypes['target'],
   options?: DraggableOptions,

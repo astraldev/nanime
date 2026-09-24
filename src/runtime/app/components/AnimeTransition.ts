@@ -4,6 +4,7 @@ import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
 
+/** Order of the leave and enter animations when one element replaces another. */
 export type AnimeTransitionMode = 'in-out' | 'out-in' | 'default'
 
 export interface AnimeTransitionProps {

@@ -6,6 +6,11 @@ import { waapi, type WAAPIAnimation } from 'animejs/waapi'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 
+/**
+ * Runs an Anime.js `waapi.animate()` on `target` once it is mounted. The
+ * animation is rebuilt when `target` or `parameters` change, and reverted
+ * when the scope is disposed.
+ */
 export function useWaapiAnimate(
   target: Parameters<typeof normalizeWaapiAnimeTarget>[0],
   parameters?: MaybeRefOrGetter<WAAPIAnimationParams>,

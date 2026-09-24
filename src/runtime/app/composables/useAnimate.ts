@@ -13,6 +13,11 @@ import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
+/**
+ * Runs an Anime.js `animate()` on `target` once it is mounted. The animation
+ * is rebuilt when `target` or `parameters` change, and reverted when the
+ * scope is disposed.
+ */
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
   parameters?: MaybeRefOrGetter<AnimationParams>,
