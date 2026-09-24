@@ -20,7 +20,8 @@
 
 - **SSR-safe by default**: animations initialize only on the client DOM, preventing hydration mismatches.
 - **Deep Vue reactivity**: watches template refs, reactive objects, and getters, rebuilding or carrying playheads across updates with `keepTime`.
-- **8 Auto-imported composables**: covering Anime.js animation, timeline, WAAPI, scroll, dragging, and text effects.
+- **9 Auto-imported composables**: covering Anime.js animation, timeline, WAAPI, scroll, layout, dragging, and text effects.
+- **Transition components**: `<AnimeTransition>` and `<AnimeTransitionGroup>` animate elements and `v-for` lists in and out with Anime.js, with no CSS to write.
 - **Full Anime.js v4 power**: access utilities, springs, custom easings, SVG morphing, and text scramble proxies.
 - **Zero-config lifecycle**: automatic memory cleanup and event detachment on component unmount.
 
@@ -85,6 +86,16 @@ useAnimate(box, {
 | [`useDraggable`](https://nanimejs.netlify.app/composables/use-draggable) | `createDraggable()` | Physics-based dragging with boundary constraints, snapping, and axis locks. |
 | [`useAnimeTimeline`](https://nanimejs.netlify.app/composables/use-anime-timeline) | `createTimeline()` | Chain and synchronize multiple animations on a shared master clock. |
 | [`useAnimeScroll`](https://nanimejs.netlify.app/composables/use-anime-scroll) | `onScroll()` | Drive animations directly from page or container scroll progress. |
+| [`useAnimeLayout`](https://nanimejs.netlify.app/composables/use-anime-layout) | `createLayout()` | Animate position and size changes, with `patch()` for Vue-driven DOM updates. |
+
+## Components
+
+| Component | Description |
+| --- | --- |
+| [`<AnimeTransition>`](https://nanimejs.netlify.app/components/transitions) | Vue's `<Transition>`, with Anime.js enter and leave animations. |
+| [`<AnimeTransitionGroup>`](https://nanimejs.netlify.app/components/transitions#lists) | `<TransitionGroup>` for `v-for` lists, with moves animated by Anime.js layout. |
+
+Both take a [transition style](https://nanimejs.netlify.app/components/transition-styles) name (`fade`, `slide-up`, `scale`, `swap`, or your own from `app.config.ts`) or inline Anime.js params.
 
 ---
 
