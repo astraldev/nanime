@@ -1,5 +1,5 @@
 import { createLayout, type AutoLayout } from 'animejs/layout'
-import { TransitionGroup, defineComponent, getCurrentInstance, h, onBeforeUpdate, onUpdated } from 'vue'
+import { TransitionGroup, cloneVNode, defineComponent, getCurrentInstance, getTransitionRawChildren, h, onBeforeUpdate, onUpdated, type VNode } from 'vue'
 import type { AnimationParams, AnimeMoveParams, AnimeTransitionStyleName } from '../public/types'
 import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { createTransitionRunner } from '../transitions/runner'
@@ -170,8 +170,27 @@ export default defineComponent(
       runner.dispose()
     })
 
+    const mounted = new Map<VNode['key'], Element>()
+
+    function trackMount(item: VNode) {
+      return cloneVNode(item, {
+        onVnodeMounted: (vnode: VNode) => {
+          if (vnode.el instanceof Element) mounted.set(item.key, vnode.el)
+        },
+      })
+    }
+
+    function takeLeaving(keys: Set<VNode['key']>) {
+      const leaving = [...mounted].filter(([key]) => !keys.has(key))
+      leaving.forEach(([key]) => mounted.delete(key))
+      return leaving
+        .map(([, el]) => el)
+        .sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1)
+    }
+
     return () => {
-      const children = slots.default?.()
+      const children = getTransitionRawChildren(slots.default?.() ?? []).map(trackMount)
+      runner.expectLeaving(takeLeaving(new Set(children.map(child => child.key))))
       return h(
         TransitionGroup,
         { tag: props.tag, css: false, moveClass: 'anime-move', appear: props.appear, ...runner.hooks },
