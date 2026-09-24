@@ -56,10 +56,10 @@ What you get
   to: /getting-started/installation
   ---
   #title
-  Built with [Nuxt 4]{.text-primary}
+  Made for [Nuxt]{.text-primary}
 
   #description
-  Composables are auto-imported across your Nuxt app
+  Composables and components are auto-imported, and AnimeJS is pre-bundled by Vite
   :::
 
   :::u-page-card
@@ -67,14 +67,41 @@ What you get
   spotlight: true
   icon: i-simple-icons-animedotjs
   spotlightColor: var(--color-primary)
-  target: _blank
-  to: https://animejs.com/
+  to: /composables/introduction
   ---
   #title
-  Powered by [AnimeJS]{.text-primary}
+  Nine [composables]{.text-primary}
 
   #description
-  All of AnimeJS v4, wrapped directly with Vue reactivity
+  Animate, WAAPI, animatable, split and scramble text, draggable, timeline, scroll and layout
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-swap
+  spotlightColor: var(--color-primary)
+  to: /components/transitions
+  ---
+  #title
+  Transition [components]{.text-primary} :badge[New]{variant="subtle"}
+
+  #description
+  Animate v-if and v-for changes, including list moves, with no CSS to write
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-palette
+  spotlightColor: var(--color-primary)
+  to: /components/transition-styles
+  ---
+  #title
+  Transition [styles]{.text-primary} :badge[New]{variant="subtle"}
+
+  #description
+  Seven built-in styles, plus your own with keyframes, filters and springs
   :::
 
   :::u-page-card
@@ -88,218 +115,37 @@ What you get
   [SSR]{.text-primary} safe
 
   #description
-  Nothing runs on the server, so there is no hydration mismatch
+  Nothing runs on the server, and every animation reverts when its component unmounts
   :::
 
   :::u-page-card
   ---
   spotlight: true
-  icon: i-tabler-settings-bolt
+  icon: i-ph-arrows-clockwise
   spotlightColor: var(--color-primary)
   to: /getting-started/configuration
   ---
   #title
-  Customizable
+  [Reactive]{.text-primary} parameters
 
   #description
-  Use auto-imports, or import from `#nanime/composables`
+  Pass a getter and the animation rebuilds whenever a ref inside it changes
   :::
-::
 
-::u-page-section
-#title
-Composables
-
-#description
-One composable per AnimeJS API, with a live demo on each page.
-
-#features
   :::u-page-card
   ---
   spotlight: true
-  icon: i-ph-play-circle
+  icon: i-ph-code
   spotlightColor: var(--color-primary)
   to: /composables/use-animate
   ---
   #title
-  useAnimate
+  The real [instance]{.text-primary}
 
   #description
-  CSS properties, transforms, SVG, and plain JavaScript objects.
+  Each composable returns the AnimeJS instance, so the AnimeJS docs apply line for line
   :::
 
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-lightning
-  spotlightColor: var(--color-primary)
-  to: /composables/use-waapi-animate
-  ---
-  #title
-  useWaapiAnimate
-
-  #description
-  The Web Animations API, running off the main thread.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-cube
-  spotlightColor: var(--color-primary)
-  to: /composables/use-animatable
-  ---
-  #title
-  useAnimatable
-
-  #description
-  Setters that tween, for values that change many times a second.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-text-t
-  spotlightColor: var(--color-primary)
-  to: /composables/use-split-text
-  ---
-  #title
-  useSplitText
-
-  #description
-  Text as lines, words, or characters, ready to stagger.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-shuffle
-  spotlightColor: var(--color-primary)
-  to: /composables/use-scramble-text
-  ---
-  #title
-  useScrambleText :badge[New]{variant="subtle"}
-
-  #description
-  Scramble and reveal, driven by reactive text.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-hand-grabbing
-  spotlightColor: var(--color-primary)
-  to: /composables/use-draggable
-  ---
-  #title
-  useDraggable
-
-  #description
-  Dragging with snapping, bounds, and axis constraints.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-clock
-  spotlightColor: var(--color-primary)
-  to: /composables/use-anime-timeline
-  ---
-  #title
-  useAnimeTimeline
-
-  #description
-  Several animations on one clock you can play, pause, and scrub.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-mouse-scroll
-  spotlightColor: var(--color-primary)
-  to: /composables/use-anime-scroll
-  ---
-  #title
-  useAnimeScroll :badge[New]{variant="subtle"}
-
-  #description
-  Drive an animation from scroll position.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-layout
-  spotlightColor: var(--color-primary)
-  to: /composables/use-anime-layout
-  ---
-  #title
-  useAnimeLayout :badge[New]{variant="subtle"}
-
-  #description
-  Animate position and size when the layout changes.
-  :::
-::
-
-::u-page-section
-#title
-Components
-
-#description
-Enter, leave and list animations in the template, with no CSS to write.
-
-#features
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-swap
-  spotlightColor: var(--color-primary)
-  to: /components/transitions
-  ---
-  #title
-  AnimeTransition :badge[New]{variant="subtle"}
-
-  #description
-  Vue's `<Transition>`, animated by AnimeJS.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-list-plus
-  spotlightColor: var(--color-primary)
-  to: /components/transitions#lists
-  ---
-  #title
-  AnimeTransitionGroup :badge[New]{variant="subtle"}
-
-  #description
-  `v-for` lists that animate items in, out and into new positions.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-palette
-  spotlightColor: var(--color-primary)
-  to: /components/transition-styles
-  ---
-  #title
-  Transition styles :badge[New]{variant="subtle"}
-
-  #description
-  Seven built-in styles, plus your own in `app.config.ts`.
-  :::
-::
-
-::u-page-section
-#title
-Built for AI agents
-
-#description
-An agent skill and machine-readable docs, kept in the same repository as the module.
-
-#features
   :::u-page-card
   ---
   spotlight: true
@@ -308,89 +154,34 @@ An agent skill and machine-readable docs, kept in the same repository as the mod
   to: /getting-started/installation#use-with-ai-agents
   ---
   #title
-  Agent skill :badge[New]{variant="subtle"}
+  Built for [AI agents]{.text-primary} :badge[New]{variant="subtle"}
 
   #description
-  Install with `npx skills add astraldev/nanime --skill nanime`.
+  An agent skill, llms.txt and an MCP server, so coding agents get nanime right
   :::
 
   :::u-page-card
   ---
   spotlight: true
-  icon: i-ph-file-text
+  icon: i-ph-feather
   spotlightColor: var(--color-primary)
-  target: _blank
-  to: /llms-full.txt
+  to: /composables/utilities
   ---
   #title
-  llms.txt
+  [Small]{.text-primary}
 
   #description
-  Every docs page as plain text, at `/llms.txt` and `/llms-full.txt`.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-plugs
-  spotlightColor: var(--color-primary)
-  to: /getting-started/installation#use-with-ai-agents
-  ---
-  #title
-  MCP server
-
-  #description
-  Lets an agent search these docs at `nanimejs.netlify.app/mcp`.
+  No runtime dependencies beyond AnimeJS and one tiny helper
   :::
 ::
 
 ::u-page-section
+  :::spring-grid-demo
+  :::
+
 #title
-The rest of the toolkit
+See it in action
 
 #description
-Easings, utilities, and proxies to use inside composable parameters.
-
-#features
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-chart-line-up
-  spotlightColor: var(--color-primary)
-  to: /composables/utilities
-  ---
-  #title
-  Easings
-
-  #description
-  Spring physics and custom cubic Bézier curves.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-wrench
-  spotlightColor: var(--color-primary)
-  to: /composables/utilities
-  ---
-  #title
-  Utils
-
-  #description
-  Stagger, snap, lerp, and helpers from `animejs/utils`.
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-plugs-connected
-  spotlightColor: var(--color-primary)
-  to: /composables/utilities#proxies
-  ---
-  #title
-  Proxies
-
-  #description
-  SVG morphing, motion paths, drawable strokes, and text scrambling.
-  :::
+Tiles spring in at the centre while the rest shift outwards, one after another. `<AnimeTransitionGroup>` runs all of it, with no CSS.
 ::
