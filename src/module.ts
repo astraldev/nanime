@@ -6,7 +6,6 @@ export interface ModuleOptions {
   /** Add composables for animejs */
   composables: boolean
   /** Register `<AnimeTransition>` and `<AnimeTransitionGroup>` */
-  /** Register `<AnimeTransition>` and `<AnimeTransitionGroup>` */
   components: boolean
   /**
    * Default for every composable's `keepTime` option. `true` carries the
@@ -93,7 +92,7 @@ export default defineNuxtModule<ModuleOptions>({
       _nuxt.options.css.push(resolver.resolve('./runtime/app/components/anime-transition.css'))
     }
 
-    _nuxt.options.alias[`#${__configKey}/composables`] = resolver.resolve('./runtime/app/composables')
+    _nuxt.options.alias[`#${__configKey}/composables`] = resolver.resolve('./runtime/app/public/composables')
     _nuxt.options.alias[`#${__configKey}/types`] = resolver.resolve('./runtime/app/public/types')
     _nuxt.options.alias[`#${__configKey}/easings`] = resolver.resolve('./runtime/app/public/easings')
     _nuxt.options.alias[`#${__configKey}/utils`] = resolver.resolve('./runtime/app/public/utils')
