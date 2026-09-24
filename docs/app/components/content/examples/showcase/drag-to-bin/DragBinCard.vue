@@ -1,188 +1,147 @@
 <script setup lang="ts">
 import { spring } from '#nanime/easings'
 
-const props = withDefaults(defineProps<{
-  label: string
-  binned: boolean
-  bin?: HTMLElement | null
-  padding?: number
-}>(), { padding: 5 })
+interface Point {
+  x: number
+  y: number
+}
 
-const emit = defineEmits<{
-  bin: []
-  over: [value: boolean]
-}>()
-
-const el = useTemplateRef('el')
-const over = ref(false)
-
-/** Anime drives the blend; the box and the stick offset are interpolated from it. */
-const blend = reactive({ p: 0 })
-const blendTo = useAnimatable(blend, { p: 0, duration: 350, ease: 'outQuad' })
-
-type Box = {
+interface Size {
   width: number
   height: number
-  deltaW: number
-  deltaH: number
-  halfDeltaW: number
-  halfDeltaH: number
 }
 
-type Geometry = {
-  originX: number
-  originY: number
-  binCenterX: number
-  binCenterY: number
-  bin: DOMRect
+const props = defineProps<{
+  name: string
+  icon: string
+  bin: HTMLElement | null
+}>()
+
+const emit = defineEmits<{
+  over: [value: boolean]
+  binned: []
+}>()
+
+const binPadding = 6
+
+const releaseEase = spring({ bounce: 0.35, duration: 500 })
+
+const fillParams = {
+  progress: { ease: spring({ bounce: 0.2, duration: 400 }) },
 }
 
-const box = shallowRef<Box | null>(null)
+const dropAnimation = {
+  opacity: 0,
+  delay: 250,
+  duration: 200,
+  ease: 'out(2)',
+}
 
-/** Vector from the handle's centre to the bin's centre, while over the bin. */
-const stick = shallowRef({ x: 0, y: 0 })
+const handle = useTemplateRef('handle')
+const overBin = ref(false)
+const dropped = ref(false)
+const fill = reactive({ progress: 0 })
+const toBin = shallowRef<Point>({ x: 0, y: 0 })
+const cardSize = shallowRef<Size>({ width: 0, height: 0 })
+const binSize = shallowRef<Size>({ width: 0, height: 0 })
+let binRect: DOMRect | null = null
+let restCentre: Point = { x: 0, y: 0 }
 
-let geometry: Geometry | null = null
+const draggable = useDraggable(handle, {
+  snap: [0],
+  releaseEase,
+  onGrab: measure,
+  onUpdate: trackBin,
+  onRelease: dropInBin,
+})
 
-const style = computed(() => {
-  // At rest the card takes its size from the handle, so no inline box can go stale.
-  if (!box.value || !blend.p) return {}
+const fillTo = useAnimatable(fill, fillParams)
 
-  const { width, height, deltaW, deltaH, halfDeltaW, halfDeltaH } = box.value
-  const p = blend.p
-  const w = width + p * deltaW
-  const h = height + p * deltaH
-
-  // Keeps the card centred on the handle as it resizes toward the bin
-  const x = p * (stick.value.x - halfDeltaW)
-  const y = p * (stick.value.y - halfDeltaH)
-
+const fillStyle = computed(() => {
+  const progress = fill.progress
+  if (!progress) return {}
+  const { width, height } = cardSize.value
+  const grownWidth = width + (binSize.value.width - width) * progress
+  const grownHeight = height + (binSize.value.height - height) * progress
+  const x = toBin.value.x * progress - (grownWidth - width) / 2
+  const y = toBin.value.y * progress - (grownHeight - height) / 2
   return {
-    width: `${w}px`,
-    height: `${h}px`,
+    width: `${grownWidth}px`,
+    height: `${grownHeight}px`,
     transform: `translate(${x}px, ${y}px)`,
   }
 })
 
-function report(value: boolean) {
-  if (over.value === value) return
+function centreOf(rect: DOMRect): Point {
+  return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+}
 
-  over.value = value
-  blendTo.p?.(value ? 1 : 0)
+function currentCentre(): Point {
+  return { x: restCentre.x + draggable.x, y: restCentre.y + draggable.y }
+}
+
+function isInsideBin({ x, y }: Point) {
+  if (!binRect) return false
+  return x > binRect.left && x < binRect.right && y > binRect.top && y < binRect.bottom
+}
+
+function measure() {
+  const rect = handle.value?.getBoundingClientRect()
+  if (!rect || !props.bin) return
+  binRect = props.bin.getBoundingClientRect()
+  const centre = centreOf(rect)
+  restCentre = { x: centre.x - draggable.x, y: centre.y - draggable.y }
+  cardSize.value = { width: rect.width, height: rect.height }
+  binSize.value = { width: binRect.width - binPadding * 2, height: binRect.height - binPadding * 2 }
+}
+
+function setOverBin(value: boolean) {
+  if (value === overBin.value) return
+  overBin.value = value
+  fillTo.progress?.(value ? 1 : 0)
   emit('over', value)
 }
 
-const draggable = useDraggable(el, {
-  snap: [0],
-  releaseEase: spring({ bounce: 0.2, duration: 500 }),
-  onGrab: (self) => {
-    const node = el.value
-    const ghost = node?.parentElement
+function trackBin() {
+  const centre = currentCentre()
+  const over = isInsideBin(centre)
+  if (over && binRect) {
+    const binCentre = centreOf(binRect)
+    toBin.value = { x: binCentre.x - centre.x, y: binCentre.y - centre.y }
+  }
+  setOverBin(over)
+}
 
-    if (!node || !ghost || !props.bin) return
-
-    // Measured once per grab: ghost provides the static un-transformed rest origin
-    const bin = props.bin.getBoundingClientRect()
-    const rest = ghost.getBoundingClientRect()
-    const width = rest.width
-    const height = rest.height
-
-    if (!width || !height || !bin.width || !bin.height) return
-
-    const deltaW = bin.width - props.padding * 2 - width
-    const deltaH = bin.height - props.padding * 2 - height
-
-    box.value = {
-      width,
-      height,
-      deltaW,
-      deltaH,
-      halfDeltaW: deltaW / 2,
-      halfDeltaH: deltaH / 2,
-    }
-
-    geometry = {
-      originX: rest.left + width / 2 - self.x,
-      originY: rest.top + height / 2 - self.y,
-      binCenterX: bin.left + bin.width / 2,
-      binCenterY: bin.top + bin.height / 2,
-      bin,
-    }
-  },
-  onUpdate: (self) => {
-    if (!geometry) return
-
-    const { originX, originY, binCenterX, binCenterY, bin } = geometry
-    const x = originX + self.x
-    const y = originY + self.y
-    const isOver = x > bin.left && x < bin.right && y > bin.top && y < bin.bottom
-
-    report(isOver)
-
-    if (isOver) {
-      stick.value = {
-        x: binCenterX - x,
-        y: binCenterY - y,
-      }
-    }
-  },
-  onRelease: () => {
-    if (over.value) {
-      draggable.stop()
-      emit('bin')
-    }
-  },
-})
-
-watch(() => props.binned, (value) => {
-  if (value) return
-
-  report(false)
-  blend.p = 0
-  stick.value = { x: 0, y: 0 }
-  draggable.reset()
-})
+function dropInBin() {
+  if (!overBin.value) return
+  draggable.stop()
+  emit('over', false)
+  dropped.value = true
+}
 </script>
 
 <template>
-  <div
-    ref="el"
-    class="handle"
-  >
-    <div
-      class="card"
-      :style="style"
+  <li class="relative h-16 w-12 shrink-0 rounded-lg bg-primary/10 sm:size-20">
+    <AnimeTransition
+      :leave-animation="dropAnimation"
+      @after-leave="emit('binned')"
     >
-      {{ label }}
-    </div>
-  </div>
+      <div
+        v-if="!dropped"
+        ref="handle"
+        class="absolute inset-0 cursor-grab touch-none select-none active:cursor-grabbing"
+      >
+        <div
+          class="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg bg-primary/80 px-1 text-[10px] font-semibold text-neutral-900 ring-1 ring-white/10 backdrop-blur-md"
+          :style="fillStyle"
+        >
+          <UIcon
+            :name="icon"
+            class="size-6 shrink-0"
+          />
+          <span class="max-w-full truncate">{{ name }}</span>
+        </div>
+      </div>
+    </AnimeTransition>
+  </li>
 </template>
-
-<style scoped>
-@reference "~/assets/css/main.css";
-
-.handle {
-  @apply absolute top-0 left-0 w-full h-12 select-none;
-  @apply cursor-grab active:cursor-grabbing;
-  touch-action: none;
-}
-
-.card {
-  @apply w-full h-full rounded-lg border border-primary/20 bg-primary/5 backdrop-blur-md;
-  @apply grid place-items-center text-sm font-semibold text-highlighted select-none;
-
-  will-change: transform;
-  transition: opacity 300ms ease-out;
-}
-
-:global(.is-binned) .card {
-  opacity: 0;
-  z-index: 10;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card {
-    transition: none;
-  }
-}
-</style>

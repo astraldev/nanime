@@ -1,55 +1,97 @@
 <script setup lang="ts">
-import ExampleWrapper from '~/components/shared/ExampleWrapper.vue'
+import { spring } from '#nanime/easings'
+import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleWrapper.vue'
 import DragBinCard from './DragBinCard.vue'
 
-const cards = ['Design system', 'Nuxt SSR', 'Anime.js v4', 'Tailwind CSS'].map(label => ({
-  label,
-  binned: ref(false),
-  over: ref(false),
-}))
+interface BinFile {
+  id: number
+  name: string
+  icon: string
+}
 
+const files: BinFile[] = [
+  { id: 1, name: 'invoice', icon: 'i-ph-file-pdf-fill' },
+  { id: 2, name: 'photo', icon: 'i-ph-image-fill' },
+  { id: 3, name: 'notes', icon: 'i-ph-note-fill' },
+  { id: 4, name: 'backup', icon: 'i-ph-file-zip-fill' },
+]
+
+const binTints = {
+  idle: 'border-neutral-500/15 bg-neutral-500/10 text-muted',
+  armed: 'border-neutral-500/25 bg-neutral-500/20 text-highlighted',
+}
+
+const enterAnimation = {
+  opacity: [0, 1],
+  scale: [0.6, 1],
+  ease: spring({ bounce: 0.4, duration: 500 }),
+}
+
+const leaveAnimation = {
+  opacity: 0,
+  duration: 200,
+  ease: 'out(2)',
+}
+
+const moveAnimation = {
+  ease: spring({ bounce: 0.35, duration: 450 }),
+}
+
+const cards = ref<BinFile[]>([...files])
+const binArmed = ref(false)
 const bin = useTemplateRef('bin')
 
-const remaining = computed(() => cards.filter(card => !card.binned.value).length)
-const armed = computed(() => cards.some(card => !card.binned.value && card.over.value))
+const status = computed(() => `${cards.value.length} of ${files.length} left`)
 
-const actions = [{
-  label: 'Restore',
-  run: () => cards.forEach((card) => { card.binned.value = false }),
-}]
+function setBinArmed(armed: boolean) {
+  binArmed.value = armed
+}
+
+function removeCard(id: number) {
+  cards.value = cards.value.filter(card => card.id !== id)
+}
+
+function restore() {
+  cards.value = [...files]
+}
+
+const actions: ExampleAction[] = [
+  { label: 'Restore', run: restore },
+]
 </script>
 
 <template>
   <ExampleWrapper
     :actions="actions"
-    :status="`${remaining} left`"
+    :status="status"
     scramble-status
   >
-    <div class="flex flex-col sm:flex-row gap-4">
-      <div class="flex-1 flex flex-col max-w-[310px]">
-        <div
+    <div class="grid h-28 grid-cols-[minmax(0,1fr)_5rem] gap-3 sm:grid-cols-[minmax(0,1fr)_8rem]">
+      <AnimeTransitionGroup
+        tag="ul"
+        class="relative flex items-center gap-2"
+        :enter-animation="enterAnimation"
+        :leave-animation="leaveAnimation"
+        :move-animation="moveAnimation"
+      >
+        <DragBinCard
           v-for="card in cards"
-          :key="card.label"
-          class="ghost"
-          :class="{ 'is-binned': card.binned.value }"
-        >
-          <DragBinCard
-            :label="card.label"
-            :binned="card.binned.value"
-            :bin="bin"
-            @bin="card.binned.value = true"
-            @over="card.over.value = $event"
-          />
-        </div>
-      </div>
+          :key="card.id"
+          :name="card.name"
+          :icon="card.icon"
+          :bin="bin"
+          @over="setBinArmed"
+          @binned="removeCard(card.id)"
+        />
+      </AnimeTransitionGroup>
 
       <div
         ref="bin"
-        class="bin"
-        :class="{ 'is-armed': armed }"
+        class="flex flex-col items-center justify-center gap-1 rounded-lg border transition-colors"
+        :class="binArmed ? binTints.armed : binTints.idle"
       >
         <UIcon
-          name="i-ph-trash"
+          name="i-ph-trash-fill"
           class="size-7"
         />
         <span class="text-xs">Drop here</span>
@@ -57,42 +99,3 @@ const actions = [{
     </div>
   </ExampleWrapper>
 </template>
-
-<style scoped>
-@reference "~/assets/css/main.css";
-
-.ghost {
-  height: 3rem;
-  margin-bottom: 0.5rem;
-  position: relative;
-  transition: height 350ms cubic-bezier(0.25, 1, 0.5, 1), margin-bottom 350ms cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* Marks the slot the card came from once it is dragged away. */
-.ghost::before {
-  @apply absolute inset-0 rounded-lg border border-dashed border-primary/20;
-  content: '';
-}
-
-.ghost.is-binned {
-  height: 0;
-  margin-bottom: 0;
-  pointer-events: none;
-}
-
-.bin {
-  @apply w-full sm:w-48 min-h-[6.5rem] rounded-lg border border-dashed border-primary/35 grid place-items-center gap-1 text-primary/70 shrink-0 self-stretch;
-  transition: all 150ms ease-out;
-}
-
-.bin.is-armed {
-  @apply border-solid border-primary bg-primary/10 text-primary;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ghost,
-  .bin {
-    transition: none;
-  }
-}
-</style>
