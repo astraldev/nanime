@@ -80,3 +80,7 @@ ul:has(> li > button[aria-label]) + h2 {
   93.75%  { --color-primary: var(--hex-magenta-1); }
   100%    { --color-primary: var(--hex-red-1); }
 }
+
+td:has(> .comparison-good) {
+  background-color: color-mix(in oklab, var(--hex-green-1) 14%, transparent);
+}

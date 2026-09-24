@@ -1,19 +1,20 @@
 ---
 title: nanime
-description: AnimeJS v4 in SSR-safe Vue composables. Animate, drag, split text, and sync timelines in Nuxt.
+description: Anime.js v4 as SSR-safe Vue composables for Nuxt. Animate, drag, split text, scroll and sync timelines, auto-imported and cleaned up on unmount
 seo:
-  title: nanime - AnimeJS Composables for Nuxt & Vue 3
-  description: AnimeJS v4 in SSR-safe Vue composables. Animate, drag, split text, and sync timelines in Nuxt.
+  title: Anime.js Composables for Nuxt and Vue 3
+  description: Anime.js v4 as SSR-safe Vue composables for Nuxt. Animate, drag, split text, scroll and sync timelines, auto-imported and cleaned up on unmount
 ---
 
 ::u-page-hero
 ---
 orientation: horizontal
 ---
-:render-code-block-preview{src="examples/misc/HeroDemo.vue" :code="false"}
+  :::render-code-block-preview{:code='false' src="examples/misc/HeroDemo.vue"}
+  :::
 
 #title
-Animate Nuxt with [AnimeJS]{.text-primary}
+Anime.js composables for [Nuxt]{.text-primary}
 
 #description
 AnimeJS wrapped in Vue composables. They resolve targets, skip server renders, and clean up on unmount.
@@ -52,8 +53,7 @@ What you get
   spotlight: true
   icon: i-simple-icons-nuxt
   spotlightColor: var(--color-primary)
-  target: _blank
-  to: https://nuxt.com
+  to: /getting-started/installation
   ---
   #title
   Built with [Nuxt 4]{.text-primary}
@@ -82,8 +82,7 @@ What you get
   spotlight: true
   icon: i-tabler-server-cog
   spotlightColor: var(--color-primary)
-  target: _blank
-  to: https://nuxt.com
+  to: /composables/introduction
   ---
   #title
   [SSR]{.text-primary} safe
@@ -97,8 +96,7 @@ What you get
   spotlight: true
   icon: i-tabler-settings-bolt
   spotlightColor: var(--color-primary)
-  target: _blank
-  to: https://nuxt.com/docs/guide/directory-structure/app-config
+  to: /getting-started/configuration
   ---
   #title
   Customizable
@@ -222,7 +220,7 @@ One composable per AnimeJS API, with a live demo on each page.
   to: /composables/use-anime-scroll
   ---
   #title
-  useAnimeScroll
+  useAnimeScroll :badge[New]{variant="subtle"}
 
   #description
   Drive an animation from scroll position.
