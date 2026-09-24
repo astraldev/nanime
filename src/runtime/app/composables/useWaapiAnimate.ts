@@ -1,11 +1,16 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
 import type { WAAPIAnimationParams } from 'animejs'
-import { normalizeWaapiAnimeTarget } from '../utils/normalize-targets'
+import { normalizeWaapiAnimeTarget } from '../utils/targets'
 import { waapi, type WAAPIAnimation } from 'animejs/waapi'
-import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
-import { markNanimeInstance, unwrapNanimeProxies } from '../utils/create-proxy'
+import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
+import { markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 
+/**
+ * Runs an Anime.js `waapi.animate()` on `target` once it is mounted. The
+ * animation is rebuilt when `target` or `parameters` change, and reverted
+ * when the scope is disposed.
+ */
 export function useWaapiAnimate(
   target: Parameters<typeof normalizeWaapiAnimeTarget>[0],
   parameters?: MaybeRefOrGetter<WAAPIAnimationParams>,

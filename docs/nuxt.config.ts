@@ -12,12 +12,39 @@ export default defineNuxtConfig({
           name: 'google-site-verification',
           content: 'k2rdqKBTN2zz6nvGRTA4DbeY0SUcq6lkEemQ_597FZs',
         },
+        { name: 'theme-color', content: '#252423' },
+      ],
+      link: [
+        { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+        { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+        { rel: 'manifest', href: '/site.webmanifest' },
       ],
     },
   },
   css: ['~/assets/css/main.css'],
   site: {
     name: 'nanime',
+    url: 'https://nanimejs.netlify.app',
+  },
+  mdc: {
+    highlight: {
+      noApiRoute: false,
+    },
+  },
+  routeRules: {
+    '/composables': { redirect: { to: '/composables/introduction', statusCode: 301 } },
+    '/getting-started': { redirect: { to: '/getting-started/introduction', statusCode: 301 } },
+    '/misc': { redirect: { to: '/composables/utilities', statusCode: 301 } },
+    '/misc/introduction': { redirect: { to: '/composables/utilities', statusCode: 301 } },
+    '/misc/easings': { redirect: { to: '/composables/utilities', statusCode: 301 } },
+    '/misc/utils': { redirect: { to: '/composables/utilities', statusCode: 301 } },
+    '/misc/proxies': { redirect: { to: '/composables/utilities#proxies', statusCode: 301 } },
+    '/components': { redirect: { to: '/components/transitions', statusCode: 301 } },
+    '/examples': { redirect: { to: '/examples/introduction', statusCode: 301 } },
+    '/examples/timeline-storyboard': { redirect: { to: '/examples/introduction', statusCode: 301 } },
+    '/examples/text-scatter': { redirect: { to: '/examples/introduction', statusCode: 301 } },
+    '/changes': { redirect: { to: '/changes/changelog', statusCode: 301 } },
   },
   sourcemap: {
     server: false,
@@ -28,8 +55,9 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/'],
+      routes: ['/', '/404.html'],
       crawlLinks: true,
+      failOnError: false,
     },
   },
   vite: {
@@ -41,6 +69,16 @@ export default defineNuxtConfig({
         'remark-mdc',
       ],
     },
+  },
+  icon: {
+    customCollections: [{ prefix: 'nanime', dir: './app/assets/icons' }],
+  },
+  llms: {
+    domain: 'https://nanimejs.netlify.app',
+  },
+  sitemap: {
+    autoLastmod: true,
+    defaults: { changefreq: 'weekly', priority: 0.7 },
   },
   studio: {
     // @ts-expect-error from the docs

@@ -1,11 +1,11 @@
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 import { nextTick, shallowRef, toValue, watch, watchPostEffect } from 'vue'
-import { normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, type DraggableTypes } from '../utils/normalize-targets'
+import { normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, type DraggableTypes } from '../utils/targets'
 import type { Draggable, DraggableAxisParam, DraggableParams, TargetsParam } from 'animejs'
 import { createDraggable } from 'animejs/draggable'
-import { createBufferedProxy, type BufferedProxyReturns } from '../utils/create-proxy'
-import { normalizeReffable, type MakeRefable } from '../utils/normalizers/make-reffable'
-import type { Prettify } from '../utils/normalizers/prettify'
+import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
+import { normalizeReffable, type MakeRefable } from '../utils/instance/make-reffable'
+import type { Prettify } from '../utils/instance/prettify'
 import defu from 'defu'
 
 const REFFABLE_PROPS = [
@@ -34,6 +34,12 @@ type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container
   y?: boolean | Prettify<MakeRefable<DraggableAxisParam, 'snap', Draggable>>
 }, RefableProps, Draggable>
 
+/**
+ * Makes `target` draggable with Anime.js `createDraggable()` once it is
+ * mounted. Refs in `options` update the draggable in place, and a new
+ * target, trigger or container rebuilds it. Calls made before mount are
+ * buffered.
+ */
 export function useDraggable(
   target: DraggableTypes['target'],
   options?: DraggableOptions,

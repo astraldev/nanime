@@ -61,7 +61,12 @@ tl.sync(animation)
 </script>
 
 <template>
-  <div class="relative flex items-center font-semibold">
+  <div class="relative flex items-center gap-2 font-semibold">
+    <UIcon
+      name="nanime:logo"
+      mode="svg"
+      class="size-5 shrink-0"
+    />
     <span ref="text">nanime</span>
   </div>
 </template>

@@ -1,9 +1,12 @@
-import { defineNuxtModule, createResolver, addImportsDir, addVitePlugin } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addComponent, addImportsDir, addVitePlugin } from '@nuxt/kit'
 import { defu } from 'defu'
+import type { NanimeAppConfig } from './runtime/app/public/types'
 
 export interface ModuleOptions {
   /** Add composables for animejs */
   composables: boolean
+  /** Register `<AnimeTransition>` and `<AnimeTransitionGroup>` */
+  components: boolean
   /**
    * Default for every composable's `keepTime` option. `true` carries the
    * playhead across rebuilds, so an animation continues instead of restarting
@@ -23,6 +26,13 @@ declare module 'nuxt/schema' {
   interface PublicRuntimeConfig {
     nanime: { keepTime: boolean }
   }
+  // CustomAppConfig types what useAppConfig() reads; AppConfigInput checks app.config.ts.
+  interface CustomAppConfig {
+    nanime?: NanimeAppConfig
+  }
+  interface AppConfigInput {
+    nanime?: NanimeAppConfig
+  }
 }
 
 const __name = 'nanime'
@@ -38,6 +48,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     composables: true,
+    components: true,
     keepTime: false,
   },
   setup(_options, _nuxt) {
@@ -61,8 +72,6 @@ export default defineNuxtModule<ModuleOptions>({
           'animejs/draggable',
           'animejs/timeline',
           'animejs/timer',
-          'tailwind-merge',
-          'lodash-es',
         )
       },
     }))
@@ -76,12 +85,19 @@ export default defineNuxtModule<ModuleOptions>({
       addImportsDir(resolver.resolve('./runtime/app/composables'))
     }
 
-    _nuxt.options.alias[`#${__configKey}/composables`] = resolver.resolve('./runtime/app/composables')
-    _nuxt.options.alias[`#${__configKey}/types`] = resolver.resolve('./runtime/app/utils/types')
-    _nuxt.options.alias[`#${__configKey}/easings`] = resolver.resolve('./runtime/app/utils/easings')
-    _nuxt.options.alias[`#${__configKey}/utils`] = resolver.resolve('./runtime/app/utils/index')
-    _nuxt.options.alias[`#${__configKey}/proxies/text`] = resolver.resolve('./runtime/app/utils/proxies/text')
-    _nuxt.options.alias[`#${__configKey}/proxies/svg`] = resolver.resolve('./runtime/app/utils/proxies/svg')
-    _nuxt.options.alias[`#${__configKey}/proxies`] = resolver.resolve('./runtime/app/utils/proxies/index')
+    if (_options.components) {
+      for (const name of ['AnimeTransition', 'AnimeTransitionGroup']) {
+        addComponent({ name, filePath: resolver.resolve(`./runtime/app/components/${name}`) })
+      }
+      _nuxt.options.css.push(resolver.resolve('./runtime/app/components/anime-transition.css'))
+    }
+
+    _nuxt.options.alias[`#${__configKey}/composables`] = resolver.resolve('./runtime/app/public/composables')
+    _nuxt.options.alias[`#${__configKey}/types`] = resolver.resolve('./runtime/app/public/types')
+    _nuxt.options.alias[`#${__configKey}/easings`] = resolver.resolve('./runtime/app/public/easings')
+    _nuxt.options.alias[`#${__configKey}/utils`] = resolver.resolve('./runtime/app/public/utils')
+    _nuxt.options.alias[`#${__configKey}/proxies/text`] = resolver.resolve('./runtime/app/public/proxies/text')
+    _nuxt.options.alias[`#${__configKey}/proxies/svg`] = resolver.resolve('./runtime/app/public/proxies/svg')
+    _nuxt.options.alias[`#${__configKey}/proxies`] = resolver.resolve('./runtime/app/public/proxies/index')
   },
 })

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { scrambleText } from '../../../src/runtime/app/utils/proxies/text'
-import { morphTo, createMotionPath, createDrawable } from '../../../src/runtime/app/utils/proxies/svg'
-import * as rootProxies from '../../../src/runtime/app/utils/proxies/index'
+import { scrambleText } from '../../../src/runtime/app/public/proxies/text'
+import { morphTo, createMotionPath, createDrawable } from '../../../src/runtime/app/public/proxies/svg'
+import * as rootProxies from '../../../src/runtime/app/public/proxies/index'
 
 describe('Proxies', () => {
   describe('Text Proxies', () => {

@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { random, stagger } from '#nanime/utils'
+import { stagger } from '#nanime/utils'
 import { spring } from '#nanime/easings'
 import ExampleWrapper from '../../../shared/ExampleWrapper.vue'
 
-const DURATION = 5000
+const DURATION = 2500
 const EASES = [
   'outQuad',
   'inOutSine',
-  'outElastic(1, .6)',
-  'outBack',
-  'inOutCirc',
   'outBounce',
   'inOutExpo',
   'outCubic',
@@ -43,21 +40,20 @@ const fromIndex = ref(0)
 const boxes = useTemplateRef('boxes')
 
 useAnimate(boxes, () => ({
-  scale: [{ to: [0, 1.25] }, { to: 0 }],
-  translateX: [{ to: () => random(-6, 6) }, { to: 0 }],
-  translateY: [{ to: () => random(-6, 6) }, { to: 0 }],
+  opacity: [0, 1, 0],
   boxShadow: [
     { to: '0 0 1rem 0 currentColor' },
     { to: '0 0 0rem 0 currentColor' },
+    { to: '0 0 0.5rem 0 currentColor' },
   ],
-  delay: stagger(60, {
+  delay: stagger(250, {
     grid: [COLS.value, ROWS.value],
     from: FROMS.value[fromIndex.value % FROMS.value.length] ?? 'center',
   }),
   duration: DURATION,
   playbackEase: EASES[easeIndex.value % EASES.length] ?? 'outQuad',
-  loop: true,
-  onLoop: () => {
+  alternate: true,
+  onComplete: () => {
     easeIndex.value++
     fromIndex.value++
   },
@@ -77,14 +73,14 @@ onUnmounted(() => {
 <template>
   <ExampleWrapper :resizable="false">
     <div
-      class="grid place-items-center gap-0.5 p-5 text-primary/30"
-      :style="{ gridTemplateColumns: `repeat(${COLS}, minmax(0,1fr))` }"
+      class="grid place-items-center p-2.5 text-primary/30 [--s:calc(var(--spacing)*6)] md:[--s:calc(var(--spacing)*8)] w-full"
+      :style="{ gridTemplateColumns: `repeat(${COLS}, minmax(var(--s), 1fr))` }"
     >
       <div
         v-for="i in COLS * ROWS"
         :key="i"
         ref="boxes"
-        class="size-5 md:size-6 rounded-sm bg-primary/30 border border-primary/20 shadow-sm aspect-square"
+        class="bg-white/[.035] border border-primary/5 aspect-square w-full opacity-0"
       />
     </div>
   </ExampleWrapper>

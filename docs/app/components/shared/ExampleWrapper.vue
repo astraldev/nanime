@@ -52,7 +52,7 @@ function onSliderInput(event: Event, slider: ExampleSlider) {
     >
       <div
         v-if="actions?.length"
-        class="flex gap-2"
+        class="flex flex-wrap gap-2"
       >
         <button
           v-for="action in actions"

@@ -1,6 +1,6 @@
 # Nanime — Nuxt + Anime.js Module
 
-Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 reactivity. Auto-imports composables.
+Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 reactivity. Auto-imports composables and registers the transition components.
 
 ## Quick Reference
 
@@ -8,20 +8,18 @@ Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 r
 |---|---|
 | Module entry | `src/module.ts` |
 | Composables | `src/runtime/app/composables/` |
-| Utilities / types | `src/runtime/app/utils/` |
-| Anime.js source | `anime-core/anime/` (git submodule, v4.4.1) |
-| Docs site (Docus) | `docs/` — dev on port 3001 |
-| Playground | `playground/` |
-| Tests | `test/` — 4 vitest projects (unit, e2e, fixtures, suites) |
+| Components | `src/runtime/app/components/` (`AnimeTransition`, `AnimeTransitionGroup`) |
+| Public API (`#nanime/*` aliases) | `src/runtime/app/public/` (`types.ts`, `utils.ts`, `easings.ts`, `proxies/`) |
+| Internal helpers | `src/runtime/app/utils/` (`targets.ts`, `proxy/`, `instance/`, `vue-helpers.ts`) |
+| Transition internals | `src/runtime/app/transitions/` (`runner.ts`, `resolve.ts`, `styles/`) |
+| Anime.js source | `node_modules/animejs/dist/modules/` (no submodule) |
+| Docs site (Docus) | `docs/` — dev on port 3001, also hosts playground pages at `docs/app/pages/playground/` |
+| Tests | `test/` — moving to a private repo |
 | Agent skills | `.agents/skills/` (also symlinked at `.agent/skills`) |
 
 ## Anime.js Setup
 
-Anime.js lives at `anime-core/anime/` as a git submodule (`git@github.com:juliangarnier/anime.git`). After cloning the project:
-
-```sh
-git submodule update --init
-```
+Anime.js comes from `node_modules`. Read its source in `node_modules/animejs/dist/modules/`.
 
 Runtime values must be imported from submodule paths — never the top-level `'animejs'` barrel. Type-only imports from `'animejs'` are fine.
 
@@ -37,13 +35,13 @@ import { set, stagger, round } from 'animejs/utils'
 import type { AnimationParams, TargetsParam } from 'animejs' // types OK
 ```
 
-These are pre-optimized via Vite in `src/module.ts` (lines 31–50).
+These are pre-optimized via Vite (`optimizeDeps.include` in `src/module.ts`).
 
 ## Module Aliases
 
 Available throughout the Nuxt app:
 
-- `#nanime/composables` — composables directory
+- `#nanime/composables` — every composable, re-exported from `public/composables.ts` (for `composables: false`)
 - `#nanime/types` — type definitions
 - `#nanime/easings` — easing utilities
 - `#nanime/utils` — re-exports of `animejs/utils`
@@ -55,14 +53,15 @@ Available throughout the Nuxt app:
 
 1. Create `src/runtime/app/composables/use<Name>.ts`
 2. Export a named function `use<Name>` — follows Vue composable convention
-3. Auto-imported via `addImportsDir` in `src/module.ts:60-62` — no manual registration needed
+3. Auto-imported via `addImportsDir` in `src/module.ts` — no manual registration needed
+4. Add its re-export to `src/runtime/app/public/composables.ts` so `#nanime/composables` exposes it
 
 **Pattern to follow** (see existing composables for reference):
 
 ```ts
-import { toReactive, tryOnScopeDispose, useMounted } from '@vueuse/core'
 import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter } from 'vue'
-import { normalizeAnimeTarget } from '../utils/normalize-targets'
+import { toReactive, tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
+import { normalizeAnimeTarget } from '../utils/targets'
 
 export function use<Name>(target: ..., parameters?: MaybeRefOrGetter<...>) {
   const flag = getAnimationComponentFlag()
@@ -87,13 +86,15 @@ Key conventions:
 - Clean up with `tryOnScopeDispose`
 - Return `toReactive(shallowRef)` for ergonomic destructuring
 
-Existing composables: `useAnimate`, `useAnimatable`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`
+Existing composables: `useAnimate`, `useAnimatable`, `useAnimeLayout`, `useAnimeScroll`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`
+
+Code comments: none in internal code. Every public type, prop and module option gets a JSDoc line (with `@default` where there is one), because users see it on hover.
 
 ## Scripts
 
 ```sh
-pnpm dev              # Playground dev server (runs dev:prepare first)
-pnpm dev:prepare      # Stub-build module + prepare playground
+pnpm dev              # Docs site on :3001, including /playground pages (runs dev:prepare first)
+pnpm dev:prepare      # Build the module and prepare the docs app; the docs load dist/, so restart after src/ changes
 pnpm test             # Run all vitest projects
 pnpm test:types       # Nuxt typecheck
 pnpm lint             # ESLint
@@ -120,9 +121,13 @@ Runs sequentially before commit:
 ## Docs
 
 Docus-based site in `docs/`. Content lives in `docs/content/`:
-- `1.getting-started/` — intro, installation, configuration
-- `2.composables/` — one page per composable
-- `4.misc/` — easings, utils
+- `1.getting-started/` — intro, installation, configuration, performance, comparison (vs) pages
+- `2.composables/` — one page per composable, plus `99.utilities.md` (easings, utils, proxies)
+- `3.components/` — transitions and transition styles
+- `5.examples/` — showcase examples
+- `6.changes/` — changelog
+
+Prose rules live in `.agents/skills/create-docs/references/prose-style.md`: "AnimeJS" in prose, "Anime.js" only in SEO frontmatter and the homepage `<h1>`.
 
 Run docs dev: `cd docs && pnpm dev` (port 3001).
 
@@ -130,16 +135,17 @@ Run docs dev: `cd docs && pnpm dev` (port 3001).
 
 - Strict TypeScript — no `any`, no `as` casts
 - Vue 3 Composition API only
-- `@vueuse/core` for reactive utilities
+- No runtime dependency on `@vueuse/core`; the needed helpers live in `src/runtime/app/utils/vue-helpers.ts`
 - ESLint enforced (see `eslint.config.mjs`)
 
 ## Testing
 
-4 vitest projects configured in `vitest.config.ts`:
-- **unit** — `test/unit/`
-- **e2e** — `test/e2e/`
+Vitest projects in `vitest.config.ts`:
 - **full-nuxt-apps** — `test/fixtures/`
+- **config** — `test/config/` (runs against the `keep-time` fixture)
 - **suites** — `test/suites/` (component tests via `mountSuspended`, real components, no mocks)
+
+`unit` and `e2e` projects are configured but their folders are empty. Tests are moving to a private repo.
 
 ## Agent Skills
 
@@ -148,9 +154,9 @@ Skills in `.agents/skills/` — each has a `SKILL.md` defining its workflow:
 | Skill | Purpose |
 |---|---|
 | `create-composable` | End-to-end workflow for SSR-safe, memory-safe, version-adaptive composables |
-| `create-docs` | Generate Docus documentation pages |
+| `create-docs` | Generate Docus documentation pages. Specs in `references/`: `composable-page-spec.md`, `component-page-spec.md`, `demo-spec.md` (every live demo), `prose-style.md` |
 | `scaffold-composable-sample` | Scaffold composable doc page with standard structure |
-| `create-playground-page` | Create playground test pages mirroring src structure |
+| `create-playground-page` | Create test pages under `docs/app/pages/playground/` |
 | `create-utility-tests` | Write vitest utility tests (Nuxt test-utils) |
 | `create-showcase-doc` | Write/rewrite a showcase example page (`docs/content/5.examples/`), including verifying its AI build prompt against a real independent agent |
 | `skill-creator` | Meta-skill for authoring new skills |

@@ -1,0 +1,4 @@
+.anime-move,
+[data-anime-transition] {
+  transition: none !important;
+}

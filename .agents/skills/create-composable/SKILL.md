@@ -33,12 +33,7 @@ Before writing any code, determine whether the anime.js API you're wrapping exis
 | `scrambleText()` | `animejs/text` (scramble) | 4.4.0 |
 | `globals`, `forEachChildren`, `addChild`, `removeChild` | `animejs` | 4.4.0 |
 
-**To verify against the submodule directly:**
-```sh
-cd anime-core/anime
-git log --oneline --all -- src/<module>/<feature>.js
-git tag --contains <first-commit-hash> | sort -V | head -1
-```
+**To verify against the installed package:** read `node_modules/animejs/dist/modules/<module>/` and its `.d.ts` files. There is no `anime-core` submodule.
 
 Or check the [anime.js GitHub releases](https://github.com/juliangarnier/anime/releases) for the changelog.
 
@@ -197,7 +192,7 @@ watchEffect(() => {
 Some composables support two modes based on whether they're called inside a Vue component instance:
 
 ```ts
-import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
+import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 
 const flag = getAnimationComponentFlag()
 
@@ -228,7 +223,7 @@ Use dual-mode when the composable wraps a simple animate-like call. Skip it when
 
 ### Target normalization
 
-Always normalize targets through the helpers in `../utils/normalize-targets`:
+Always normalize targets through the helpers in `../utils/targets`:
 
 - `normalizeAnimeTarget` — for standard anime targets (string, ref, element)
 - `normalizeWaapiAnimeTarget` — for WAAPI targets
@@ -243,10 +238,10 @@ Add a new normalizer if the API expects a different target shape.
 Every composable return value must be identifiable as a nanime proxy so that `useAnimeTimeline`'s `.sync()` can unwrap it to the raw anime.js instance.
 
 - **`createProxy` / `createBufferedProxy` returns**: Already have `NANIME_INSTANCE` symbol in their `get`/`has` traps — no extra work needed.
-- **`toReactive` returns**: Must be registered via `markNanimeInstance(result, instanceRef)` from `../utils/create-proxy` before returning:
+- **`toReactive` returns**: Must be registered via `markNanimeInstance(result, instanceRef)` from `../utils/proxy` before returning:
 
 ```ts
-import { markNanimeInstance } from '../utils/create-proxy'
+import { markNanimeInstance } from '../utils/proxy'
 
 const result = toReactive(instance)
 markNanimeInstance(result, instance)
@@ -257,10 +252,10 @@ This enables `resolveNanimeInstance()` to extract the raw anime.js instance from
 
 ### Reffable props
 
-For composables where individual options should be reactive (like `useDraggable`), use the `makeReffable` pattern from `../utils/normalizers/make-reffable.ts`:
+For composables where individual options should be reactive (like `useDraggable`), use the `makeReffable` pattern from `../utils/instance/make-reffable.ts`:
 
 ```ts
-import { normalizeReffable, type MakeRefable } from '../utils/normalizers/make-reffable'
+import { normalizeReffable, type MakeRefable } from '../utils/instance/make-reffable'
 
 type Options = MakeRefable<OriginalParams, 'prop1' | 'prop2', InstanceType>
 ```
@@ -272,12 +267,13 @@ This lets users pass either a raw value or a `Ref`/getter for those props.
 ## Step 5: Integrate
 
 1. **Vite optimizeDeps** — If wrapping a new anime submodule, add to `src/module.ts:37-44`
-2. **Types** — Re-export any new anime.js types used by the composable from `src/runtime/app/utils/types.ts`. This file is aliased as `#nanime/types` — users and example components import types from there, not directly from `'animejs'`.
-   - If the composable exposes anime.js utilities that consuming apps need (e.g., `scrambleText` for use inside animation params), create a re-export under `src/runtime/app/utils/proxies/` and register it as a `#nanime/proxies/<name>` alias in `src/module.ts`. This avoids direct `animejs/*` imports in consuming apps.
+2. **Types** — Re-export any new anime.js types used by the composable from `src/runtime/app/public/types.ts`. This file is aliased as `#nanime/types` — users and example components import types from there, not directly from `'animejs'`. Every public type and property gets a JSDoc line (with `@default` where there is one), because users see it on hover. Internal code carries no comments.
+   - If the composable exposes anime.js utilities that consuming apps need (e.g., `scrambleText` for use inside animation params), create a re-export under `src/runtime/app/public/proxies/` and register it as a `#nanime/proxies/<name>` alias in `src/module.ts`. This avoids direct `animejs/*` imports in consuming apps.
+   - Runtime layout: `public/` holds only what the `#nanime/*` aliases expose, `utils/` is internal, and feature internals get their own folder (e.g. `transitions/`). `src/module.ts` imports types from `public/types.ts`, never from a feature util.
 3. **Docs page** — Create in `docs/content/2.composables/` using the `scaffold-composable-sample` skill. This is **required**, not optional.
-4. **Example component** — Create a live demo in `docs/app/components/content/examples/composables/`. Referenced by the docs page via `::render-code-block-preview`. This is **required**.
+4. **Example component** — Create a live demo in `docs/app/components/content/examples/composables/`, written to `create-docs/references/demo-spec.md`. Referenced by the docs page via `::render-code-block-preview`. This is **required**.
 5. **Composables index card** — Add a card entry in `docs/content/2.composables/0.introduction.md` linking to the new docs page.
-6. **Playground** — Create a test page in `playground/pages/` (use the `create-playground-page` skill)
+6. **Playground** — Create a test page in `docs/app/pages/playground/` (use the `create-playground-page` skill)
 7. **Tests** — Write utility tests in `test/suites/utilities/` (use the `create-utility-tests` skill)
 
 ---
@@ -287,7 +283,7 @@ This lets users pass either a raw value or a `Ref`/getter for those props.
 ```sh
 pnpm test:types    # Must pass — no any, no unsafe casts
 pnpm test          # All 4 vitest projects must pass
-pnpm dev           # Verify in playground — SSR + client navigation
+pnpm dev           # Docs site on :3001 with the playground pages — SSR + client navigation
 ```
 
 Test SSR explicitly: load the playground page via full page refresh (server render), then navigate to it via client-side link (client render). Both must work without errors.
@@ -314,7 +310,8 @@ Test SSR explicitly: load the playground page via full page refresh (server rend
 
 ### Code Quality
 - [ ] Strict TypeScript — no `any`, no `as` casts
-- [ ] Targets normalized via `normalize-targets` helpers
+- [ ] Targets normalized via `utils/targets` helpers
+- [ ] No comments in internal code; JSDoc on every public type and property
 - [ ] Follows existing naming: `use<Name>.ts` exporting `function use<Name>`
 - [ ] Return value registered with `NANIME_INSTANCE` (symbol trap or `markNanimeInstance`)
 - [ ] New anime submodule added to Vite `optimizeDeps` if needed
@@ -324,6 +321,6 @@ Test SSR explicitly: load the playground page via full page refresh (server rend
 - [ ] Docs page in `docs/content/2.composables/`
 - [ ] Example component in `docs/app/components/content/examples/composables/`
 - [ ] Card added to `docs/content/2.composables/0.introduction.md`
-- [ ] Playground page in `playground/pages/`
+- [ ] Playground page in `docs/app/pages/playground/`
 - [ ] Tests in `test/suites/utilities/`
 - [ ] `pnpm test:types` and `pnpm test` pass

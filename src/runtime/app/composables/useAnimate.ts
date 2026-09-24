@@ -1,15 +1,23 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
-import { normalizeAnimeTarget } from '../utils/normalize-targets'
+import { normalizeAnimeTarget } from '../utils/targets'
 import type { AnimationParams, TargetsParam } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { keepTime } from 'animejs/utils'
-import type { NanimeInstanceOptions } from '../utils/types'
-import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/normalizers/instance-management'
-import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/create-proxy'
-import { shallowEqual } from '../utils/shallow-equal'
+import type { NanimeInstanceOptions } from '../public/types'
+import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
+import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
+import { deepEqualWithSkip } from '../utils/deep-equal'
 import { resolveKeepTime } from '../utils/global-options'
+import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
+const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
+
+/**
+ * Runs an Anime.js `animate()` on `target` once it is mounted. The animation
+ * is rebuilt when `target` or `parameters` change, and reverted when the
+ * scope is disposed.
+ */
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
   parameters?: MaybeRefOrGetter<AnimationParams>,
@@ -46,7 +54,11 @@ export function useAnimate(
       [mounted, resolveTargets, resolveBoundParameters],
       ([isMounted, targets, params]) => {
         if (!isMounted) return
-        if (previous && previous.targets === targets && shallowEqual(previous.params, params)) return
+        if (
+          previous
+          && previous.targets === targets
+          && deepEqualWithSkip(previous.params, params, callbacks)
+        ) return
 
         previous = { targets, params }
         rebuildAnimation(targets, params)

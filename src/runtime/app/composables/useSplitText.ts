@@ -1,6 +1,6 @@
 import { computed, nextTick, shallowRef, toValue, watch, type ComputedRef, type MaybeRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { splitText, type TextSplitter } from 'animejs/text'
-import { normalizeSplitTextTarget } from '../utils/normalize-targets'
+import { normalizeSplitTextTarget } from '../utils/targets'
 import {
   extractNonFunctionProperties,
   extractOnlyFunctionProperties,
@@ -26,6 +26,11 @@ type SplitText = {
   refresh: () => void
 }
 
+/**
+ * Splits the text of `target` into lines, words and chars with Anime.js
+ * `splitText()`. The split arrays are refs that update when the text is
+ * split again, and the split is reverted when the scope is disposed.
+ */
 export function useSplitText(
   target: MaybeRef<Parameters<typeof normalizeSplitTextTarget>[0]>,
   parameters?: MaybeRefOrGetter<Parameters<typeof splitText>[1]>,

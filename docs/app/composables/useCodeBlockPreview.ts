@@ -48,7 +48,14 @@ export const useCodeBlockPreview = async (src: string, code = true) => {
 
   // 2. Find imports to ../**/*.vue, ~/**/*.vue, @/**/*.vue
   const importRegex = /^import\s+(?:\S.*?)??from\s+['"](?:~|@|\.\.).*?\.vue['"]\s*;?\r?\n?/gm
-  script = script.replace(importRegex, '\n').replace(/\n{3,}/g, '\n\n').trim()
+  const actionsRegex = /^const actions\b[^\n]*(?:\n[ \t][^\n]*)*(?:\n[\])}][^\n]*)?\n?/gm
+  const actionHelperRegex = /^function \w+Action\b[^\n]*(?:\n[ \t][^\n]*)*(?:\n\}[^\n]*)?\n?/gm
+  script = script
+    .replace(importRegex, '\n')
+    .replace(actionsRegex, '\n')
+    .replace(actionHelperRegex, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
 
   // 3. Remove wrapper usage in template
   template = template
@@ -113,6 +120,17 @@ View on GitHub
 ::
 `
 
-  // Parse Markdown (auto-imported)
-  return md
+  // Parse Markdown using local highlighter to bypass missing API endpoint
+  let highlighter
+  if (import.meta.server) {
+    try {
+      highlighter = await import('#mdc-highlighter').then(m => m.default)
+    }
+    catch (e) {
+      console.error('[useCodeBlockPreview] Failed to import #mdc-highlighter', e)
+    }
+  }
+
+  const parseOptions = highlighter ? { highlight: { highlighter } } : {}
+  return await parseMarkdown(md, parseOptions)
 }

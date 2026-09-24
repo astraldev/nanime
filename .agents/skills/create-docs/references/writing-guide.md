@@ -119,5 +119,5 @@ All external links (URLs pointing outside the docs site) must open in a new tab.
 
 - Include **working, copy-pasteable** examples
 - Show **complete** code, not fragments
-- Add **comments** for complex logic
+- No comments in demo components; markdown snippets follow prose-style.md
 - Use **realistic** variable names

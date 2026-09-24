@@ -35,6 +35,26 @@
   animation: rotate-primary 120s steps(16) infinite;
 }
 
+:root:not(.dark) {
+  --hex-red-1: oklch(from #ff4b4b min(l, 0.52) c h);
+  --hex-corail-1: oklch(from #ff7d36 min(l, 0.52) c h);
+  --hex-orange-1: oklch(from #ffa828 min(l, 0.52) c h);
+  --hex-yellow-1: oklch(from #ffcc2a min(l, 0.52) c h);
+  --hex-citrus-1: oklch(from #f9f640 min(l, 0.52) c h);
+  --hex-lime-1: oklch(from #b7ff54 min(l, 0.52) c h);
+  --hex-green-1: oklch(from #8dff55 min(l, 0.52) c h);
+  --hex-turquoise-1: oklch(from #00ffaa min(l, 0.52) c h);
+  --hex-cyan-1: oklch(from #26f2d5 min(l, 0.52) c h);
+  --hex-sky-1: oklch(from #05dbe9 min(l, 0.52) c h);
+  --hex-sega-1: oklch(from #33b3f1 min(l, 0.52) c h);
+  --hex-king-1: oklch(from #4d9cff min(l, 0.52) c h);
+  --hex-indigo-1: oklch(from #7c85ff min(l, 0.52) c h);
+  --hex-lavender-1: oklch(from #a369ff min(l, 0.52) c h);
+  --hex-purple-1: oklch(from #c06ddf min(l, 0.52) c h);
+  --hex-magenta-1: oklch(from #e962bf min(l, 0.52) c h);
+  --hex-pink-1: oklch(from #ff718b min(l, 0.52) c h);
+}
+
 li:has(> button[aria-label]) {
   list-style: none;
   padding-left: 9px;
@@ -79,4 +99,8 @@ ul:has(> li > button[aria-label]) + h2 {
   87.5%   { --color-primary: var(--hex-purple-1); }
   93.75%  { --color-primary: var(--hex-magenta-1); }
   100%    { --color-primary: var(--hex-red-1); }
+}
+
+td:has(> .comparison-good) {
+  background-color: color-mix(in oklab, var(--hex-green-1) 14%, transparent);
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { normalizeSplitTextTarget } from '../../../src/runtime/app/utils/normalize-targets'
+import { normalizeSplitTextTarget } from '../../../src/runtime/app/utils/targets'
 import SplitTextComponent from './split-text.vue'
 
 describe('normalizeSplitTextTarget', () => {
