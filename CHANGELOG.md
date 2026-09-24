@@ -1,5 +1,61 @@
 # Changelog
 
+## v0.2.0
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.1.14...v0.2.0)
+
+### 🚀 Enhancements
+
+- Add AnimeTransition and AnimeTransitionGroup components ([700b202](https://github.com/astraldev/nanime/commit/700b202))
+
+### 🔥 Performance
+
+- Fix issue with infinite recursion ([913cb0b](https://github.com/astraldev/nanime/commit/913cb0b))
+
+### 🩹 Fixes
+
+- Code highlight rendering ([01d9a25](https://github.com/astraldev/nanime/commit/01d9a25))
+- **transition-group:** Keep centred content in place during moves ([a27fa7e](https://github.com/astraldev/nanime/commit/a27fa7e))
+- **transitions:** Make stagger() work for items that enter or leave together ([c554bd1](https://github.com/astraldev/nanime/commit/c554bd1))
+- Compare parameter elements by identity and make #nanime/composables importable ([6f6a15d](https://github.com/astraldev/nanime/commit/6f6a15d))
+
+### 💅 Refactors
+
+- **composables:** Rename useLayout.ts to useAnimeLayout.ts and add JSDoc ([3a43e30](https://github.com/astraldev/nanime/commit/3a43e30))
+
+### 📖 Documentation
+
+- Add per-page SEO titles and descriptions ([b4b0caf](https://github.com/astraldev/nanime/commit/b4b0caf))
+- Add comparison pages for Nuxt modules and Vue packages ([c01de9f](https://github.com/astraldev/nanime/commit/c01de9f))
+- Reformat MDC blocks in useDraggable and loading-sequence ([ccb69e9](https://github.com/astraldev/nanime/commit/ccb69e9))
+- **installation:** Add SEO meta and a section on using the docs with AI agents ([69c2709](https://github.com/astraldev/nanime/commit/69c2709))
+- Document the transition components and useAnimeLayout ([e2ba619](https://github.com/astraldev/nanime/commit/e2ba619))
+- Fold the misc pages into one Utilities page ([29ef322](https://github.com/astraldev/nanime/commit/29ef322))
+- **examples:** Remove the timeline storyboard and text magnet examples ([04cbb0b](https://github.com/astraldev/nanime/commit/04cbb0b))
+- Keep pipes out of table cells so Nuxt Studio doesn't split them ([c33b92f](https://github.com/astraldev/nanime/commit/c33b92f))
+- Rework the comparison pages ([955eba3](https://github.com/astraldev/nanime/commit/955eba3))
+- **skills:** Add demo and component page specs, fix stale paths ([c323037](https://github.com/astraldev/nanime/commit/c323037))
+- **skill:** Cover transitions, styles and useAnimeLayout in the nanime skill ([c2956a6](https://github.com/astraldev/nanime/commit/c2956a6))
+- Show agent support on the introduction and homepage ([05c2ddd](https://github.com/astraldev/nanime/commit/05c2ddd))
+- Mark pages and cards added since v0.1.14 as new ([ee4c53c](https://github.com/astraldev/nanime/commit/ee4c53c))
+- **examples:** Add the media library example ([a1779f4](https://github.com/astraldev/nanime/commit/a1779f4))
+- Rework the homepage around one feature grid and a live demo ([85556b0](https://github.com/astraldev/nanime/commit/85556b0))
+- **examples:** Rebuild the loading sequence with transition components and springs ([8b8edac](https://github.com/astraldev/nanime/commit/8b8edac))
+- **examples:** Rebuild drag to bin as a horizontal list with a fixed bin ([beaa7b4](https://github.com/astraldev/nanime/commit/beaa7b4))
+- Tighten SEO copy, update example pages and agent notes ([23c527b](https://github.com/astraldev/nanime/commit/23c527b))
+- Add the logo to the header, favicons and app icons, and darken accent colours in light mode ([696c1a3](https://github.com/astraldev/nanime/commit/696c1a3))
+- Trim the comparison pages, add live previews, and write the 0.2.0 changelog ([bf86ff4](https://github.com/astraldev/nanime/commit/bf86ff4))
+- Add branded OG image templates ([6926f4a](https://github.com/astraldev/nanime/commit/6926f4a))
+
+### 🏡 Chore
+
+- **module:** Drop unused lodash-es and tailwind-merge from optimizeDeps ([ed780c8](https://github.com/astraldev/nanime/commit/ed780c8))
+- Add draft icon ([2533c5e](https://github.com/astraldev/nanime/commit/2533c5e))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.1.14
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.1.13...v0.1.14)
