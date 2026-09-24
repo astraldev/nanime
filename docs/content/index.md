@@ -294,6 +294,58 @@ Enter, leave and list animations in the template, with no CSS to write.
 
 ::u-page-section
 #title
+Built for AI agents
+
+#description
+An agent skill and machine-readable docs, kept in the same repository as the module.
+
+#features
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-robot
+  spotlightColor: var(--color-primary)
+  to: /getting-started/installation#use-with-ai-agents
+  ---
+  #title
+  Agent skill
+
+  #description
+  Install with `npx skills add astraldev/nanime --skill nanime`.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-file-text
+  spotlightColor: var(--color-primary)
+  target: _blank
+  to: /llms-full.txt
+  ---
+  #title
+  llms.txt
+
+  #description
+  Every docs page as plain text, at `/llms.txt` and `/llms-full.txt`.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-plugs
+  spotlightColor: var(--color-primary)
+  to: /getting-started/installation#use-with-ai-agents
+  ---
+  #title
+  MCP server
+
+  #description
+  Lets an agent search these docs at `nanimejs.netlify.app/mcp`.
+  :::
+::
+
+::u-page-section
+#title
 The rest of the toolkit
 
 #description

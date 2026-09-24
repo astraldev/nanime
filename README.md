@@ -112,7 +112,7 @@ Both take a [transition style](https://nanimejs.netlify.app/components/transitio
 
 - **llms.txt**: Structured markdown documentation feed for LLMs is available at [https://nanimejs.netlify.app/llms.txt](https://nanimejs.netlify.app/llms.txt) and [llms-full.txt](https://nanimejs.netlify.app/llms-full.txt).
 - **MCP Server**: Query documentation programmatically via the Model Context Protocol endpoint at `https://nanimejs.netlify.app/mcp`.
-- **Bundled Agent Skills**: The npm package includes agent skill definitions in `skills/nanime` for Claude Code, Cursor, and related agent environments.
+- **Agent Skill**: Install it with `npx skills add astraldev/nanime --skill nanime`. It covers the composables, `<AnimeTransition>` / `<AnimeTransitionGroup>`, transition styles, `useAnimeLayout`, and the mistakes that animate the wrong thing without an error. The npm package also ships it in `skills/nanime`.
 
 ---
 
