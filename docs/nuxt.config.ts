@@ -28,8 +28,15 @@ export default defineNuxtConfig({
   routeRules: {
     '/composables': { redirect: { to: '/composables/introduction', statusCode: 301 } },
     '/getting-started': { redirect: { to: '/getting-started/introduction', statusCode: 301 } },
-    '/misc': { redirect: { to: '/misc/introduction', statusCode: 301 } },
+    '/misc': { redirect: { to: '/composables/utilities', statusCode: 301 } },
+    '/misc/introduction': { redirect: { to: '/composables/utilities', statusCode: 301 } },
+    '/misc/easings': { redirect: { to: '/composables/utilities', statusCode: 301 } },
+    '/misc/utils': { redirect: { to: '/composables/utilities', statusCode: 301 } },
+    '/misc/proxies': { redirect: { to: '/composables/utilities#proxies', statusCode: 301 } },
+    '/components': { redirect: { to: '/components/transitions', statusCode: 301 } },
     '/examples': { redirect: { to: '/examples/introduction', statusCode: 301 } },
+    '/examples/timeline-storyboard': { redirect: { to: '/examples/introduction', statusCode: 301 } },
+    '/examples/text-scatter': { redirect: { to: '/examples/introduction', statusCode: 301 } },
     '/changes': { redirect: { to: '/changes/changelog', statusCode: 301 } },
   },
   sourcemap: {

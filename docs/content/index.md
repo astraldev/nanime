@@ -225,6 +225,71 @@ One composable per AnimeJS API, with a live demo on each page.
   #description
   Drive an animation from scroll position.
   :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-layout
+  spotlightColor: var(--color-primary)
+  to: /composables/use-anime-layout
+  ---
+  #title
+  useAnimeLayout :badge[New]{variant="subtle"}
+
+  #description
+  Animate position and size when the layout changes.
+  :::
+::
+
+::u-page-section
+#title
+Components
+
+#description
+Enter, leave and list animations in the template, with no CSS to write.
+
+#features
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-swap
+  spotlightColor: var(--color-primary)
+  to: /components/transitions
+  ---
+  #title
+  AnimeTransition :badge[New]{variant="subtle"}
+
+  #description
+  Vue's `<Transition>`, animated by AnimeJS.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-list-plus
+  spotlightColor: var(--color-primary)
+  to: /components/transitions#lists
+  ---
+  #title
+  AnimeTransitionGroup :badge[New]{variant="subtle"}
+
+  #description
+  `v-for` lists that animate items in, out and into new positions.
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-ph-palette
+  spotlightColor: var(--color-primary)
+  to: /components/transition-styles
+  ---
+  #title
+  Transition styles
+
+  #description
+  Seven built-in styles, plus your own in `app.config.ts`.
+  :::
 ::
 
 ::u-page-section
@@ -240,7 +305,7 @@ Easings, utilities, and proxies to use inside composable parameters.
   spotlight: true
   icon: i-ph-chart-line-up
   spotlightColor: var(--color-primary)
-  to: /misc/easings
+  to: /composables/utilities
   ---
   #title
   Easings
@@ -254,7 +319,7 @@ Easings, utilities, and proxies to use inside composable parameters.
   spotlight: true
   icon: i-ph-wrench
   spotlightColor: var(--color-primary)
-  to: /misc/utils
+  to: /composables/utilities
   ---
   #title
   Utils
@@ -268,7 +333,7 @@ Easings, utilities, and proxies to use inside composable parameters.
   spotlight: true
   icon: i-ph-plugs-connected
   spotlightColor: var(--color-primary)
-  to: /misc/proxies
+  to: /composables/utilities#proxies
   ---
   #title
   Proxies
