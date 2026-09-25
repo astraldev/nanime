@@ -38,6 +38,21 @@ declare module 'nuxt/schema' {
 const __name = 'nanime'
 const __configKey = 'nanime'
 
+const ANIMEJS_ENTRIES = [
+  'animejs/animation',
+  'animejs/animatable',
+  'animejs/utils',
+  'animejs/waapi',
+  'animejs/layout',
+  'animejs/text',
+  'animejs/svg',
+  'animejs/events',
+  'animejs/draggable',
+  'animejs/timeline',
+  'animejs/easings',
+  'animejs/timer',
+]
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: __name,
@@ -57,22 +72,9 @@ export default defineNuxtModule<ModuleOptions>({
     addVitePlugin(() => ({
       name: '__optimize-deps',
       config(config) {
-        // This runs before environment setup
         config.optimizeDeps ||= {}
         config.optimizeDeps.include ||= []
-        config.optimizeDeps.include.push(
-          'animejs/animation',
-          'animejs/animatable',
-          'animejs/utils',
-          'animejs/waapi',
-          'animejs/layout',
-          'animejs/text',
-          'animejs/svg',
-          'animejs/events',
-          'animejs/draggable',
-          'animejs/timeline',
-          'animejs/timer',
-        )
+        config.optimizeDeps.include.push(...ANIMEJS_ENTRIES.map(entry => `${__name} > ${entry}`))
       },
     }))
 
