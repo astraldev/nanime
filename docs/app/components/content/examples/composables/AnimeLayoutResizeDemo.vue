@@ -2,16 +2,16 @@
 import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleWrapper.vue'
 
 const row = useTemplateRef('row')
-const wide = ref(false)
+const expanded = ref(1)
 
 const layout = useAnimeLayout(row, { duration: 500 })
 
-function toggle() {
-  layout.patch(() => (wide.value = !wide.value))
+function expandNext() {
+  layout.patch(() => (expanded.value = (expanded.value % 5) + 1))
 }
 
 const actions: ExampleAction[] = [
-  { label: 'Resize', run: toggle },
+  { label: 'Next', run: expandNext },
 ]
 </script>
 
@@ -19,13 +19,13 @@ const actions: ExampleAction[] = [
   <ExampleWrapper :actions="actions">
     <div
       ref="row"
-      class="flex flex-wrap gap-2"
+      class="flex flex-wrap items-start gap-2"
     >
       <div
-        v-for="n in 6"
+        v-for="n in 5"
         :key="n"
-        class="h-10 rounded-lg bg-primary"
-        :class="wide ? 'w-24' : 'w-10'"
+        class="rounded-lg bg-primary"
+        :class="expanded === n ? 'h-20 w-32' : 'size-10'"
       />
     </div>
   </ExampleWrapper>
