@@ -43,14 +43,14 @@ export interface AnimeTransitionGroupProps {
 type StyledElement = HTMLElement | SVGElement
 type Styles = Record<string, string>
 
-const PAINT_STYLES = ['transform', 'opacity', 'filter', 'clip-path', 'color', 'background-color', 'border-radius']
+const BASE_STYLES = ['transform']
 
 const toKebab = (prop: string) => prop.replace(/[A-Z]/g, char => `-${char.toLowerCase()}`)
 
 function animatedStyles(params: AnimationParams[]): string[] {
   const probe = typeof document === 'undefined' ? null : document.documentElement.style
   const animated = params.flatMap(Object.keys).filter(key => probe && key in probe).map(toKebab)
-  return [...new Set([...PAINT_STYLES, ...animated])]
+  return [...new Set([...BASE_STYLES, ...animated])]
 }
 
 const readStyles = (el: StyledElement, props: string[]): Styles =>
