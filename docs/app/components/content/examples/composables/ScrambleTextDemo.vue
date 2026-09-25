@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ScrambleTextParams } from '#nanime/types'
-import { useIntervalFn } from '@vueuse/core'
 import ExampleWrapper from '~/components/shared/ExampleWrapper.vue'
 
 const el = useTemplateRef('text')
@@ -13,6 +12,17 @@ const texts = [
   'Care to star us on github? :)',
 ]
 
+function next() {
+  index.value = (index.value + 1) % texts.length
+}
+
+const animationConfig = {
+  ease: 'inCirc',
+  duration: 2500,
+  delay: 2500,
+  onComplete: next,
+}
+
 const scrambleConfig = computed((): ScrambleTextParams => ({
   text: texts[index.value],
   chars: 'symbols',
@@ -22,11 +32,7 @@ const scrambleConfig = computed((): ScrambleTextParams => ({
   revealRate: 20,
 }))
 
-useScrambleText(el, { ease: 'inCirc', duration: 2500 }, scrambleConfig)
-
-useIntervalFn(() => {
-  index.value = (index.value + 1) % texts.length
-}, 5000)
+useScrambleText(el, animationConfig, scrambleConfig)
 </script>
 
 <template>
