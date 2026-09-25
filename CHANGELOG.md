@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.2.1
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.2.0...v0.2.1)
+
+### 🩹 Fixes
+
+- Pre-bundle animejs through nanime so pnpm apps resolve it ([9a91bd6](https://github.com/astraldev/nanime/commit/9a91bd6))
+- Keep inline styles AnimeTransitionGroup doesn't animate ([eeb1f7a](https://github.com/astraldev/nanime/commit/eeb1f7a))
+
+### 📖 Documentation
+
+- Keep full descriptions in OG images ([32f7973](https://github.com/astraldev/nanime/commit/32f7973))
+- Show container and size changes in the useAnimeLayout demos ([ca23290](https://github.com/astraldev/nanime/commit/ca23290))
+- Drive the animatable and scramble demos from onComplete ([3e47ccc](https://github.com/astraldev/nanime/commit/3e47ccc))
+- Write the 0.2.1 changelog ([3541b38](https://github.com/astraldev/nanime/commit/3541b38))
+
+### 🏡 Chore
+
+- Add the nanime promo videos in 16:9 and 4:5 ([bc8c4d0](https://github.com/astraldev/nanime/commit/bc8c4d0))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.2.0
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.1.14...v0.2.0)

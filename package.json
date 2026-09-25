@@ -1,6 +1,6 @@
 {
   "name": "nanime",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Anime.js v4 composables for Nuxt and Vue 3. SSR-safe, reactive, auto-imported.",
   "author": "Ekure Edem <61796351+astraldev@users.noreply.github.com>",
   "homepage": "https://nanimejs.netlify.app",
