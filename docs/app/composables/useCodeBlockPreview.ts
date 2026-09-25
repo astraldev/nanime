@@ -21,21 +21,21 @@ function dedent(text: string, baseIndent = 0): string {
 }
 
 export const useCodeBlockPreview = async (src: string, code = true) => {
-  const components = import.meta.glob('../components/content/examples/**/*.vue', {
+  const components = import.meta.glob<string>('../components/content/examples/**/*.vue', {
     query: '?raw',
     import: 'default',
-    eager: true,
   })
 
   // Normalize path to match glob key
   const globPath = `../components/content/${src}`
+  const loadSource = components[globPath]
 
-  if (!components[globPath]) {
+  if (!loadSource) {
     console.error(`Component not found: ${globPath}`, Object.keys(components))
     return ''
   }
 
-  const content = (components[globPath] as string) || ''
+  const content = (await loadSource()) || ''
 
   // 1. Extract blocks initially
   const scriptMatch = content.match(/<script[^>]*>([\s\S]*?)<\/script>/)
@@ -132,5 +132,6 @@ View on GitHub
   }
 
   const parseOptions = highlighter ? { highlight: { highlighter } } : {}
+  const { parseMarkdown } = await import('@nuxtjs/mdc/runtime')
   return await parseMarkdown(md, parseOptions)
 }

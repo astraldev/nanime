@@ -5,6 +5,9 @@ export default defineAppConfig({
   header: {
     title: 'nanime',
   },
+  search: {
+    fts: true,
+  },
   toc: {
     title: 'Table of content',
     bottom: {
