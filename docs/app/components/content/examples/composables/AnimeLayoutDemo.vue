@@ -1,39 +1,48 @@
 <script setup lang="ts">
-import { shuffle } from '#nanime/utils'
 import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleWrapper.vue'
 
-const list = useTemplateRef('list')
-const items = ref([1, 2, 3, 4, 5, 6])
-
-const layout = useAnimeLayout(list, { duration: 600 })
-
-function reverse() {
-  layout.patch(() => items.value.reverse())
+const arrangements = {
+  row: 'flex gap-2',
+  column: 'flex flex-col gap-2',
+  grid: 'grid grid-cols-2 gap-2',
 }
 
-function shuffleItems() {
-  layout.patch(() => shuffle(items.value))
+type Arrangement = keyof typeof arrangements
+
+const container = useTemplateRef('container')
+const arrangement = ref<Arrangement>('row')
+
+const layout = useAnimeLayout(container, { duration: 600 })
+
+function arrange(next: Arrangement) {
+  layout.patch(() => (arrangement.value = next))
 }
 
-const actions: ExampleAction[] = [
-  { label: 'Reverse', run: reverse },
-  { label: 'Shuffle', run: shuffleItems },
-]
+function arrangeAction(name: Arrangement): ExampleAction {
+  return { label: name, run: () => arrange(name), active: arrangement.value === name }
+}
+
+const actions = computed<ExampleAction[]>(() => [
+  arrangeAction('row'),
+  arrangeAction('column'),
+  arrangeAction('grid'),
+])
 </script>
 
 <template>
   <ExampleWrapper :actions="actions">
-    <ul
-      ref="list"
-      class="flex flex-wrap gap-2"
+    <div
+      ref="container"
+      class="w-fit"
+      :class="arrangements[arrangement]"
     >
-      <li
-        v-for="item in items"
-        :key="item"
+      <div
+        v-for="n in 4"
+        :key="n"
         class="flex size-10 items-center justify-center rounded-lg bg-primary font-semibold text-black"
       >
-        {{ item }}
-      </li>
-    </ul>
+        {{ n }}
+      </div>
+    </div>
   </ExampleWrapper>
 </template>
