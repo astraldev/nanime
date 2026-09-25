@@ -16,7 +16,12 @@
     "vue": "catalog:nuxt"
   },
   "devDependencies": {
-    "typescript": "catalog:nuxt",
-    "@types/node": "catalog:nuxt"
+    "@iconify-json/mage": "^1.2.4",
+    "@iconify-json/ph": "^1.2.2",
+    "@iconify-json/simple-icons": "^1.2.97",
+    "@iconify-json/tabler": "^1.2.40",
+    "@iconify-json/vscode-icons": "^1.2.81",
+    "@types/node": "catalog:nuxt",
+    "typescript": "catalog:nuxt"
   }
 }

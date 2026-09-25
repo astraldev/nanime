@@ -70,8 +70,30 @@ export default defineNuxtConfig({
       ],
     },
   },
+  hooks: {
+    // Stops every page prefetching the 3 MB nuxt-studio editor
+    'build:manifest': (manifest) => {
+      for (const chunk of Object.values(manifest)) chunk.prefetch = false
+    },
+  },
   icon: {
     customCollections: [{ prefix: 'nanime', dir: './app/assets/icons' }],
+    clientBundle: {
+      scan: true,
+      icons: [
+        'simple-icons:npm',
+        'vscode-icons:file-type-npm',
+        'vscode-icons:file-type-pnpm',
+        'vscode-icons:file-type-yarn',
+        'vscode-icons:file-type-bun',
+        'vscode-icons:file-type-typescript',
+        'vscode-icons:file-type-vue',
+        'vscode-icons:file-type-js',
+        'vscode-icons:file-type-css',
+        'vscode-icons:file-type-node',
+        'vscode-icons:file-type-nuxt',
+      ],
+    },
   },
   llms: {
     domain: 'https://nanimejs.netlify.app',
