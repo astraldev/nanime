@@ -1,7 +1,8 @@
 import { shallowRef, toValue, watch, type MaybeRefOrGetter } from 'vue'
 import { onScroll } from 'animejs/events'
 import type { ScrollObserver, ScrollObserverParams } from 'animejs'
-import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
+import { createBufferedProxy, resolveNanimeInstance, type BufferedProxyReturns } from '../utils/proxy'
+import { snapshotParameters } from '../utils/snapshot-parameters'
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 
 const CHAINABLE_METHODS = new Set(['link', 'refresh', 'revert'])
@@ -19,6 +20,8 @@ export function useAnimeScroll(
 
   const { proxy, flushBuffer } = createBufferedProxy<ScrollObserver>(observer, {
     chainableMethods: CHAINABLE_METHODS,
+    replayMethods: new Set(['link']),
+    transformArgs: (method, args) => method === 'link' ? args.map(arg => resolveNanimeInstance(arg)) : args,
   })
 
   const resolveParameters = () => toValue(parameters) || {}
@@ -30,10 +33,10 @@ export function useAnimeScroll(
   }
 
   watch(
-    [mounted, resolveParameters],
-    ([isMounted, params]) => {
+    [mounted, () => snapshotParameters(resolveParameters())],
+    ([isMounted]) => {
       if (!isMounted) return
-      rebuildObserver(params)
+      rebuildObserver(resolveParameters())
     },
     { immediate: true },
   )

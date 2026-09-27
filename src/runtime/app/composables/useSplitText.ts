@@ -1,4 +1,4 @@
-import { computed, nextTick, shallowRef, toValue, watch, type ComputedRef, type MaybeRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { computed, nextTick, shallowRef, toValue, warn, watch, watchEffect, type ComputedRef, type MaybeRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { splitText, type TextSplitter } from 'animejs/text'
 import { normalizeSplitTextTarget } from '../utils/targets'
 import {
@@ -9,6 +9,8 @@ import {
   type OnlyFunctionProperties,
 } from '../utils/extract-props'
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
+import { snapshotParameters } from '../utils/snapshot-parameters'
+import type { SplitTextOptions } from '../public/types'
 
 type SplitEffect = Parameters<TextSplitter['addEffect']>[0]
 
@@ -29,11 +31,13 @@ type SplitText = {
 /**
  * Splits the text of `target` into lines, words and chars with Anime.js
  * `splitText()`. The split arrays are refs that update when the text is
- * split again, and the split is reverted when the scope is disposed.
+ * split again, and the split is reverted when the scope is disposed. Pass
+ * `options.html` for text that changes.
  */
 export function useSplitText(
   target: MaybeRef<Parameters<typeof normalizeSplitTextTarget>[0]>,
   parameters?: MaybeRefOrGetter<Parameters<typeof splitText>[1]>,
+  options?: SplitTextOptions,
 ): SplitText {
   const mounted = useMounted()
   const splitter = shallowRef<TextSplitter | null>(null)
@@ -57,9 +61,22 @@ export function useSplitText(
     version.value++
   }
 
+  const readHtmlOption = () => options?.html === undefined ? undefined : toValue(options.html)
+  const resolveHtml = () => {
+    const html = readHtmlOption()
+    return typeof html === 'string' ? html : undefined
+  }
+
+  if (options?.html !== undefined) {
+    watchEffect(() => {
+      const html = readHtmlOption()
+      if (typeof html !== 'string') warn(`[nanime] useSplitText: the html option is ${String(html)}, so the current text is kept.`)
+    })
+  }
+
   const resyncSource = (instance: TextSplitter) => {
     const element = instance.$target
-    if (!element) return
+    if (!element || resolveHtml() !== undefined) return
     const produced = instance.chars[0] || instance.words[0] || instance.lines[0]
     if (produced && element.contains(produced)) return
     instance.html = element.innerHTML
@@ -69,15 +86,14 @@ export function useSplitText(
   const resolveTarget = () => normalizeSplitTextTarget(toValue(target))
   const resolveParameters = () => toValue(parameters)
 
-  const rebuildSplitter = (
-    element: NonNullable<ReturnType<typeof resolveTarget>>,
-    params: ReturnType<typeof resolveParameters>,
-  ) => {
+  const rebuildSplitter = (element: HTMLElement, params: ReturnType<typeof resolveParameters>) => {
     if (splitter.value) {
       resyncSource(splitter.value)
       splitter.value.revert()
     }
 
+    const html = resolveHtml()
+    if (html !== undefined) element.innerHTML = html
     const newSplitter = splitText(element, params)
     splitter.value = newSplitter
 
@@ -90,18 +106,43 @@ export function useSplitText(
     nextTick(syncArrays)
   }
 
+  const teardown = () => {
+    if (splitter.value) {
+      resyncSource(splitter.value)
+      splitter.value.revert()
+    }
+    splitter.value = null
+    lines.value = []
+    words.value = []
+    chars.value = []
+  }
+
   watch(
     [
       mounted,
       resolveTarget,
-      resolveParameters,
+      () => {
+        const params = resolveParameters()
+        return params && snapshotParameters(params)
+      },
     ],
-    ([isMounted, element, params]) => {
-      if (!isMounted || !element) return
-      rebuildSplitter(element, params)
+    ([isMounted, target]) => {
+      if (!isMounted) return
+      const element = typeof target === 'string' ? document.querySelector(target) : target
+      if (!(element instanceof HTMLElement)) {
+        teardown()
+        return
+      }
+      rebuildSplitter(element, resolveParameters())
     },
     { immediate: true },
   )
+
+  watch(resolveHtml, (html) => {
+    if (!splitter.value || html === undefined || splitter.value.html === html) return
+    splitter.value.html = html
+    splitter.value.refresh()
+  })
 
   const refresh = () => {
     if (!splitter.value) return
@@ -109,13 +150,7 @@ export function useSplitText(
     splitter.value.split(true)
   }
 
-  tryOnScopeDispose(() => {
-    splitter.value?.revert()
-    splitter.value = null
-    lines.value = []
-    words.value = []
-    chars.value = []
-  })
+  tryOnScopeDispose(teardown)
 
   return {
     lines,

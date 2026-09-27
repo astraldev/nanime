@@ -1,7 +1,7 @@
 import { createAnimatable } from 'animejs/animatable'
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
-import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
-import { normalizeAnimeTarget } from '../utils/targets'
+import { onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
+import { hasTargets, normalizeAnimeTarget, sameTargets } from '../utils/targets'
 import type { AnimatableObject, AnimatableParams, TargetsParam } from 'animejs'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
@@ -20,16 +20,24 @@ export function useAnimatable(
   const animatable = shallowRef(createAnimatable({}, {}))
   const mounted = useMounted()
 
+  const resolveTargets = () => normalizeAnimeTarget(target)
+
   if (flag === AnimationComponentFlags.Watchable) {
-    let oldTarget: TargetsParam
-    watchEffect(() => {
+    let previous: TargetsParam | null = null
+
+    const sync = () => {
       if (!mounted.value) return
-      const targets = normalizeAnimeTarget(target)
-      if (oldTarget === targets) return
-      oldTarget = targets
-      const newAnimatable = createAnimatable(targets, toValue(options) || {})
-      animatable.value = newAnimatable
-    })
+      const targets = resolveTargets()
+      if (previous !== null && sameTargets(previous, targets)) return
+      previous = targets
+      animatable.value.revert()
+      animatable.value = hasTargets(targets)
+        ? createAnimatable(targets, toValue(options) || {})
+        : createAnimatable({}, {})
+    }
+
+    watch(resolveTargets, sync)
+    onMounted(sync)
 
     tryOnScopeDispose(() => {
       animatable.value.revert()
@@ -37,10 +45,9 @@ export function useAnimatable(
   }
   else {
     nextTick(() => {
-      const targets = normalizeAnimeTarget(target)
-      if (!targets) return
-      const newAnimatable = createAnimatable(targets, toValue(options) || {})
-      animatable.value = newAnimatable
+      const targets = resolveTargets()
+      if (!hasTargets(targets)) return
+      animatable.value = createAnimatable(targets, toValue(options) || {})
     })
   }
 

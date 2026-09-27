@@ -1,9 +1,10 @@
-import { nextTick, shallowRef, toValue, watch, type MaybeRef, type MaybeRefOrGetter } from 'vue'
+import { nextTick, onMounted, shallowRef, toValue, watch, type MaybeRef, type MaybeRefOrGetter } from 'vue'
 import { createLayout, type AutoLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
 import type { DOMTargetSelector, Timeline } from 'animejs'
 import { normalizeLayoutTarget } from '../utils/targets'
 import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
+import { snapshotParameters } from '../utils/snapshot-parameters'
 import { markLayoutAnimations } from '../utils/layout-animations'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
@@ -55,23 +56,24 @@ export function useAnimeLayout(
     flushBuffer()
   }
 
-  let previous: { root: DOMTargetSelector, params: AutoLayoutParams } | null = null
+  let previous: { root: DOMTargetSelector, snapshot: Record<string, unknown> } | null = null
 
-  watch(
-    [mounted, resolveRoot, resolveParameters],
-    ([isMounted, root, params]) => {
-      if (!isMounted || !root) return
-      if (
-        previous
-        && previous.root === root
-        && deepEqualWithSkip(previous.params, params, callbacks)
-      ) return
+  const sync = () => {
+    const root = resolveRoot()
+    if (!mounted.value || !root) return
+    const snapshot = snapshotParameters(resolveParameters())
+    if (
+      previous
+      && previous.root === root
+      && deepEqualWithSkip(previous.snapshot, snapshot, callbacks)
+    ) return
 
-      previous = { root, params }
-      rebuildLayout(root, params)
-    },
-    { immediate: true },
-  )
+    previous = { root, snapshot }
+    rebuildLayout(root, resolveParameters())
+  }
+
+  watch([resolveRoot, () => snapshotParameters(resolveParameters())], sync)
+  onMounted(sync)
 
   tryOnScopeDispose(() => {
     layout.value?.revert()

@@ -25,12 +25,14 @@ export function markLayoutAnimations<Layout extends AutoLayout>(layout: Layout):
   }
 
   function release() {
-    root.removeAttribute(LAYOUT_ANIMATING_ATTRIBUTE)
     for (const [element, property, value] of pinned) {
       if (value) element.style.setProperty(property, value)
       else element.style.removeProperty(property)
     }
     pinned = []
+    if (!root.hasAttribute(LAYOUT_ANIMATING_ATTRIBUTE)) return
+    root.getBoundingClientRect()
+    root.removeAttribute(LAYOUT_ANIMATING_ATTRIBUTE)
   }
 
   layout.record = () => {
@@ -55,7 +57,7 @@ export function markLayoutAnimations<Layout extends AutoLayout>(layout: Layout):
         onComplete?.(self)
       },
     })
-    if (!timeline.completed) {
+    if (root instanceof Element && root.classList.contains('is-animated')) {
       root.setAttribute(LAYOUT_ANIMATING_ATTRIBUTE, '')
       pinSizedNodes()
     }

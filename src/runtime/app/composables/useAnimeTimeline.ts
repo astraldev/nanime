@@ -5,10 +5,11 @@ import { createTimeline, type Timeline } from 'animejs/timeline'
 import { keepTime } from 'animejs/utils'
 import type { NanimeInstanceOptions } from '../public/types'
 import { normalizeAnimeTarget } from '../utils/targets'
-import { createBufferedProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/proxy'
+import { createBufferedProxy, hasNanimeProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/proxy'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { resolveKeepTime } from '../utils/global-options'
 import { deepEqualWithSkip } from '../utils/deep-equal'
+import { snapshotParameters } from '../utils/snapshot-parameters'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
 const CONTENT_METHODS = new Set([
@@ -70,25 +71,41 @@ export function useAnimeTimeline(
 
   const resolveParameters = () => unwrapNanimeProxies(toValue(parameters) || {})
 
-  const buildTimeline = (params: TimelineParams) => createTimeline(params)
-  const createReplacement = keepsTime ? keepTime(buildTimeline) : buildTimeline
+  const buildTimeline = (params: TimelineParams) => {
+    const next = createTimeline(params)
+    timeline.value = next
+    flushBuffer()
+    return next
+  }
+  const buildKeepingTime = keepTime(buildTimeline)
 
   const rebuildTimeline = (params: TimelineParams) => {
-    if (!keepsTime && timeline.value) timeline.value.revert()
-    timeline.value = createReplacement(params)
-    flushBuffer()
+    if (hasNanimeProxy(toValue(parameters) || {})) {
+      timeline.value?.cancel()
+      buildTimeline(params)
+      return
+    }
+    if (!keepsTime) {
+      timeline.value?.revert()
+      buildTimeline(params)
+      return
+    }
+    const wasPaused = timeline.value?.paused
+    const next = buildKeepingTime(params)
+    if (wasPaused === false) next.resume()
+    else if (wasPaused) next.pause()
   }
 
   if (flag === AnimationComponentFlags.Watchable) {
-    let previous: TimelineParams | null = null
+    let previous: Record<string, unknown> | null = null
 
     watch(
-      [mounted, resolveParameters],
-      ([isMounted, params]) => {
+      [mounted, () => snapshotParameters(resolveParameters())],
+      ([isMounted, snapshot]) => {
         if (!isMounted) return
-        if (previous && deepEqualWithSkip(previous, params, callbacks)) return
-        previous = params
-        rebuildTimeline(params)
+        if (previous && deepEqualWithSkip(previous, snapshot, callbacks)) return
+        previous = snapshot
+        rebuildTimeline(resolveParameters())
       },
       { immediate: true },
     )
