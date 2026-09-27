@@ -5,6 +5,14 @@ export default defineAppConfig({
   header: {
     title: 'nanime',
   },
+  ui: {
+    header: {
+      slots: {
+        container: 'relative',
+        center: 'absolute left-1/2 -translate-x-1/2',
+      },
+    },
+  },
   search: {
     fts: true,
   },
