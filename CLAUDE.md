@@ -8,7 +8,8 @@ Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 r
 |---|---|
 | Module entry | `src/module.ts` |
 | Composables | `src/runtime/app/composables/` |
-| Components | `src/runtime/app/components/` (`AnimeTransition`, `AnimeTransitionGroup`) |
+| Components | `src/runtime/app/components/` (`AnimeTransition`, `AnimeTransitionGroup`, `AnimeLayoutGroup`) |
+| Component defaults | `app.config.ts` `nanime.components` (`transition`, `transitionGroup`, `layoutGroup`), scoped via `provideAnimeDefaults()`; resolved in `src/runtime/app/utils/component-defaults.ts` (prop > provider > app config > built-in) |
 | Public API (`#nanime/*` aliases) | `src/runtime/app/public/` (`types.ts`, `utils.ts`, `easings.ts`, `proxies/`) |
 | Internal helpers | `src/runtime/app/utils/` (`targets.ts`, `proxy/`, `instance/`, `vue-helpers.ts`) |
 | Transition internals | `src/runtime/app/transitions/` (`runner.ts`, `resolve.ts`, `styles/`) |
@@ -86,7 +87,9 @@ Key conventions:
 - Clean up with `tryOnScopeDispose`
 - Return `toReactive(shallowRef)` for ergonomic destructuring
 
-Existing composables: `useAnimate`, `useAnimatable`, `useAnimeLayout`, `useAnimeScroll`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`
+Existing composables: `useAnimate`, `useAnimatable`, `useAnimeLayout`, `useAnimeScroll`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`, plus `provideAnimeDefaults`
+
+A new configurable component gets a key in `NanimeComponentDefaults` (`public/types/components.ts`); nothing else to register. Read its props through `useComponentDefaults(name).option(props, key) ?? builtIn`. Boolean and defaulted props use `default: undefined` so "not passed" stays detectable. DOM markers (attributes, classes) live in `src/runtime/app/utils/markers.ts`.
 
 Code comments: none in internal code. Every public type, prop and module option gets a JSDoc line (with `@default` where there is one), because users see it on hover.
 

@@ -22,7 +22,7 @@ AnimeJS wrapped in Vue composables. They resolve targets, skip server renders, a
 #links
   :::u-button
   ---
-  icon: i-lucide-arrow-right
+  icon: i-ph-arrow-right
   size: xl
   to: /getting-started/installation
   ---
@@ -79,15 +79,15 @@ What you get
   :::u-page-card
   ---
   spotlight: true
-  icon: i-ph-swap
+  icon: i-ph-arrows-left-right
   spotlightColor: var(--color-primary)
   to: /components/transitions
   ---
   #title
-  Transition [components]{.text-primary} :badge[New]{variant="subtle"}
+  Transition and layout [components]{.text-primary} :badge[New]{variant="subtle"}
 
   #description
-  Animate v-if and v-for changes, including list moves, with no CSS to write
+  Animate v-if, v-for and layout changes, including list moves, with no CSS to write
   :::
 
   :::u-page-card

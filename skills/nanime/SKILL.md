@@ -4,8 +4,9 @@ description: |
   Build animations in a Nuxt app with nanime, the Nuxt module wrapping Anime.js v4.
   Use when animating elements, text, SVG paths or scroll position in Nuxt: useAnimate,
   useWaapiAnimate, useAnimatable, useAnimeTimeline, useDraggable, useSplitText,
-  useScrambleText, useAnimeScroll, useAnimeLayout, the <AnimeTransition> and
-  <AnimeTransitionGroup> components, transition styles in app.config.ts, and the
+  useScrambleText, useAnimeScroll, useAnimeLayout, the <AnimeTransition>,
+  <AnimeTransitionGroup> and <AnimeLayoutGroup> components, transition styles and
+  component defaults in app.config.ts, provideAnimeDefaults, and the
   #nanime/* aliases. Read the failure modes below before shipping. Most mistakes here
   do not throw, they animate the wrong thing. Use it too when an effect seems to need
   raw animejs, GSAP, or CSS transition classes.
@@ -45,6 +46,7 @@ All are auto-imported. No import statement is needed.
 | `useScrambleText` | Scrambling and revealing an element's text |
 | `useAnimeScroll` | A scroll observer, to scrub an animation with scroll position |
 | `useAnimeLayout` | Animating position and size when mounted elements change layout. `patch(fn)` records, runs `fn`, waits a tick, animates |
+| `provideAnimeDefaults` | Default component props for everything rendered below the calling component |
 
 ## Components
 
@@ -76,6 +78,42 @@ Anime.js running the animations. Write no transition CSS.
 Details, staggering and custom styles:
 [references/transitions.md](references/transitions.md).
 
+`<AnimeLayoutGroup>` animates its children to a new size and position when
+the values in `deps` change, with no `patch()` call:
+
+```vue
+<template>
+  <AnimeLayoutGroup :deps="[view]" :class="view === 'grid' ? 'grid grid-cols-2' : 'flex'">
+    <div v-for="n in 4" :key="n" />
+  </AnimeLayoutGroup>
+</template>
+```
+
+- `deps` entries are watched deeply. A getter entry such as
+  `[() => store.view]` is called and its result watched. Add `shallow` to
+  react only when an entry is replaced.
+- Without `deps`, every re-render of the group animates.
+- Toggle children with `v-show` to get enter and leave fades while the rest
+  slides. With `v-if`, a removed child vanishes at once and only its
+  neighbours animate.
+- `elements` picks which elements move on their own: a selector such as
+  `'.card'` (matched only inside this group), elements, component instances,
+  or a list. The group still measures everything inside it, so wrap only
+  what moves. Content inside a matched element does not move on its own: it
+  jumps to its new spot halfway through, so it can visibly shift when the
+  element resizes (add it to `elements`, e.g. `'.card, .card h3'`, to make
+  it slide), and fades out and back if its own size changes too
+  (`layoutOptions: { swapAt: { opacity: 1 } }` keeps it visible).
+- `layoutOptions` takes Anime.js `createLayout()` params. `tag` defaults to
+  `'div'`.
+
+Default props for all three components go in `app.config.ts` under
+`nanime.components`, keyed `transition`, `transitionGroup` and `layoutGroup`.
+`provideAnimeDefaults({ ... })` takes the same shape and applies to the
+calling component's subtree. A prop passed to the component always wins,
+and an `undefined` default leaves the outer one in place. In app config,
+`layoutGroup.elements` takes selectors only.
+
 ## When you are stuck
 
 Don't drop to `onMounted` with raw `animejs` imports, and don't reach for GSAP.
@@ -85,7 +123,7 @@ The effect almost always has a nanime path:
 |---|---|
 | Enter/leave, keyed swaps, custom transition styles | [references/transitions.md](references/transitions.md) |
 | `v-for` lists: add, remove, reorder, stagger | [references/lists.md](references/lists.md) |
-| Position or size changes on mounted elements (FLIP) | [references/use-anime-layout.md](references/use-anime-layout.md) |
+| Position or size changes on mounted elements (FLIP), `<AnimeLayoutGroup>` | [references/use-anime-layout.md](references/use-anime-layout.md) |
 | Timelines over split text, SVG draw/morph, scroll | [references/timelines.md](references/timelines.md) |
 | Checking an animation without a browser, test setup | [references/verifying.md](references/verifying.md) |
 

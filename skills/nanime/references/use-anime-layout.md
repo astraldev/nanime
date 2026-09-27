@@ -8,6 +8,22 @@ expanding, or a reorder you want to `await`.
 
 Docs: https://nanimejs.netlify.app/composables/use-anime-layout
 
+When the change comes from state you can list, `<AnimeLayoutGroup>` does
+the same without a `patch` call. It records its children before Vue updates
+the DOM whenever `deps` changes, then animates:
+
+```vue
+<template>
+  <AnimeLayoutGroup :deps="[wide]" :layout-options="{ duration: 500 }">
+    <div v-for="item in items" :key="item.id" />
+  </AnimeLayoutGroup>
+</template>
+```
+
+Docs: https://nanimejs.netlify.app/components/layout-group. Use
+`useAnimeLayout` when you need to `await` the animation or change the
+timing per call.
+
 ```ts
 const list = useTemplateRef('list')
 const layout = useAnimeLayout(list, { duration: 500, ease: 'inOutQuad' })
