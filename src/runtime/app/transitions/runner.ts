@@ -2,8 +2,7 @@ import type { AnimationParams, FunctionValue } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import type { BaseTransitionProps } from 'vue'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
-
-export const ACTIVE_ATTRIBUTE = 'data-anime-transition'
+import { TRANSITION_ATTRIBUTE } from '../utils/markers'
 
 type StyledElement = HTMLElement | SVGElement
 
@@ -59,12 +58,12 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
       if (ended) return
       ended = true
       running.delete(el)
-      el.removeAttribute(ACTIVE_ATTRIBUTE)
+      el.removeAttribute(TRANSITION_ATTRIBUTE)
       options.onEnd?.(el)
       done()
     }
 
-    el.setAttribute(ACTIVE_ATTRIBUTE, '')
+    el.setAttribute(TRANSITION_ATTRIBUTE, '')
     const animation = animate(el, {
       ...resolveForBatch(params, el, batch),
       onComplete(self) {

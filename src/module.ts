@@ -3,15 +3,22 @@ import { defu } from 'defu'
 import type { NanimeAppConfig } from './runtime/app/public/types'
 
 export interface ModuleOptions {
-  /** Add composables for animejs */
+  /**
+   * Add composables for animejs
+   * @default true
+   */
   composables: boolean
-  /** Register `<AnimeTransition>` and `<AnimeTransitionGroup>` */
+  /**
+   * Adds components (`AnimeTransition`, `AnimeTransitionGroup`, `AnimeLayoutGroup`)
+   * @default true
+   */
   components: boolean
   /**
    * Default for every composable's `keepTime` option. `true` carries the
    * playhead across rebuilds, so an animation continues instead of restarting
    * when its reactive inputs change. A composable's own third argument still
    * wins over this.
+   * @default false
    */
   keepTime: boolean
 }
@@ -88,7 +95,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (_options.components) {
-      for (const name of ['AnimeTransition', 'AnimeTransitionGroup']) {
+      for (const name of ['AnimeTransition', 'AnimeTransitionGroup', 'AnimeLayoutGroup']) {
         addComponent({ name, filePath: resolver.resolve(`./runtime/app/components/${name}`) })
       }
       _nuxt.options.css.push(resolver.resolve('./runtime/app/components/anime-transition.css'))
