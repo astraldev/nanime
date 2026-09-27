@@ -12,8 +12,10 @@ const { data: markdown } = await useAsyncData(
 </script>
 
 <template>
-  <MDC
+  <div
     v-if="markdown"
-    :value="markdown"
-  />
+    class="code-preview"
+  >
+    <MDC :value="markdown" />
+  </div>
 </template>

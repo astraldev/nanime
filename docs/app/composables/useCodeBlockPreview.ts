@@ -1,23 +1,101 @@
+import type { ElementNode, TemplateChildNode } from '@vue/compiler-dom'
+import type MagicString from 'magic-string'
 import { kebabCase } from 'scule'
 import { parseFilename } from 'ufo'
 
-function dedent(text: string, baseIndent = 0): string {
-  const lines = text.split('\n')
-  while (lines.length > 0 && lines[0]?.trim() === '') lines.shift()
-  while (lines.length > 0 && lines[lines.length - 1]?.trim() === '') lines.pop()
-  if (lines.length === 0) return ''
+const MAX_STRING_LENGTH = 100
+const MAX_PREVIEW_CLASSES = 5
+const EXAMPLE_IMPORT = /^(?:~|@|\.\.).*\.vue$/
+const ACTION_HELPER = /^\w+Action$/
 
-  const minIndent = lines.reduce((min, line) => {
-    if (line.trim() === '') return min
-    const match = line.match(/^(\s*)/)
-    const indent = match?.[1]?.length ?? 0
-    return Math.min(min, indent)
-  }, Infinity)
+// Shapes an example SFC for the code tabs. The parsers and prettier load on demand,
+// so pages that only render the live preview never download them.
+async function formatExample(source: string) {
+  const [{ parse, NodeTypes }, { parse: parseScript }, { default: MagicString }, { default: jsTokens }, { format }, html] = await Promise.all([
+    import('@vue/compiler-dom'),
+    import('@babel/parser'),
+    import('magic-string'),
+    import('js-tokens'),
+    import('prettier/standalone'),
+    import('prettier/plugins/html'),
+  ])
 
-  const prefix = ' '.repeat(baseIndent)
-  return lines
-    .map(line => (line.trim() === '' ? '' : prefix + line.slice(minIndent)))
-    .join('\n')
+  // More than MAX_PREVIEW_CLASSES static classes become "...";
+  // data-preview-keep-class="a,b" shows only those classes instead.
+  function simplifyClass(element: ElementNode, code: MagicString) {
+    const attributes = element.props.filter(prop => prop.type === NodeTypes.ATTRIBUTE)
+    const keep = attributes.find(attribute => attribute.name === 'data-preview-keep-class')
+    const classAttribute = attributes.find(attribute => attribute.name === 'class')
+    if (keep) code.remove(keep.loc.start.offset, keep.loc.end.offset)
+    if (!classAttribute?.value) return
+
+    const classes = classAttribute.value.content.split(/\s+/).filter(Boolean)
+    const shown = keep
+      ? (keep.value?.content ?? '').split(',').map(name => name.trim()).filter(name => classes.includes(name))
+      : classes.length > MAX_PREVIEW_CLASSES ? ['...'] : classes
+    const { start, end } = classAttribute.loc
+    if (shown.length) code.overwrite(start.offset, end.offset, `class="${shown.join(' ')}"`)
+    else code.remove(start.offset, end.offset)
+  }
+
+  function simplifyElements(nodes: TemplateChildNode[], code: MagicString) {
+    for (const node of nodes) {
+      if (node.type !== NodeTypes.ELEMENT) continue
+      if (node.tag === 'ExampleWrapper') {
+        const first = node.children[0]
+        const last = node.children.at(-1)
+        if (first && last) {
+          code.remove(node.loc.start.offset, first.loc.start.offset)
+          code.remove(last.loc.end.offset, node.loc.end.offset)
+        }
+        else {
+          code.remove(node.loc.start.offset, node.loc.end.offset)
+        }
+      }
+      else {
+        simplifyClass(node, code)
+      }
+      simplifyElements(node.children, code)
+    }
+  }
+
+  // Prettier re-indents the template and puts a tag on one line when it fits in 80 columns.
+  async function formatTemplate(template: ElementNode) {
+    if (!template.innerLoc) return ''
+    const code = new MagicString(source)
+    simplifyElements(template.children, code)
+    const inner = code.slice(template.innerLoc.start.offset, template.innerLoc.end.offset).trim()
+    if (!inner) return ''
+    const formatted = await format(`<template>\n${inner}\n</template>`, { parser: 'vue', plugins: [html] })
+    return formatted.trim()
+  }
+
+  // Drops the ExampleWrapper plumbing (its import, `const actions`, `function *Action`)
+  // and replaces strings longer than MAX_STRING_LENGTH with '...'.
+  function formatScript(script: string) {
+    const code = new MagicString(script)
+    for (const statement of parseScript(script, { sourceType: 'module', plugins: ['typescript'] }).program.body) {
+      const exampleOnly
+        = (statement.type === 'ImportDeclaration' && EXAMPLE_IMPORT.test(statement.source.value))
+          || (statement.type === 'VariableDeclaration' && statement.declarations.some(({ id }) => id.type === 'Identifier' && id.name === 'actions'))
+          || (statement.type === 'FunctionDeclaration' && ACTION_HELPER.test(statement.id?.name ?? ''))
+      if (exampleOnly) code.remove(statement.start ?? 0, statement.end ?? 0)
+    }
+    const stripped = code.toString().replace(/\n{3,}/g, '\n\n').trim()
+    return Array.from(jsTokens(stripped), token =>
+      token.type === 'StringLiteral' && token.value.length - 2 > MAX_STRING_LENGTH
+        ? `${token.value[0]}...${token.value[0]}`
+        : token.value).join('')
+  }
+
+  const blocks = parse(source, { parseMode: 'sfc' }).children.filter(node => node.type === NodeTypes.ELEMENT)
+  const block = (tag: string) => blocks.find(node => node.tag === tag)
+  const template = block('template')
+  return {
+    script: formatScript(block('script')?.innerLoc?.source ?? ''),
+    template: template ? await formatTemplate(template) : '',
+    style: block('style')?.innerLoc?.source.trim() ?? '',
+  }
 }
 
 export const useCodeBlockPreview = async (src: string, code = true) => {
@@ -35,44 +113,10 @@ export const useCodeBlockPreview = async (src: string, code = true) => {
     return ''
   }
 
-  const content = (await loadSource()) || ''
-
-  // 1. Extract blocks initially
-  const scriptMatch = content.match(/<script[^>]*>([\s\S]*?)<\/script>/)
-  const templateMatch = content.match(/<template>([\s\S]*?)<\/template>/)
-  const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/)
-
-  let script = scriptMatch?.[1] ? scriptMatch[1] : ''
-  let template = templateMatch?.[1] ? templateMatch[1] : ''
-  const style = styleMatch?.[1] ? styleMatch[1] : ''
-
-  // 2. Find imports to ../**/*.vue, ~/**/*.vue, @/**/*.vue
-  const importRegex = /^import\s+(?:\S.*?)??from\s+['"](?:~|@|\.\.).*?\.vue['"]\s*;?\r?\n?/gm
-  const actionsRegex = /^const actions\b[^\n]*(?:\n[ \t][^\n]*)*(?:\n[\])}][^\n]*)?\n?/gm
-  const actionHelperRegex = /^function \w+Action\b[^\n]*(?:\n[ \t][^\n]*)*(?:\n\}[^\n]*)?\n?/gm
-  script = script
-    .replace(importRegex, '\n')
-    .replace(actionsRegex, '\n')
-    .replace(actionHelperRegex, '\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
-
-  // 3. Remove wrapper usage in template
-  template = template
-    .replace(/<ExampleWrapper[^>]*>([\s\S]*?)<\/ExampleWrapper>/g, '$1')
-    .replace(/<ExampleWrapper[^>]*\/>/g, '')
-
-  let finalScript = script
-  let finalTemplate = template
-  let finalStyle = style
-
-  // Preview-only callers never render these, so skip formatting entirely.
-  if (code) {
-    finalScript = dedent(script, 0)
-    const dedentedTemplate = dedent(template, 2)
-    finalTemplate = dedentedTemplate ? `<template>\n${dedentedTemplate}\n</template>` : ''
-    finalStyle = dedent(style, 0)
-  }
+  // Preview-only callers never render the code, so skip parsing and formatting entirely.
+  const { script: finalScript, template: finalTemplate, style: finalStyle } = code
+    ? await formatExample((await loadSource()) || '')
+    : { script: '', template: '', style: '' }
 
   // Determine component name for preview
   const filename = parseFilename(src.replace('.vue', ''))
