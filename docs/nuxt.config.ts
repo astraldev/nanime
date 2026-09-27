@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   extends: ['docus'],
-  modules: ['nuxt-studio', 'nanime'],
+  modules: ['nanime'],
   components: {
     global: true,
     dirs: ['~/components'],
@@ -70,12 +70,6 @@ export default defineNuxtConfig({
       ],
     },
   },
-  hooks: {
-    // Stops every page prefetching the 3 MB nuxt-studio editor
-    'build:manifest': (manifest) => {
-      for (const chunk of Object.values(manifest)) chunk.prefetch = false
-    },
-  },
   icon: {
     customCollections: [{ prefix: 'nanime', dir: './app/assets/icons' }],
     clientBundle: {
@@ -101,19 +95,5 @@ export default defineNuxtConfig({
   sitemap: {
     autoLastmod: true,
     defaults: { changefreq: 'weekly', priority: 0.7 },
-  },
-  studio: {
-    // @ts-expect-error from the docs
-    git: {
-      commit: {
-        messagePrefix: 'content:',
-      },
-    },
-    repository: {
-      provider: 'github',
-      owner: 'astraldev',
-      repo: 'nanime',
-      branch: process.env.STUDIO_BRANCH_NAME || 'main',
-    },
   },
 })
