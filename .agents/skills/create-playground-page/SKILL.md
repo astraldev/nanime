@@ -46,9 +46,10 @@ to make it rescan.
 # Comparing defaults side by side
 
 To compare settings for a component (old default against a candidate),
-follow `docs/app/pages/playground/defaults/`: one page per component, one
-section per real use case (modal, toast stack, tag input, accordion, …).
-The shared pieces in `docs/app/components/playground/`:
+build one page per component with one section per real use case (modal,
+toast stack, tag input, accordion, …). Delete the pages once the decision
+is made; the docs site ships no comparison pages. The shared pieces in
+`docs/app/components/playground/` stay:
 
 - `PlaygroundCompare`: a titled section that renders its slot once per
   column, each inside `PlaygroundDefaultsScope`, so the components in the
