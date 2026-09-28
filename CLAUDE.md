@@ -14,7 +14,7 @@ Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 r
 | Internal helpers | `src/runtime/app/utils/` (`targets.ts`, `proxy/`, `instance/`, `vue-helpers.ts`) |
 | Transition internals | `src/runtime/app/transitions/` (`runner.ts`, `resolve.ts`, `styles/`) |
 | Anime.js source | `node_modules/animejs/dist/modules/` (no submodule) |
-| Docs site (Docus) | `docs/` — dev on port 3001, also hosts playground pages at `docs/app/pages/playground/` |
+| Docs site (Docus) | `docs/` — dev on port 3001. Local playground pages go in `docs/app/pages/playground/` and are never committed; shared helpers live in `docs/app/components/playground/` |
 | Tests | `test/` — moving to a private repo; use-case and regression tests already live in `../nanime-tests` |
 | Agent skills | `.agents/skills/` (also symlinked at `.agent/skills`) |
 
@@ -96,7 +96,7 @@ Code comments: none in internal code. Every public type, prop and module option 
 ## Scripts
 
 ```sh
-pnpm dev              # Docs site on :3001, including /playground pages (runs dev:prepare first)
+pnpm dev              # Docs site on :3001, plus any local /playground pages (runs dev:prepare first)
 pnpm dev:prepare      # Build the module and prepare the docs app; the docs load dist/, so restart after src/ changes
 pnpm test             # Run all vitest projects
 pnpm test:types       # Nuxt typecheck
@@ -165,7 +165,7 @@ Skills in `.agents/skills/` — each has a `SKILL.md` defining its workflow:
 | `create-composable` | End-to-end workflow for SSR-safe, memory-safe, version-adaptive composables |
 | `create-docs` | Generate Docus documentation pages. Specs in `references/`: `composable-page-spec.md`, `component-page-spec.md`, `demo-spec.md` (every live demo), `prose-style.md` |
 | `scaffold-composable-sample` | Scaffold composable doc page with standard structure |
-| `create-playground-page` | Create test pages under `docs/app/pages/playground/` |
+| `create-playground-page` | Create local, uncommitted test pages under `docs/app/pages/playground/` |
 | `create-utility-tests` | Write vitest utility tests (Nuxt test-utils) |
 | `create-showcase-doc` | Write/rewrite a showcase example page (`docs/content/5.examples/`), including verifying its AI build prompt against a real independent agent |
 | `skill-creator` | Meta-skill for authoring new skills |

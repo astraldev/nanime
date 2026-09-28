@@ -33,7 +33,7 @@ export default defineAppConfig({
   github: {
     rootDir: 'docs',
   },
-  // Used by the transitions playground and the custom styles demo. Functions survive here, unlike runtimeConfig.
+  // Used by the custom styles demo. Functions survive here, unlike runtimeConfig.
   nanime: {
     transitions: {
       pop: {

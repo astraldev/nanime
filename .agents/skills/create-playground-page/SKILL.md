@@ -10,11 +10,12 @@ hand, including edge cases that don't belong in the docs.
 
 # Where pages live
 
-There is no separate `playground/` app. Test pages live in the docs app
-under `docs/app/pages/playground/`, e.g.
-`docs/app/pages/playground/transitions.vue`. They are served at
-`/playground/<name>` by `pnpm dev` (port 3001) and are not linked from the
-docs navigation.
+There is no separate `playground/` app. Build test pages in the docs app
+under `docs/app/pages/playground/`, served at `/playground/<name>` by
+`pnpm dev` (port 3001). They are local and temporary: the docs site ships
+no playground pages, so never commit them. When you're done, delete the
+page, or move one worth keeping to the same path in `../nanime-tests`.
+Shared helpers in `docs/app/components/playground/` are committed.
 
 The docs app loads the module's built `dist/`, not `src/`. After changing
 `src/`, run `pnpm prepack` to rebuild `dist/`, then reload the page. The
