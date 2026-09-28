@@ -182,5 +182,5 @@ What you get
 See it in action
 
 #description
-Dashboards that rearrange, feeds that grow, panels that open and close. Change your data, and every element springs to its new place.
+Dashboards that rearrange, feeds that grow, panels that open and close. Change your data, and every element springs to its new place. Add, shuffle or remove cards, or click one to expand it.
 ::
