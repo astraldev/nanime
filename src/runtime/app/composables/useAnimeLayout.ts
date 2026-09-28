@@ -61,7 +61,8 @@ export function useAnimeLayout(
   const sync = () => {
     const root = resolveRoot()
     if (!mounted.value || !root) return
-    const snapshot = snapshotParameters(resolveParameters())
+    const params = resolveParameters()
+    const snapshot = snapshotParameters(params)
     if (
       previous
       && previous.root === root
@@ -69,7 +70,7 @@ export function useAnimeLayout(
     ) return
 
     previous = { root, snapshot }
-    rebuildLayout(root, resolveParameters())
+    rebuildLayout(root, params)
   }
 
   watch([resolveRoot, () => snapshotParameters(resolveParameters())], sync)

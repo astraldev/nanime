@@ -4,13 +4,14 @@ import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { useComponentDefaults } from '../utils/component-defaults'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
+import { fade } from '../transitions/styles/fade'
 
 export type { AnimeTransitionMode, AnimeTransitionProps } from '../public/types'
 
 export default defineComponent(
   (props: AnimeTransitionProps, { slots }) => {
     const { option } = useComponentDefaults('transition')
-    const styles = useTransitionStyles()
+    const styles = useTransitionStyles(fade)
     const runner = createTransitionRunner({
       enter: () => styles.enter(option(props, 'enterAnimation')),
       leave: () => styles.leave(option(props, 'leaveAnimation')),

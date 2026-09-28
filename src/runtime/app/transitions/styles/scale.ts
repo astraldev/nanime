@@ -1,6 +1,6 @@
 import type { AnimeTransitionStyle } from '../../public/types'
 
-export const scale: AnimeTransitionStyle = {
+export const scale = {
   enter: {
     opacity: [0, 1],
     scale: [0.85, 1],
@@ -13,4 +13,4 @@ export const scale: AnimeTransitionStyle = {
     duration: 200,
     ease: 'in(3)',
   },
-}
+} satisfies AnimeTransitionStyle

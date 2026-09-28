@@ -1,6 +1,6 @@
 import type { AnimeTransitionStyle } from '../../public/types'
 
-export const fade: AnimeTransitionStyle = {
+export const fade = {
   enter: {
     opacity: [0, 1],
     duration: 300,
@@ -11,4 +11,4 @@ export const fade: AnimeTransitionStyle = {
     duration: 200,
     ease: 'in(3)',
   },
-}
+} satisfies AnimeTransitionStyle

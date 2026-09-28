@@ -40,18 +40,18 @@ export interface AnimeTransitionGroupProps<StyleName extends string = AnimeTrans
   tag?: string
   /**
    * How items appear: a transition style name, or Anime.js params.
-   * @default 'fade'
+   * @default a fade in over 250ms, `out(3)`
    */
   enterAnimation?: StyleName | AnimationParams
   /**
    * How items disappear: a transition style name, or Anime.js params.
-   * @default 'fade'
+   * @default a fade out over 150ms, `in(3)`
    */
   leaveAnimation?: StyleName | AnimationParams
   /**
    * How items move to a new position: a transition style name,
    * `{ duration, delay, ease }`, or `false` to skip moves.
-   * @default { duration: 400, ease: 'out(3)' }
+   * @default { duration: 350, ease: 'out(3)' }
    */
   moveAnimation?: StyleName | AnimeMoveParams | false
   /**
@@ -105,8 +105,9 @@ export interface AnimeLayoutGroupProps {
   shallow?: boolean
   /**
    * Anime.js `createLayout()` params, merged over the configured defaults.
-   * Use `elements` instead of `children`.
-   * @default Anime.js layout defaults
+   * Use `elements` instead of `children`. Setting `ease` or `duration`
+   * replaces the default spring.
+   * @default { ease: spring({ bounce: 0.15, duration: 300 }) }
    */
   layoutOptions?: Omit<AutoLayoutParams, 'children'>
 }

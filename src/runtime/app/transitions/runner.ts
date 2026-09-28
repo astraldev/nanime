@@ -94,7 +94,6 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
     },
     onEnterCancelled: stop,
     onLeaveCancelled: stop,
-    onAfterLeave: stop,
   }
 
   return {

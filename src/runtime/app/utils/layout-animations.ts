@@ -2,9 +2,26 @@ import type { AutoLayout, LayoutAnimationParams } from 'animejs/layout'
 import type { Timeline } from 'animejs'
 import { LAYOUT_ANIMATING_ATTRIBUTE } from './markers'
 
-type PinnedStyle = 'box-sizing' | 'line-height'
+type PinnedStyle = 'box-sizing' | 'line-height' | 'position' | 'white-space'
 
-export function markLayoutAnimations<Layout extends AutoLayout>(layout: Layout): Layout {
+function readOneLineTexts(root: Element) {
+  const checked = new Set<HTMLElement>()
+  const oneLine = new Set<HTMLElement>()
+  const range = document.createRange()
+  if (typeof range.getClientRects !== 'function') return oneLine
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+  for (let text = walker.nextNode(); text; text = walker.nextNode()) {
+    const parent = text.parentElement
+    if (!(parent instanceof HTMLElement) || checked.has(parent) || !text.textContent?.trim()) continue
+    checked.add(parent)
+    range.selectNodeContents(parent)
+    const lines = new Set([...range.getClientRects()].map(rect => Math.round(rect.top)))
+    if (lines.size === 1) oneLine.add(parent)
+  }
+  return oneLine
+}
+
+export function markLayoutAnimations(layout: AutoLayout): AutoLayout {
   const record = layout.record.bind(layout)
   const animate = layout.animate.bind(layout)
   const revert = layout.revert.bind(layout)
@@ -16,11 +33,13 @@ export function markLayoutAnimations<Layout extends AutoLayout>(layout: Layout):
     element.style.setProperty(property, value)
   }
 
-  function pinSizedNodes() {
-    layout.newState.nodes.forEach(({ $el, measuredDisplay }) => {
+  function pinSizedNodes(oneLineTexts: Set<HTMLElement>) {
+    layout.newState.nodes.forEach(({ $el, measuredDisplay, measuredPosition, isInlined }) => {
       if (!($el instanceof HTMLElement) || !$el.style.width) return
       pin($el, 'box-sizing', 'border-box')
       if (measuredDisplay === 'inline' && $el.style.position === 'absolute') pin($el, 'line-height', $el.style.height)
+      if (isInlined && $el !== root && $el.firstElementChild && measuredPosition === 'static') pin($el, 'position', 'relative')
+      if (oneLineTexts.has($el)) pin($el, 'white-space', 'nowrap')
     })
   }
 
@@ -49,6 +68,7 @@ export function markLayoutAnimations<Layout extends AutoLayout>(layout: Layout):
 
   layout.animate = (params: LayoutAnimationParams = {}) => {
     release()
+    const oneLineTexts = readOneLineTexts(root)
     const onComplete = params.onComplete ?? layout.params.onComplete
     const timeline = animate({
       ...params,
@@ -57,9 +77,9 @@ export function markLayoutAnimations<Layout extends AutoLayout>(layout: Layout):
         onComplete?.(self)
       },
     })
-    if (root instanceof Element && root.classList.contains('is-animated')) {
+    if (root.classList.contains('is-animated')) {
       root.setAttribute(LAYOUT_ANIMATING_ATTRIBUTE, '')
-      pinSizedNodes()
+      pinSizedNodes(oneLineTexts)
     }
     return timeline
   }

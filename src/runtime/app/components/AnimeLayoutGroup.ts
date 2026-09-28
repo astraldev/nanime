@@ -1,5 +1,6 @@
 import { computed, defineComponent, h, onBeforeUpdate, onUpdated, shallowRef, toValue, useId, warn, watch } from 'vue'
 import type { AutoLayoutParams } from 'animejs/layout'
+import { spring } from 'animejs/easings'
 import type { DOMTargetSelector } from 'animejs'
 import type { AnimeLayoutElements, AnimeLayoutGroupProps } from '../public/types'
 import { useAnimeLayout } from '../composables/useAnimeLayout'
@@ -11,6 +12,7 @@ export type { AnimeLayoutGroupProps } from '../public/types'
 
 const noop = () => {}
 const warned = new Set<string>()
+const builtInEase = spring({ bounce: 0.15, duration: 300 })
 
 const sameEntries = (next: readonly unknown[], prev: readonly unknown[]) =>
   next.length === prev.length && next.every((value, index) => Object.is(value, prev[index]))
@@ -45,6 +47,7 @@ export default defineComponent(
 
     function layoutParams(): AutoLayoutParams {
       const options = assignDefined<AutoLayoutParams>({}, ...layers.value.map(layer => layer.layoutOptions), props.layoutOptions)
+      if (options.ease === undefined && options.duration === undefined) options.ease = builtInEase
       const elements = option(props, 'elements')
       return elements === undefined ? options : { ...options, children: resolveElements(elements) }
     }

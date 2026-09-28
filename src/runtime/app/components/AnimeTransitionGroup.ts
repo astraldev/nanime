@@ -7,6 +7,7 @@ import { markLayoutAnimations } from '../utils/layout-animations'
 import { MOVE_CLASS } from '../utils/markers'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
+import { transitionGroupStyle } from '../transitions/styles/group'
 
 export type { AnimeTransitionGroupProps } from '../public/types'
 
@@ -55,7 +56,7 @@ export default defineComponent(
   (props: AnimeTransitionGroupProps, { slots }) => {
     const instance = getCurrentInstance()
     const { option } = useComponentDefaults('transitionGroup')
-    const styles = useTransitionStyles()
+    const styles = useTransitionStyles(transitionGroupStyle)
     const enterParams = () => styles.enter(option(props, 'enterAnimation'))
     const leaveParams = () => styles.leave(option(props, 'leaveAnimation'))
     const moveParams = () => styles.move(option(props, 'moveAnimation'))
@@ -64,7 +65,7 @@ export default defineComponent(
 
     let layout: AutoLayout | null = null
 
-    const leavesToPin = new Map<HTMLElement, Styles>()
+    const leavesToPin = new Map<StyledElement, Styles>()
     const pinnedOriginals = new WeakMap<Element, Styles>()
 
     let hiddenFromMove = new Set<Element>()
@@ -78,7 +79,7 @@ export default defineComponent(
       },
       onEnd(el) {
         if (hiddenFromMove.has(el)) endedDuringMove.set(el, readStyles(el, transitionStyles()))
-        if (el instanceof HTMLElement) leavesToPin.delete(el)
+        leavesToPin.delete(el)
         const originals = pinnedOriginals.get(el)
         pinnedOriginals.delete(el)
         if (originals) setStyles(el, originals)
@@ -113,7 +114,7 @@ export default defineComponent(
 
     onBeforeUpdate(() => {
       const root = instance?.subTree.el
-      if (moveParams() === false || !(root instanceof HTMLElement)) return dropLayout()
+      if (!moveParams() || !(root instanceof HTMLElement)) return dropLayout()
       if (layout?.root !== root) dropLayout()
       runLayout(root, () => {
         layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }))
@@ -125,7 +126,7 @@ export default defineComponent(
       pinLeavingItems()
       const current = layout
       const move = moveParams()
-      if (!current || move === false) return
+      if (!current || !move) return
       const { duration, delay, ease } = move
       const onComplete = () => {
         restoreEndedDuringMove()

@@ -1,6 +1,6 @@
 import type { AnimeTransitionStyle } from '../../public/types'
 
-const slide = (axis: 'x' | 'y', distance: number): AnimeTransitionStyle => ({
+const slide = (axis: 'x' | 'y', distance: number) => ({
   enter: {
     opacity: [0, 1],
     [axis]: [-distance, 0],
@@ -13,7 +13,7 @@ const slide = (axis: 'x' | 'y', distance: number): AnimeTransitionStyle => ({
     duration: 250,
     ease: 'in(3)',
   },
-})
+}) satisfies AnimeTransitionStyle
 
 export const slideUp = slide('y', -20)
 export const slideDown = slide('y', 20)
