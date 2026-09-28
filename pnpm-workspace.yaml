@@ -3,17 +3,8 @@ packages:
   - docs
 
 overrides:
-  h3: ^1.15.11
-  '@nuxtjs/mdc': ^0.22.1
-  '@tiptap/core': '>3.30.5'
+  # GHSA-g7r4-m6w7-qqqr, via docus > @nuxt/fonts > fontless
   esbuild: ^0.28.1
-  fast-uri: ^3.1.6
-  hono: ^4.13.5
-  js-yaml: ^4.3.2
-  nuxt-og-image: ^6.7.0
-  qs: ^6.16.0
-  sharp: ^0.35.4
-  svgo: ^4.1.0
 
 catalogs:
   # Nuxt core — shared by the module (root) and the docs site
@@ -22,13 +13,13 @@ catalogs:
     '@nuxt/kit': ^4.5.2
     '@nuxt/module-builder': ^1.0.3
     '@nuxt/schema': ^4.5.2
-    '@nuxt/test-utils': ^4.1.0
-    '@types/node': latest
-    '@vueuse/core': ^14.4.0
-    '@vueuse/nuxt': 14.4.0
+    '@nuxt/test-utils': ^4.3.2
+    '@types/node': ^26.6.3
+    '@vueuse/core': ^15.0.0
+    '@vueuse/nuxt': ^15.0.0
     nuxt: ^4.5.2
-    typescript: ~6.0.3
-    vue: ^3.5.41
+    typescript: ~5.9.3
+    vue: ^3.5.43
 
   # Everything else the module depends on
   runtime:
@@ -36,19 +27,28 @@ catalogs:
     defu: ^6.1.7
 
   tooling:
-    '@vue/test-utils': ^2.4.11
+    '@vue/test-utils': ^2.5.1
     changelogen: ^0.6.2
-    eslint: ^10.9.0
-    happy-dom: ^20.11.6
-    lefthook: ^2.1.10
-    vitest: ^4.1.11
+    eslint: ^10.11.0
+    jsdom: ^30.1.1
+    lefthook: ^2.1.14
+    vitest: ^5.0.2
     vue-tsc: ^3.3.11
 
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - better-sqlite3
-  - esbuild
-  - lefthook
-  - sharp
-  - unrs-resolver
-  - vue-demi
+# Upstream mismatches with no fixed release yet
+peerDependencyRules:
+  allowedVersions:
+    # @nuxt/module-builder ships vue-sfc-transformer 0.2 against mkdist's 0.1 peer
+    mkdist>vue-sfc-transformer: '0.2'
+    # nuxt-component-meta (docus) pins older copies of these optional unctx peers
+    unctx>unplugin: '2'
+    unctx>oxc-parser: '0.139'
+
+allowBuilds:
+  '@parcel/watcher': true
+  better-sqlite3: true
+  esbuild: true
+  lefthook: true
+  sharp: true
+  unrs-resolver: true
+  vue-demi: true
