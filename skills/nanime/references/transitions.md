@@ -2,8 +2,11 @@
 
 Drop-ins for Vue's `<Transition>` and `<TransitionGroup>`. Anime.js runs the
 enter, leave and move animations, so write no transition CSS and no
-`.v-enter-active` / `.v-move` classes. Both are auto-registered. Vue's
-transition events (`@after-enter`, `@after-leave`, …) pass through.
+`.v-enter-active` / `.v-move` classes. Vue's transition events
+(`@after-enter`, `@after-leave`, …) pass through.
+
+For elements that stay mounted but change position or size, use
+[layout.md](layout.md) instead.
 
 Docs: https://nanimejs.netlify.app/components/transitions and
 https://nanimejs.netlify.app/components/transition-styles
@@ -32,6 +35,20 @@ https://nanimejs.netlify.app/components/transition-styles
 Use `mode="out-in"` for keyed swaps. Otherwise both elements are in the DOM
 at once and the new one pushes the old one aside.
 
+For a crossfade, keep the default mode and stack the two elements: make
+the keyed child `absolute inset-0` inside a sized `relative` box. The old
+one's leave and the new one's enter then run together in the same spot.
+
+```vue
+<template>
+  <div class="relative size-40">
+    <AnimeTransition :enter-animation="{ opacity: [0, 1], duration: 400 }" :leave-animation="{ opacity: 0, duration: 400 }">
+      <img :key="track.id" :src="track.cover" class="absolute inset-0">
+    </AnimeTransition>
+  </div>
+</template>
+```
+
 ## Lists: `v-for` with add, remove and reorder
 
 ```vue
@@ -51,7 +68,7 @@ It takes the props above except `mode`, plus:
 | `absoluteLeave` | `boolean` | `true` |
 
 - Unlike Vue's `<TransitionGroup>`, it always renders a wrapper element
-  (`tag`, default `div`). Put the list's layout classes on the group itself.
+  (`tag`). Put the list's layout classes on the group itself.
 - Give the group `position: relative`. With `absoluteLeave`, a leaving item
   switches to `position: absolute` against it, so the others close the gap
   while it animates out.
@@ -60,6 +77,15 @@ It takes the props above except `mode`, plus:
 - Every item needs a stable `:key`, such as an id. With an index key,
   removing an item makes the last element leave while the rest swap their
   content in place, so nothing slides.
+- Every re-render of the group runs a move pass over everything inside it,
+  even when nothing moved. A value read in the group's slot that settles
+  after mount, such as a template ref passed to each item as a prop,
+  re-renders the group once on load. Pass a getter instead
+  (`:target="() => bin"`) so the slot reads nothing that changes.
+- A leave, a move and an enter in the same update all start together. To
+  let the new item appear after the others have made room, give the enter
+  a `delay` about as long as the leave. The enter's start values apply at
+  once, so the item stays hidden while it waits.
 
 ### Staggering items
 
@@ -82,15 +108,21 @@ import { stagger } from '#nanime/utils'
 The count restarts with each update, so one item added later starts with
 no delay.
 
+A stagger in `moveAnimation` works differently. Moves run on every element
+inside the group, down to the text in each item, so the delay grows with
+each nested element rather than each item. An item holding five elements
+adds five steps, and the text trails behind its own item. Leave the move
+unstaggered for items with content, or keep the step to a few
+milliseconds.
+
 ## Styles
 
 Built-ins: `fade`, `slide-up`, `slide-down`, `slide-left`, `slide-right`,
 `scale`, `swap`. Inline params beat a name. An unknown name falls back to
-the `fade` animation and logs a warning.
+`fade` and logs a warning.
 
 Define your own in `app.config.ts`, never `nuxt.config.ts`. A style can set
 `enter`, `leave` and `move`, and a style named like a built-in replaces it.
-The names autocomplete in the animation props.
 
 ```ts
 export default defineAppConfig({
@@ -114,10 +146,24 @@ Inline params take any Anime.js param, including `keyframes`:
 </AnimeTransition>
 ```
 
-## Transition or `useAnimeLayout`?
+## Component defaults
 
-- Elements entering and leaving, or a `v-for` array changing:
-  `<AnimeTransitionGroup>`.
-- Elements staying mounted but changing position or size (a class toggle,
-  a grid column change, an expanding card): `useAnimeLayout`. See
-  [use-anime-layout.md](use-anime-layout.md).
+Default props for `<AnimeTransition>`, `<AnimeTransitionGroup>` and
+`<AnimeLayoutGroup>` go in `app.config.ts` under `nanime.components`, keyed
+`transition`, `transitionGroup` and `layoutGroup`:
+
+```ts
+export default defineAppConfig({
+  nanime: {
+    components: {
+      transition: { enterAnimation: 'slide-up' },
+      transitionGroup: { moveAnimation: { duration: 300 } },
+    },
+  },
+})
+```
+
+`provideAnimeDefaults({ ... })` takes the same shape and applies to the
+calling component's subtree. A prop passed to the component always wins, and
+an `undefined` default leaves the outer one in place. In app config,
+`layoutGroup.elements` takes selectors only.

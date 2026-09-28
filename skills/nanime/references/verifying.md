@@ -35,7 +35,7 @@ expect(at(400)).toContain('translateX(0%)')
   instead of matching `translateX(`.
 - For data-driven updates, change the reactive value mid-flight and check that
   the value continues from where it was without snapping to the start. That
-  only works with `keepTime` (SKILL.md, Rebuilds).
+  only works with `keepTime` (SKILL.md, "Rebuilds restart the animation").
 
 ## happy-dom gaps
 

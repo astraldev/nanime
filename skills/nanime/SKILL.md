@@ -2,246 +2,152 @@
 name: nanime
 description: |
   Build animations in a Nuxt app with nanime, the Nuxt module wrapping Anime.js v4.
-  Use when animating elements, text, SVG paths or scroll position in Nuxt: useAnimate,
-  useWaapiAnimate, useAnimatable, useAnimeTimeline, useDraggable, useSplitText,
-  useScrambleText, useAnimeScroll, useAnimeLayout, the <AnimeTransition>,
-  <AnimeTransitionGroup> and <AnimeLayoutGroup> components, transition styles and
-  component defaults in app.config.ts, provideAnimeDefaults, and the
-  #nanime/* aliases. Read the failure modes below before shipping. Most mistakes here
-  do not throw, they animate the wrong thing. Use it too when an effect seems to need
-  raw animejs, GSAP, or CSS transition classes.
+  Use when animating elements, text, SVG or scroll in Nuxt: useAnimate, useWaapiAnimate,
+  useAnimatable, useAnimeTimeline, useDraggable, useSplitText, useScrambleText,
+  useAnimeScroll, useAnimeLayout, <AnimeTransition>, <AnimeTransitionGroup>,
+  <AnimeLayoutGroup>, transition styles, component defaults, provideAnimeDefaults and
+  the #nanime/* aliases. Also use when an effect seems to need raw animejs, GSAP or CSS
+  transition classes. Most mistakes here do not throw; they animate the wrong thing.
 ---
 
 # nanime
 
-## Purpose
+The composables own an Anime.js instance, rebuild it when reactive inputs
+change, and revert it on unmount. They wait for mount, so they are SSR-safe.
+Composables and components are auto-imported and auto-registered.
 
-nanime wraps Anime.js v4 instances in Vue reactivity: the composables own each
-instance, rebuild it when your reactive inputs change, and revert it when the
-component unmounts. This file covers correct usage and the failures that produce
-no error.
+Don't drop to `onMounted` with raw `animejs` imports, and don't reach for GSAP
+or transition CSS. The effect almost always has a nanime path.
 
-## When to Use
+## Pick the tool
 
-- Animating DOM elements, SVG, text or plain objects in a Nuxt app
-- Driving an animation from scroll position
-- Splitting text into lines, words or characters to animate
-- Making an element draggable
-- Sequencing several animations on a timeline
-- Animating `v-if` / `v-show` / keyed elements in and out, and `v-for` lists
-  that add, remove or reorder items
+| Building | Use | Details |
+|---|---|---|
+| Animating elements, refs, arrays, plain objects | `useAnimate` (`useWaapiAnimate` for the Web Animations API) | |
+| Values set imperatively at speed (cursor follow, live counter) | `useAnimatable` | |
+| Sequencing | `useAnimeTimeline` | [timelines.md](references/timelines.md) |
+| Scroll-driven animation | `useAnimeScroll` | [timelines.md](references/timelines.md) |
+| Text split into lines, words, chars | `useSplitText` | [timelines.md](references/timelines.md) |
+| Scrambling or revealing text | `useScrambleText` | |
+| SVG draw, morph, motion path | `#nanime/proxies/svg` inside a composable | [timelines.md](references/timelines.md) |
+| Dragging with snap, bounds, axis locks | `useDraggable` | [lists.md](references/lists.md) for draggable list items |
+| `v-if` / `v-show` / keyed enter and leave, crossfades | `<AnimeTransition>` | [transitions.md](references/transitions.md) |
+| `v-for` add, remove, reorder, stagger | `<AnimeTransitionGroup>` | [transitions.md](references/transitions.md), [lists.md](references/lists.md) |
+| Mounted elements changing position or size (FLIP) | `<AnimeLayoutGroup>`, or `useAnimeLayout` to `await` it | [layout.md](references/layout.md) |
+| Testing an animation without a browser | | [verifying.md](references/verifying.md) |
 
-## Composables
-
-All are auto-imported. No import statement is needed.
-
-| Composable | For |
-|---|---|
-| `useAnimate` | The general case. Elements, refs, arrays, plain objects |
-| `useWaapiAnimate` | The same, through the browser's Web Animations API |
-| `useAnimatable` | Values you set imperatively at speed, such as cursor-following |
-| `useAnimeTimeline` | Sequencing. Chain `.add()`, `.set()`, `.label()`, `.sync()` |
-| `useDraggable` | Dragging, with snapping, bounds and axis locks |
-| `useSplitText` | Splitting text into lines, words and characters |
-| `useScrambleText` | Scrambling and revealing an element's text |
-| `useAnimeScroll` | A scroll observer, to scrub an animation with scroll position |
-| `useAnimeLayout` | Animating position and size when mounted elements change layout. `patch(fn)` records, runs `fn`, waits a tick, animates |
-| `provideAnimeDefaults` | Default component props for everything rendered below the calling component |
-
-## Components
-
-Auto-registered, like Vue's `<Transition>` and `<TransitionGroup>` but with
-Anime.js running the animations. Write no transition CSS.
-
-```vue
-<template>
-  <AnimeTransition enter-animation="slide-up" leave-animation="fade">
-    <div v-if="open" />
-  </AnimeTransition>
-
-  <AnimeTransitionGroup tag="ul" class="relative" enter-animation="scale" leave-animation="scale">
-    <li v-for="item in items" :key="item.id">{{ item.label }}</li>
-  </AnimeTransitionGroup>
-</template>
-```
-
-- `enterAnimation` / `leaveAnimation` take a style name or Anime.js params.
-  Built-in styles: `fade` (default), `slide-up`, `slide-down`, `slide-left`,
-  `slide-right`, `scale`, `swap`. Custom ones go in `app.config.ts` under
-  `nanime.transitions`.
-- `<AnimeTransition>` adds `mode` and `appear`. `<AnimeTransitionGroup>` adds
-  `appear`, `tag` (default `'div'`), `moveAnimation` and `absoluteLeave`.
-- The group slides the remaining items with Anime.js layout. Give it
-  `position: relative`, because leaving items are pinned with
-  `position: absolute`.
-
-Details, staggering and custom styles:
-[references/transitions.md](references/transitions.md).
-
-`<AnimeLayoutGroup>` animates its children to a new size and position when
-the values in `deps` change, with no `patch()` call:
-
-```vue
-<template>
-  <AnimeLayoutGroup :deps="[view]" :class="view === 'grid' ? 'grid grid-cols-2' : 'flex'">
-    <div v-for="n in 4" :key="n" />
-  </AnimeLayoutGroup>
-</template>
-```
-
-- `deps` entries are watched deeply. A getter entry such as
-  `[() => store.view]` is called and its result watched. Add `shallow` to
-  react only when an entry is replaced.
-- Without `deps`, every re-render of the group animates.
-- Toggle children with `v-show` to get enter and leave fades while the rest
-  slides. With `v-if`, a removed child vanishes at once and only its
-  neighbours animate.
-- `elements` picks which elements move on their own: a selector such as
-  `'.card'` (matched only inside this group), elements, component instances,
-  or a list. The group still measures everything inside it, so wrap only
-  what moves. Content inside a matched element does not move on its own: it
-  jumps to its new spot halfway through, so it can visibly shift when the
-  element resizes (add it to `elements`, e.g. `'.card, .card h3'`, to make
-  it slide), and fades out and back if its own size changes too
-  (`layoutOptions: { swapAt: { opacity: 1 } }` keeps it visible).
-- `layoutOptions` takes Anime.js `createLayout()` params. `tag` defaults to
-  `'div'`.
-
-Default props for all three components go in `app.config.ts` under
-`nanime.components`, keyed `transition`, `transitionGroup` and `layoutGroup`.
-`provideAnimeDefaults({ ... })` takes the same shape and applies to the
-calling component's subtree. A prop passed to the component always wins,
-and an `undefined` default leaves the outer one in place. In app config,
-`layoutGroup.elements` takes selectors only.
-
-## When you are stuck
-
-Don't drop to `onMounted` with raw `animejs` imports, and don't reach for GSAP.
-The effect almost always has a nanime path:
-
-| Building | Read |
-|---|---|
-| Enter/leave, keyed swaps, custom transition styles | [references/transitions.md](references/transitions.md) |
-| `v-for` lists: add, remove, reorder, stagger | [references/lists.md](references/lists.md) |
-| Position or size changes on mounted elements (FLIP), `<AnimeLayoutGroup>` | [references/use-anime-layout.md](references/use-anime-layout.md) |
-| Timelines over split text, SVG draw/morph, scroll | [references/timelines.md](references/timelines.md) |
-| Checking an animation without a browser, test setup | [references/verifying.md](references/verifying.md) |
-
-For questions about Anime.js itself (a parameter, a return shape, a util), read
+For an Anime.js parameter, return shape or util, read
 https://animejs.com/documentation. nanime passes those through unchanged.
-
-For nanime's own API, read https://nanimejs.netlify.app/llms-full.txt (every
-docs page as plain text), or query the docs MCP server at
-https://nanimejs.netlify.app/mcp.
+For nanime's own API, read https://nanimejs.netlify.app/llms-full.txt or query
+the docs MCP server at https://nanimejs.netlify.app/mcp.
 
 ## Aliases
 
-Import helpers from these rather than from `animejs` directly.
+Not auto-imported. Import helpers from these, never from `animejs` directly.
 
 | Alias | Holds |
 |---|---|
-| `#nanime/types` | Anime.js types (`AnimationParams`, `JSAnimation`, `FunctionValue`, …) and `AnimeTransitionStyle` |
-| `#nanime/utils` | Anime.js utils (`stagger`, `random`, `shuffle`, `set`, `round`, …), plus `animate` and `createTimer` for handler code |
-| `#nanime/easings` | Anime.js easings (`spring`, `cubicBezier`, `steps`, …) |
-| `#nanime/proxies` | Everything in the two below |
+| `#nanime/types` | Anime.js types (`AnimationParams`, `JSAnimation`, …) and `AnimeTransitionStyle` |
+| `#nanime/utils` | Anime.js utils (`stagger`, `random`, `set`, …), plus `animate` and `createTimer` for handler code |
+| `#nanime/easings` | `spring`, `cubicBezier`, `steps`, … |
 | `#nanime/proxies/svg` | `createMotionPath`, `createDrawable`, `morphTo` |
 | `#nanime/proxies/text` | `scrambleText`, for use inside animation parameters |
+| `#nanime/proxies` | Both of the above |
 
-These are not auto-imported. Import from the alias.
+## Rules
 
-## Binding one composable to another
+Each of these fails without an error.
 
-Pass a composable's return value straight into another composable's parameters.
-nanime resolves it to the underlying Anime.js instance before Anime.js sees it.
-
-```ts
-const scroll = useAnimeScroll(() => ({ target: section.value, sync: true }))
-
-useAnimate(box, { x: 400, autoplay: scroll })
-```
-
-The same applies to a timeline's `sync()`.
-
-## Failures that produce no error
-
-### Parameters reading a template ref must be a getter
+### Parameters that read a template ref must be a getter
 
 ```ts
-useAnimeScroll(() => ({ target: section.value }))   // correct
-useAnimeScroll({ target: section.value })           // silently wrong
+useAnimeScroll(() => ({ target: section.value ?? undefined }))   // correct
+useAnimeScroll({ target: section.value })                        // silently wrong
 ```
 
-A template ref is empty while the component sets up. A plain object is read once
-at that moment, so the option arrives empty. Anime.js then falls back to a
-default, such as watching the whole document instead of your element. The
-animation runs against the wrong thing and nothing reports it. A getter is read
-again once the element exists.
+A template ref is `null` during setup. A plain object is read once, then, so
+Anime.js falls back to a default, such as watching `document.body` instead of
+your element. A getter is read again once the element exists.
 
-Read `.value` yourself. Anime.js resolves no framework refs when it parses
-targets, so a ref object resolves to nothing and the option falls back to its
-default, which for a scroll observer's `container` and `target` is
-`document.body`.
+Read `.value` yourself: Anime.js does not unwrap Vue refs inside parameters.
+Template refs are `T | null` while most params take `T | undefined`, so use
+`?? undefined`, not a cast.
 
-### Never call a composable outside `setup`
+### Call composables only in `setup`
 
 ```ts
 function onClick() {
-  useAnimate(box, { x: 100 })   // leaks
+  useAnimate(box, { x: 100 })   // leaks: no effect scope, never reverted
 }
 ```
 
-Outside `setup` there is no component instance and no effect scope, so nothing
-is ever reverted. Every call adds another live animation. For animations started
-from a handler or a per-frame callback, import `animate` from `#nanime/utils`
-and keep the handle yourself, cancelling the previous one before starting the
-next and reverting on scope dispose.
+From a handler or per-frame callback, use `animate` from `#nanime/utils` and
+own the handle:
 
-### One scroll observer drives one animation
+```ts
+import { animate } from '#nanime/utils'
+import type { JSAnimation } from '#nanime/types'
 
-An observer holds a single animation, not a list. Giving the same observer to a
-second animation takes the slot from the first, which then freezes where it
-stopped. Call `useAnimeScroll` once per animation. Observers built from the same
-parameters stay in step, because they read the same scroll position.
+const pulse = shallowRef<JSAnimation | null>(null)
+onScopeDispose(() => pulse.value?.revert())
+
+function highlight(el: HTMLElement) {
+  pulse.value?.revert()
+  pulse.value = animate(el, { scale: [1, 1.1, 1], duration: 400 })
+}
+```
+
+Code of your own that reads an element must also wait for mount.
+
+### Pass composable returns straight in
+
+nanime unwraps a composable's return value to its Anime.js instance, in
+parameters and in a timeline's `sync()`:
+
+```ts
+const scroll = useAnimeScroll(() => ({ target: section.value ?? undefined, sync: true }))
+useAnimate(box, { x: 400, autoplay: scroll })
+```
+
+One scroll observer drives one animation. Handing it to a second animation
+steals it from the first, which freezes. Call `useAnimeScroll` once per
+animation; observers with the same params stay in step.
 
 ### Live values do not tick in a template
 
-`{{ animation.progress }}` shows the value from when the instance was created
-and never updates. The returned object tracks the instance, not the numbers
-changing inside it, which is what stops a sixty-per-second animation from
-re-rendering your component. Write the value into your own ref from a callback:
+`{{ animation.progress }}` never updates; the return value tracks the
+instance, not the numbers inside it. Copy the value out from a callback:
 
 ```ts
 const progress = ref(0)
-
-useAnimate(box, {
-  x: 400,
-  onUpdate: self => progress.value = self.progress,
-})
+useAnimate(box, { x: 400, onUpdate: self => progress.value = self.progress })
 ```
 
-### `createDrawable` returns an array
+### Text a composable rewrites must not re-render
 
-```ts
-const drawable = computed(() => path.value ? createDrawable(path.value)[0] : null)
+`useScrambleText` and `useSplitText` write into the element. If Vue also
+renders the changing value there, they overwrite each other. Render the first
+value once and hand changes to the composable:
+
+```vue
+<script setup lang="ts">
+useScrambleText(title, {}, () => ({ text: track.value.title }))
+</script>
+
+<template>
+  <h2 ref="title" v-once>{{ track.title }}</h2>
+</template>
 ```
 
-Take `[0]`. A ref holding an array is not the same as an array of refs, and the
-target types do not accept the former.
+For `useSplitText`, keep `v-once` and pass the new text through its `html`
+option.
 
-## Rebuilds
+### Rebuilds restart the animation
 
-When your reactive target or parameters change, the composable reverts the old
-instance and builds a new one. Two consequences:
+When a reactive target or parameter changes, the composable reverts the old
+instance and builds a new one, from the start. Unchanged params are skipped,
+so a getter returning an identical fresh object costs nothing.
 
-- The animation restarts by default. Pass `{ keepTime: true }` as the last
-  argument so a duration change mid-flight continues rather than restarting.
-  Only `useAnimate`, `useAnimeTimeline` and `useScrambleText` accept it. For a
-  value that retargets constantly, such as a live counter, use `useAnimatable`.
-- Rebuilds are skipped when the new parameters are unchanged, so a getter
-  returning a fresh but identical object each tick costs nothing.
-
-## SSR
-
-The composables wait for mount before touching the DOM, so they are safe in
-server-rendered pages. Anything you write yourself that reads an element must
-make the same check.
+- To continue mid-flight instead, pass `{ keepTime: true }` as the last
+  argument. Only `useAnimate`, `useAnimeTimeline` and `useScrambleText` take it.
+- For a value that retargets constantly, use `useAnimatable`.
