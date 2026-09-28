@@ -115,6 +115,10 @@ catalog specifiers (`catalog:nuxt`), and only pnpm rewrites those into real
 ranges when packing. An `npm publish` ships `"animejs": "catalog:runtime"` and
 every install of it fails.
 
+Adding, bumping or hoisting a dependency: read `.agents/rules/dependencies.md`
+first. The layout is strict (no `shamefully-hoist`), so `docs/` must declare
+every package it imports.
+
 ## Pre-commit Hooks (Lefthook)
 
 Runs sequentially before commit:

@@ -44,6 +44,13 @@ peerDependencyRules:
     unctx>unplugin: '2'
     unctx>oxc-parser: '0.139'
 
+# Nuxt modules add these to vite.optimizeDeps.include, resolved from the app root
+publicHoistPattern:
+  - '@vue/devtools-core'
+  - '@vue/devtools-kit'
+  - remark-emoji
+  - remark-mdc
+
 allowBuilds:
   '@parcel/watcher': true
   better-sqlite3: true
