@@ -39,9 +39,15 @@ then animates them to their new size and position.
   Add it to `elements` (`'.card, .card h3'`) to make it slide. If its own size
   changes too it fades out and back; `layoutOptions: { swapAt: { opacity: 1 } }`
   keeps it visible.
-- `layoutOptions` takes Anime.js `createLayout()` params. `tag` defaults to
-  `'div'`. App-wide defaults: see Component defaults in
-  [transitions.md](transitions.md).
+- `layoutOptions` takes Anime.js `createLayout()` params. By default the
+  group moves on `spring({ bounce: 0.15, duration: 300 })`. Setting `ease` or
+  `duration` anywhere (prop or component defaults) replaces the spring, since
+  a spring picks its own duration. `tag` defaults to `'div'`. App-wide
+  defaults: see Component defaults in [transitions.md](transitions.md).
+- Layout animates `width` and `height`, so text reflows as a box resizes.
+  Text that fits on one line when the move ends stays on one line throughout,
+  so a button whose label changes doesn't wrap mid-move. Text over several
+  lines reflows.
 
 Docs: https://nanimejs.netlify.app/components/layout-group
 

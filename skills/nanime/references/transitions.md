@@ -59,12 +59,14 @@ one's leave and the new one's enter then run together in the same spot.
 </template>
 ```
 
-It takes the props above except `mode`, plus:
+It takes the props above except `mode`, with its own defaults, plus:
 
 | Prop | Type | Default |
 |---|---|---|
+| `enterAnimation` | style name or `AnimationParams` | fade in, 250ms `out(3)` |
+| `leaveAnimation` | style name or `AnimationParams` | fade out, 150ms `in(3)` |
 | `tag` | `string` | `'div'` |
-| `moveAnimation` | style name, `{ duration, delay, ease }`, or `false` | `{ duration: 400, ease: 'out(3)' }` |
+| `moveAnimation` | style name, `{ duration, delay, ease }`, or `false` | `{ duration: 350, ease: 'out(3)' }` |
 | `absoluteLeave` | `boolean` | `true` |
 
 - Unlike Vue's `<TransitionGroup>`, it always renders a wrapper element
@@ -118,8 +120,11 @@ milliseconds.
 ## Styles
 
 Built-ins: `fade`, `slide-up`, `slide-down`, `slide-left`, `slide-right`,
-`scale`, `swap`. Inline params beat a name. An unknown name falls back to
-`fade` and logs a warning.
+`scale`, `swap`. Inline params beat a name. An unknown name logs a warning
+and falls back to the component's own default: `fade` on `<AnimeTransition>`,
+the group's defaults on `<AnimeTransitionGroup>`. The same goes for a style
+that lacks the part asked for: no built-in style has a `move`, so
+`move-animation="fade"` moves with the group's 350ms `out(3)`.
 
 Define your own in `app.config.ts`, never `nuxt.config.ts`. A style can set
 `enter`, `leave` and `move`, and a style named like a built-in replaces it.
