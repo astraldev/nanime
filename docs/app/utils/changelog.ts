@@ -14,3 +14,14 @@ export const CHANGELOG_TYPES: Record<ChangelogType, ChangelogTypeMeta> = {
   packaging: { label: 'Packaging', description: 'A dependency or install change.', color: 'var(--hex-gray-1)' },
   docs: { label: 'Documentation', description: 'A documentation change.', color: 'var(--hex-purple-1)' },
 }
+
+const API_PAGES: Record<string, string> = {
+  AnimeTransition: '/components/transitions',
+  AnimeTransitionGroup: '/components/transitions#lists',
+  AnimeLayoutGroup: '/components/layout-group',
+  provideAnimeDefaults: '/getting-started/configuration#set-component-defaults',
+}
+
+export function apiPage(name: string) {
+  return API_PAGES[name] ?? `/composables/${name.replace(/[A-Z]/g, char => `-${char.toLowerCase()}`)}`
+}
