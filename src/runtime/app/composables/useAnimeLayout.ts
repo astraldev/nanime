@@ -1,6 +1,6 @@
 import { nextTick, onMounted, shallowRef, toValue, watch, type MaybeRef, type MaybeRefOrGetter } from 'vue'
 import { createLayout, type AutoLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
-import type { DOMTargetSelector, Timeline } from 'animejs'
+import type { DOMTargetSelector } from 'animejs'
 import { normalizeLayoutTarget } from '../utils/targets'
 import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
@@ -14,9 +14,9 @@ const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 type NanimeLayout = AutoLayout & {
   /**
    * Records the layout, runs `callback`, waits for Vue to patch the DOM, then
-   * animates. Resolves with the Anime.js timeline of the animation.
+   * animates. Resolves when the animation finishes.
    */
-  patch: (callback: () => unknown, params?: LayoutAnimationParams) => Promise<Timeline | undefined>
+  patch: (callback: () => unknown, params?: LayoutAnimationParams) => Promise<void>
 }
 
 function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams, current: () => AutoLayout | null): NanimeLayout {
@@ -26,7 +26,7 @@ function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams, c
       current()?.record()
       await callback()
       await nextTick()
-      return current()?.animate(animationParams)
+      await current()?.animate(animationParams)
     },
   })
 }
