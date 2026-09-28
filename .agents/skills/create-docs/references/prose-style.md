@@ -89,6 +89,66 @@ how it works. Not copy trying to sell it, and not a spec.
   means anything. Name the thing: "the AnimeJS version", "the
   `@hypernym/nuxt-anime` version", or the method itself.
 
+## Rejected sentences and their replacements
+
+Real sentences the maintainer rejected, with what replaced them. Each one
+passed the rules above and still read badly. Check new prose against these
+patterns too.
+
+- **A count instead of the content.** "`nanime` runs with no
+  configuration. Three options exist if the defaults do not fit." The
+  reader learns a number, not where anything goes. Replaced with:
+  "Everything on this page is optional. The module options go in
+  `nuxt.config.ts`. Transition styles and component defaults go in
+  `app.config.ts`."
+- **A benefit the reader cannot picture.** "The skill teaches the agent the
+  composables, the transition components, and the mistakes that animate the
+  wrong element without an error." Replaced with a before and after in real
+  API names: "The skill teaches your coding agent the `nanime` composables
+  and transition components. With it, the agent calls `useAnimate()`
+  instead of calling `animate()` inside `onMounted`."
+- **A fact with nothing to do with it.** "The npm package also ships it,
+  under `node_modules/nanime/skills/nanime`." Three rewordings in, the
+  sentence was deleted. If the reader cannot act on a fact, cut it rather
+  than reword it.
+- **Several facts stacked into one paragraph.** "Nuxt auto-imports the
+  composables and registers `<AnimeTransition>` and
+  `<AnimeTransitionGroup>` from here, so there is nothing else to
+  configure. The `composables` and `components` options turn either off,
+  and `app.config.ts` holds custom transition styles." Replaced with the
+  outcome first and one link for the rest: "No other setup is needed. The
+  composables, `<AnimeTransition>`, `<AnimeTransitionGroup>` and
+  `<AnimeLayoutGroup>` now work in every component without an import.
+  [Configuration] covers turning auto-imports off and adding your own
+  transition styles."
+- **A definition with no example.** "A proxy is not called on its own. It
+  returns a value that goes inside animation parameters, and the animation
+  applies it." The maintainer could not tell what this meant. Replaced with
+  one plain sentence and a code sample that uses `scrambleText` as the
+  value of `innerHTML` in a timeline step. An unfamiliar concept needs a
+  sample before its definition makes sense.
+- **Mechanism before instruction.** "The composables return a proxy to
+  their AnimeJS instance. Call methods on the proxy, as in
+  `animation.play()`." Replaced with the instruction first: "Call methods
+  on the object a composable returns, as in `animation.play()`.
+  Destructuring that object breaks it in two ways:", followed by a
+  two-item list. Explain internals only when they change what the reader
+  does.
+- **How the page was researched.** "The `nanime` maintainers wrote this
+  page from each package's source and README as of September 2026."
+  Replaced with what the page covers and when: "This page compares
+  `nanime` with `vue-animejs` and `v-anime`, as of September 2026. If
+  something is out of date, open an issue."
+- **Setup steps as prose.** A list of bold labels, each with a sentence
+  about what the item is, was "not very actionable". Replaced with one
+  heading per step ("Install the agent skill", "Connect the docs MCP
+  server") and the command or config file in a code block under each.
+  When the reader is meant to run something, show it in a code block.
+- **Selling before facts.** Comparison pages opened with a "Where does
+  nanime stand out?" list before the table. The table now comes first,
+  then "Which should you pick?", then the code comparisons. The selling
+  list was dropped, since the table already says the same thing.
+
 ## Explanation vs. implementation
 
 On a showcase page, "What's happening" and "How it's built" explain the
@@ -252,6 +312,11 @@ offending sentence when a check fails. "Sounds fine" is not a pass.
       split it.
 - [ ] No sentence points at the layout ("the X tab", "the other two tabs",
       "as above"). Name the version or thing instead.
+- [ ] Every sentence passes the patterns in "Rejected sentences and their
+      replacements": no counts in place of content, no benefit without a
+      concrete before and after, no fact the reader cannot act on, no new
+      concept without a sample, instruction before mechanism, no
+      research-provenance line, setup steps as code blocks.
 
 **Explanation vs. implementation** (showcase pages only)
 - [ ] "What's happening" and "How it's built" contain no Vue or DOM

@@ -7,7 +7,7 @@ const emit = defineEmits<{
   reset: []
 }>()
 
-const highlight = ref(true)
+const highlight = ref(false)
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 {
   "name": "nanime",
   "version": "0.2.1",
-  "description": "Anime.js v4 composables for Nuxt and Vue 3. SSR-safe, reactive, auto-imported.",
+  "description": "Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text",
   "author": "Ekure Edem <61796351+astraldev@users.noreply.github.com>",
   "homepage": "https://nanimejs.netlify.app",
   "bugs": "https://github.com/astraldev/nanime/issues",

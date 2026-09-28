@@ -1,6 +1,6 @@
 // Sections linked from the header instead of the sidebar.
 export const headerLinks = [
-  { label: 'Showcase', section: '/examples', to: '/examples/introduction' },
+  { label: 'Examples', section: '/examples', to: '/examples/introduction' },
   { label: 'Changelog', section: '/changes', to: '/changes/changelog' },
 ]
 

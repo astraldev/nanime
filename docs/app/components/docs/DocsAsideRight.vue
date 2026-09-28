@@ -12,6 +12,9 @@ const wideExample = computed(() => {
   return path.startsWith('/examples/') && path !== '/examples/introduction'
 })
 
+const sidebarItems = useSidebarNavigation()
+const tocOnLeft = computed(() => sidebarItems.value.length <= 1)
+
 const { subNavigationMode } = useSubNavigation()
 const appConfig = useAppConfig()
 const { t } = useDocusI18n()
@@ -20,7 +23,10 @@ const contentTocVariants = useUIConfig('contentToc')
 </script>
 
 <template>
-  <div :data-wide-example="wideExample || undefined">
+  <div
+    :data-wide-example="wideExample || undefined"
+    :data-toc-left="tocOnLeft || undefined"
+  >
     <UContentToc
       v-if="links.length && !wideExample"
       :highlight="contentTocVariants.highlight ?? true"
@@ -31,7 +37,10 @@ const contentTocVariants = useUIConfig('contentToc')
       :links="links"
       :class="{ 'hidden lg:block': subNavigationMode }"
     >
-      <template #bottom>
+      <template
+        v-if="!tocOnLeft"
+        #bottom
+      >
         <DocsAsideRightBottom />
       </template>
     </UContentToc>
@@ -48,6 +57,20 @@ const contentTocVariants = useUIConfig('contentToc')
 
   [data-slot="root"] > [data-wide-example] {
     display: none;
+  }
+
+  [data-slot="root"] > [data-toc-left] {
+    order: -1;
+  }
+
+  [data-slot="root"]:has(> [data-toc-left]) > [data-slot="center"] {
+    max-width: calc(80% - 0.5rem);
+  }
+
+  [data-toc-left] > nav {
+    margin-inline-end: 0;
+    padding-inline-end: 0;
+    backdrop-filter: none;
   }
 }
 </style>

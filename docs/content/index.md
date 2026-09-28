@@ -1,9 +1,9 @@
 ---
 title: nanime
-description: Anime.js v4 as SSR-safe Vue composables for Nuxt. Animate, drag, split text, scroll and sync timelines, auto-imported and cleaned up on unmount
+description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
 seo:
   title: Anime.js Composables for Nuxt and Vue 3
-  description: Anime.js v4 as SSR-safe Vue composables for Nuxt. Animate, drag, split text, scroll and sync timelines, auto-imported and cleaned up on unmount
+  description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
 ---
 
 ::u-page-hero
@@ -182,5 +182,5 @@ What you get
 See it in action
 
 #description
-Dashboards that rearrange, feeds that grow, panels that open and close. Change your data, and every element springs to its new place. Add, shuffle or remove cards, or click one to expand it.
+Dashboards that rearrange, feeds that grow, panels that open and close. When your data changes, every element moves to its new place on its own. Try it below.
 ::
