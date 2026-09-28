@@ -15,7 +15,7 @@ Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 r
 | Transition internals | `src/runtime/app/transitions/` (`runner.ts`, `resolve.ts`, `styles/`) |
 | Anime.js source | `node_modules/animejs/dist/modules/` (no submodule) |
 | Docs site (Docus) | `docs/` — dev on port 3001, also hosts playground pages at `docs/app/pages/playground/` |
-| Tests | `test/` — moving to a private repo |
+| Tests | `test/` — moving to a private repo; use-case and regression tests already live in `../nanime-tests` |
 | Agent skills | `.agents/skills/` (also symlinked at `.agent/skills`) |
 
 ## Anime.js Setup
@@ -153,6 +153,8 @@ Vitest projects in `vitest.config.ts`:
 - **suites** — `test/suites/` (component tests via `mountSuspended`, real components, no mocks)
 
 `unit` and `e2e` projects are configured but their folders are empty. Tests are moving to a private repo.
+
+Use-case and regression tests (per-composable bug hunts, `it.fails` pins for known bugs) and the debug playground pages that went with them live outside this repo in `../nanime-tests`, at the same paths they had here (`test/suites/...`, `docs/app/...`). Their imports are relative (`../../../src/runtime/...`), so copy a file back to the same path to run it, and don't commit it. Add new tests of that kind there, not in `test/`.
 
 ## Agent Skills
 
