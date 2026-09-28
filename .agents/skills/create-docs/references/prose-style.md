@@ -84,6 +84,11 @@ how it works. Not copy trying to sell it, and not a spec.
   directly leaves Y falling back to Z" stacks two facts ahead of the
   consequence they cause. Split the facts from the consequence.
 
+- **Pointing at the page layout.** "The AnimeJS tab calls", "the other two
+  tabs", "as above" make the reader find a UI element before the sentence
+  means anything. Name the thing: "the AnimeJS version", "the
+  `@hypernym/nuxt-anime` version", or the method itself.
+
 ## Explanation vs. implementation
 
 On a showcase page, "What's happening" and "How it's built" explain the
@@ -245,6 +250,8 @@ offending sentence when a check fails. "Sounds fine" is not a pass.
 - [ ] No sentence chains more than one action or fact before its purpose
       clause. If a sentence has two purposes or two unrelated actions,
       split it.
+- [ ] No sentence points at the layout ("the X tab", "the other two tabs",
+      "as above"). Name the version or thing instead.
 
 **Explanation vs. implementation** (showcase pages only)
 - [ ] "What's happening" and "How it's built" contain no Vue or DOM
