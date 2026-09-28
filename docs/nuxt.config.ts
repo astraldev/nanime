@@ -44,6 +44,10 @@ export default defineNuxtConfig({
     '/examples': { redirect: { to: '/examples/introduction', statusCode: 301 } },
     '/examples/timeline-storyboard': { redirect: { to: '/examples/introduction', statusCode: 301 } },
     '/examples/text-scatter': { redirect: { to: '/examples/introduction', statusCode: 301 } },
+    '/examples/drag-to-bin': { redirect: { to: '/examples/drive', statusCode: 301 } },
+    '/examples/media-library': { redirect: { to: '/examples/drive', statusCode: 301 } },
+    '/examples/loading-sequence': { redirect: { to: '/examples/road-trip', statusCode: 301 } },
+    '/examples/scroll-road-trip': { redirect: { to: '/examples/road-trip', statusCode: 301 } },
     '/changes': { redirect: { to: '/changes/changelog', statusCode: 301 } },
   },
   sourcemap: {
