@@ -9,14 +9,14 @@ const panel = useTemplateRef<HTMLElement>('panel')
 const track = useTemplateRef<HTMLElement>('track')
 const thread = useTemplateRef<SVGPathElement>('thread')
 
-const scroll = useAnimeScroll(() => ({
-  container: panel.value ?? undefined,
-  target: track.value ?? undefined,
+const scroll = useAnimeScroll({
+  container: panel,
+  target: track,
   axis: 'x',
   enter: 'left left',
   leave: 'right right',
   sync: true,
-}))
+})
 
 const drawable = computed<DrawableSVGGeometry | null>(() =>
   thread.value ? createDrawable(thread.value)[0] ?? null : null,

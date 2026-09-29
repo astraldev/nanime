@@ -27,16 +27,16 @@ function trackTravel(observer: ScrollObserver) {
   emit('progress', observer.progress)
 }
 
-function scrubAcrossViewport(extra?: ScrollObserverParams) {
-  return useAnimeScroll(() => ({
-    container: viewport.value ?? undefined,
-    target: scene.value ?? undefined,
+function scrubAcrossViewport(extra?: Pick<ScrollObserverParams, 'onUpdate'>) {
+  return useAnimeScroll({
+    container: viewport,
+    target: scene,
     axis: 'x',
     enter: 'left left',
     leave: 'right right',
     sync: true,
     ...extra,
-  }))
+  })
 }
 
 const carScroll = scrubAcrossViewport({ onUpdate: trackTravel })
