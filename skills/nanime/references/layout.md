@@ -39,6 +39,9 @@ then animates them to their new size and position.
   Add it to `elements` (`'.card, .card h3'`) to make it slide. If its own size
   changes too it fades out and back; `layoutOptions: { swapAt: { opacity: 1 } }`
   keeps it visible.
+- Instead of listing a selector for every element, give each element that
+  moves the same attribute of your own and pass it once:
+  `elements="[data-layout]"` with `data-layout` on the card and its `h3`.
 - `layoutOptions` takes Anime.js `createLayout()` params. By default the
   group moves on `spring({ bounce: 0.15, duration: 300 })`. Setting `ease` or
   `duration` anywhere (prop or component defaults) replaces the spring, since

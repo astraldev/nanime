@@ -35,15 +35,18 @@ https://nanimejs.netlify.app/components/transition-styles
 Use `mode="out-in"` for keyed swaps. Otherwise both elements are in the DOM
 at once and the new one pushes the old one aside.
 
-For a crossfade, keep the default mode and stack the two elements: make
-the keyed child `absolute inset-0` inside a sized `relative` box. The old
-one's leave and the new one's enter then run together in the same spot.
+For a crossfade, keep the default mode and stack the two elements in one
+grid cell: make the wrapper a `grid` and give the keyed child
+`col-start-1 row-start-1`. The old one's leave and the new one's enter then
+run together in the same spot. No fixed size or `absolute` is needed: the
+wrapper takes the taller of the two while both are mounted, and the new
+one's size once the leave ends.
 
 ```vue
 <template>
-  <div class="relative size-40">
+  <div class="grid">
     <AnimeTransition :enter-animation="{ opacity: [0, 1], duration: 400 }" :leave-animation="{ opacity: 0, duration: 400 }">
-      <img :key="track.id" :src="track.cover" class="absolute inset-0">
+      <img :key="track.id" :src="track.cover" class="col-start-1 row-start-1">
     </AnimeTransition>
   </div>
 </template>

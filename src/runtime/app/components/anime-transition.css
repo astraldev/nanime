@@ -4,7 +4,7 @@
   transition: none !important;
 }
 
-@layer base {
+@layer base.nanime {
   :where(div, section, article, main, aside, nav, header, footer, form, fieldset, ul, ol):where([data-nanime-layout-group]) {
     display: flow-root;
   }
