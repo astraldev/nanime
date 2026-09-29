@@ -16,9 +16,12 @@ import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
 /**
- * Scrambles the text of `target` with Anime.js `scrambleText()`. The
- * animation is rebuilt when the target or either options object changes,
- * and reverted when the scope is disposed.
+ * Scrambles the text of `target` with Anime.js `scrambleText()` when the
+ * component mounts and reverts it when the scope is disposed.
+ *
+ * When `target`, `animationOptions` or `scrambleOptions` change, the
+ * animation is rebuilt. Pass `keepTime: true` to continue from the current
+ * playhead instead of restarting.
  */
 export function useScrambleText(
   target: Parameters<typeof normalizeAnimeTarget>[0],

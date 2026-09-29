@@ -37,10 +37,12 @@ type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container
 }, RefableProps, Draggable>
 
 /**
- * Makes `target` draggable with Anime.js `createDraggable()` once it is
- * mounted. Refs in `options` update the draggable in place, and a new
- * target, trigger or container rebuilds it. Calls made before mount are
- * buffered.
+ * Makes `target` draggable with an Anime.js `createDraggable()` when the
+ * component mounts and reverts it when the scope is disposed.
+ *
+ * When a ref in `options` changes, the draggable updates in place. When
+ * `target`, `trigger` or `container` points to a new element, it is rebuilt.
+ * Methods called before mount run once the draggable exists.
  */
 export function useDraggable(
   target: DraggableTypes['target'],

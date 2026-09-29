@@ -91,15 +91,15 @@ export interface AnimeLayoutGroupProps {
   elements?: AnimeLayoutElements
   /**
    * Values that trigger a layout animation when they change, including
-   * changes nested inside them. Every function entry is called as a getter,
-   * such as `() => state.view`, and its result is watched, so pass a handler
-   * inside an object rather than on its own. Without `deps`, every re-render
-   * of the group animates.
+   * changes nested inside them. A function entry is read as a getter, such as
+   * `() => state.view`, and its result is watched; to pass a function as a
+   * value, wrap it in an object. Without `deps`, every re-render of the group
+   * animates.
    */
   deps?: readonly unknown[]
   /**
    * Animate only when an entry of `deps` is replaced, not when something
-   * nested inside one changes. Read once, when the group is created.
+   * nested inside it changes. Read once, when the group is created.
    * @default false
    */
   shallow?: boolean

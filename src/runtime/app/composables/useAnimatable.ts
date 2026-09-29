@@ -7,9 +7,11 @@ import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/ins
 import { markNanimeInstance } from '../utils/proxy'
 
 /**
- * Creates an Anime.js `createAnimatable()` for `target` once it is mounted.
- * The animatable is rebuilt when the resolved target changes, and reverted
- * when the scope is disposed.
+ * Creates an Anime.js `createAnimatable()` for `target` when the component
+ * mounts and reverts it when the scope is disposed.
+ *
+ * When `target` points to a new element, the animatable is rebuilt and the
+ * old element goes back to its original styles.
  */
 export function useAnimatable(
   target: Parameters<typeof normalizeAnimeTarget>[0],

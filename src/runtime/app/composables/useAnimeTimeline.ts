@@ -33,12 +33,13 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * Reactive timeline composable. Returns a proxied `Timeline` whose
- * `.add()`, `.set()` and `.remove()` methods accept Vue template refs,
- * component refs and `MaybeRefOrGetter` targets alongside raw selectors.
+ * Creates an Anime.js `createTimeline()` when the component mounts and
+ * reverts it when the scope is disposed.
  *
- * Calls made before mount are buffered and replayed once the DOM is ready,
- * so every method is safe to invoke immediately.
+ * `add()`, `set()` and `remove()` take template refs, component refs and
+ * getters as targets, as well as selectors. When `parameters` change, the
+ * timeline is rebuilt; pass `keepTime: true` to keep its playhead. Methods
+ * called before mount run once the timeline exists.
  */
 export function useAnimeTimeline(
   parameters?: MaybeRefOrGetter<TimelineParams>,

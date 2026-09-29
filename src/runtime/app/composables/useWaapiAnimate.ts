@@ -7,9 +7,10 @@ import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/ins
 import { markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 
 /**
- * Runs an Anime.js `waapi.animate()` on `target` once it is mounted. The
- * animation is rebuilt when `target` or `parameters` change, and reverted
- * when the scope is disposed.
+ * Runs an Anime.js `waapi.animate()` on `target` when the component mounts
+ * and reverts it when the scope is disposed.
+ *
+ * When `target` or `parameters` change, the animation is rebuilt.
  */
 export function useWaapiAnimate(
   target: Parameters<typeof normalizeWaapiAnimeTarget>[0],

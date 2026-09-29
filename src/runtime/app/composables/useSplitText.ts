@@ -30,9 +30,11 @@ type SplitText = {
 
 /**
  * Splits the text of `target` into lines, words and chars with Anime.js
- * `splitText()`. The split arrays are refs that update when the text is
- * split again, and the split is reverted when the scope is disposed. Pass
- * `options.html` for text that changes.
+ * `splitText()`, and restores the original text when the scope is disposed.
+ *
+ * `lines`, `words` and `chars` are refs that update each time the text is
+ * split again. For text that changes, pass it as `options.html` instead of
+ * rendering it in the template.
  */
 export function useSplitText(
   target: MaybeRef<Parameters<typeof normalizeSplitTextTarget>[0]>,

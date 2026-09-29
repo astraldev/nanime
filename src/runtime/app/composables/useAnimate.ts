@@ -15,9 +15,12 @@ import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
 /**
- * Runs an Anime.js `animate()` on `target` once it is mounted. The animation
- * is rebuilt when `target` or `parameters` change, and reverted when the
- * scope is disposed.
+ * Runs an Anime.js `animate()` on `target` when the component mounts and
+ * reverts it when the scope is disposed.
+ *
+ * When `target` or `parameters` change, the animation is rebuilt. Pass
+ * `keepTime: true` to continue from the current playhead instead of
+ * restarting.
  */
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],

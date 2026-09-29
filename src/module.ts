@@ -4,20 +4,21 @@ import type { NanimeAppConfig } from './runtime/app/public/types'
 
 export interface ModuleOptions {
   /**
-   * Add composables for animejs
+   * Auto-import the nanime composables. With `false`, import them from
+   * `#nanime/composables`.
    * @default true
    */
   composables: boolean
   /**
-   * Adds components (`AnimeTransition`, `AnimeTransitionGroup`, `AnimeLayoutGroup`)
+   * Register `<AnimeTransition>`, `<AnimeTransitionGroup>` and
+   * `<AnimeLayoutGroup>`.
    * @default true
    */
   components: boolean
   /**
-   * Default for every composable's `keepTime` option. `true` carries the
-   * playhead across rebuilds, so an animation continues instead of restarting
-   * when its reactive inputs change. A composable's own third argument still
-   * wins over this.
+   * Default `keepTime` for every composable. With `true`, an animation that a
+   * reactive change rebuilds continues from its current playhead instead of
+   * restarting. A composable's own `keepTime` option overrides it.
    * @default false
    */
   keepTime: boolean
