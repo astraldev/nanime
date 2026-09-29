@@ -13,11 +13,24 @@ orientation: horizontal
   :::render-code-block-preview{:code='false' src="examples/misc/HeroDemo.vue"}
   :::
 
+#headline
+  :::u-button
+  ---
+  color: neutral
+  size: sm
+  to: https://github.com/astraldev/nanime#versioning
+  target: _blank
+  trailing-icon: i-ph-arrow-right
+  variant: subtle
+  ---
+  Minor releases can break until 1.0
+  :::
+
 #title
 Anime.js composables for [Nuxt]{.text-primary}
 
 #description
-AnimeJS wrapped in Vue composables. They resolve targets, skip server renders, and clean up on unmount.
+Call AnimeJS from `setup()` with no `onMounted`, no cleanup and no imports. Animations wait for the element to mount and revert when the component unmounts.
 
 #links
   :::u-button
@@ -123,7 +136,7 @@ What you get
   spotlight: true
   icon: i-ph-arrows-clockwise
   spotlightColor: var(--color-primary)
-  to: /getting-started/configuration
+  to: /composables/introduction
   ---
   #title
   [Reactive]{.text-primary} parameters
@@ -157,7 +170,7 @@ What you get
   Built for [AI agents]{.text-primary} :badge[New]{variant="subtle"}
 
   #description
-  An agent skill, llms.txt and an MCP server, so coding agents get nanime right
+  Install the agent skill or connect the MCP server, and coding agents write nanime code instead of raw AnimeJS
   :::
 
   :::u-page-card
@@ -165,13 +178,12 @@ What you get
   spotlight: true
   icon: i-ph-feather
   spotlightColor: var(--color-primary)
-  to: /composables/utilities
   ---
   #title
   [Small]{.text-primary}
 
   #description
-  No runtime dependencies beyond AnimeJS and one tiny helper
+  The runtime depends on AnimeJS and defu, nothing else
   :::
 ::
 
@@ -182,5 +194,5 @@ What you get
 See it in action
 
 #description
-Dashboards that rearrange, feeds that grow, panels that open and close. When your data changes, every element moves to its new place on its own. Try it below.
+Dashboards that rearrange, feeds that grow, panels that open and close. When the data changes, each element animates to its new place.
 ::
