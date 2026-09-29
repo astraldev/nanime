@@ -1,5 +1,66 @@
 # Changelog
 
+## v0.3.0
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.2.1...v0.3.0)
+
+### 🚀 Enhancements
+
+- Add AnimeLayoutGroup and configurable component defaults ([594acc1](https://github.com/astraldev/nanime/commit/594acc1))
+- **components:** New group defaults and layout animation fixes ([f026c71](https://github.com/astraldev/nanime/commit/f026c71))
+- **useAnimeScroll:** ⚠️  Take a parameters object with ref targets and live thresholds ([be530d7](https://github.com/astraldev/nanime/commit/be530d7))
+- **useScrambleText:** ⚠️  Reject duration, delay and ease in animation options ([720020e](https://github.com/astraldev/nanime/commit/720020e))
+
+### 🩹 Fixes
+
+- Reactive rebuilds, mount timing, and transition cleanup across core ([616b566](https://github.com/astraldev/nanime/commit/616b566))
+- **docs:** Declare the packages docs imports directly ([52f5556](https://github.com/astraldev/nanime/commit/52f5556))
+- **useAnimeLayout:** ⚠️  Resolve patch() with void when the animation finishes ([11bb96e](https://github.com/astraldev/nanime/commit/11bb96e))
+- **useWaapiAnimate:** Rebuild only when target or parameter values change ([833a922](https://github.com/astraldev/nanime/commit/833a922))
+
+### 📖 Documentation
+
+- Cut the JS every docs page downloads ([4bd53ac](https://github.com/astraldev/nanime/commit/4bd53ac))
+- Build demo code tabs with the Vue parser and prettier ([e697146](https://github.com/astraldev/nanime/commit/e697146))
+- Document AnimeLayoutGroup and component defaults ([9187144](https://github.com/astraldev/nanime/commit/9187144))
+- One demo per page, shorter prose, Phosphor icons ([e545a37](https://github.com/astraldev/nanime/commit/e545a37))
+- Move Showcase and Changelog into the header ([16469a3](https://github.com/astraldev/nanime/commit/16469a3))
+- Remove nuxt-studio ([8efca68](https://github.com/astraldev/nanime/commit/8efca68))
+- Add the Pens showcase page ([8ba62aa](https://github.com/astraldev/nanime/commit/8ba62aa))
+- Rewrite the examples as interactive app scenes ([235ee0a](https://github.com/astraldev/nanime/commit/235ee0a))
+- **skills:** Restructure the nanime skill and add list and transition notes ([309efc7](https://github.com/astraldev/nanime/commit/309efc7))
+- Add unreleased changelog entries ([4040699](https://github.com/astraldev/nanime/commit/4040699))
+- Add a playground index page listing every playground route ([8d62324](https://github.com/astraldev/nanime/commit/8d62324))
+- Tighten getting started and composables intro prose ([9649b21](https://github.com/astraldev/nanime/commit/9649b21))
+- **playground:** Add defaults playgrounds for the transition and layout components ([b4535ef](https://github.com/astraldev/nanime/commit/b4535ef))
+- **skills:** Cover the new group and layout defaults and playground verification ([c2b072b](https://github.com/astraldev/nanime/commit/c2b072b))
+- **playground:** Remove the defaults comparison pages ([94899f1](https://github.com/astraldev/nanime/commit/94899f1))
+- Make the homepage spring grid demo interactive ([0e9a66d](https://github.com/astraldev/nanime/commit/0e9a66d))
+- **playground:** Remove the remaining playground pages ([4fe0837](https://github.com/astraldev/nanime/commit/4fe0837))
+- Audit the changelog and document the new component defaults ([836f8c0](https://github.com/astraldev/nanime/commit/836f8c0))
+- Left TOC on single pages, Examples header, hero hover, new descriptions ([64cfef0](https://github.com/astraldev/nanime/commit/64cfef0))
+- Document only the nanime layer on composable pages ([b24d899](https://github.com/astraldev/nanime/commit/b24d899))
+- Rewrite the public JSDoc of composables, types and module options ([72af706](https://github.com/astraldev/nanime/commit/72af706))
+- Ease picker demo for useWaapiAnimate, WAAPI bounce for useSplitText ([550fd5d](https://github.com/astraldev/nanime/commit/550fd5d))
+
+### 📦 Build
+
+- **deps:** Move to pnpm 12, jsdom, and clean peer deps ([bd608d7](https://github.com/astraldev/nanime/commit/bd608d7))
+
+### 🏡 Chore
+
+- Note where use-case and regression tests live ([8e9f591](https://github.com/astraldev/nanime/commit/8e9f591))
+
+#### ⚠️ Breaking Changes
+
+- **useAnimeScroll:** ⚠️  Take a parameters object with ref targets and live thresholds ([be530d7](https://github.com/astraldev/nanime/commit/be530d7))
+- **useScrambleText:** ⚠️  Reject duration, delay and ease in animation options ([720020e](https://github.com/astraldev/nanime/commit/720020e))
+- **useAnimeLayout:** ⚠️  Resolve patch() with void when the animation finishes ([11bb96e](https://github.com/astraldev/nanime/commit/11bb96e))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.2.1
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.2.0...v0.2.1)
