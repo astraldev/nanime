@@ -5,7 +5,7 @@ import { snapshotParameters } from '../utils/snapshot-parameters'
 import type { AnimationParams, ScrambleTextParams } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { keepTime } from 'animejs/utils'
-import type { NanimeInstanceOptions } from '../public/types'
+import type { NanimeInstanceOptions, ScrambleAnimationParams } from '../public/types'
 import { scrambleText } from 'animejs/text'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
@@ -25,7 +25,7 @@ const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
  */
 export function useScrambleText(
   target: Parameters<typeof normalizeAnimeTarget>[0],
-  animationOptions?: MaybeRefOrGetter<AnimationParams>,
+  animationOptions?: MaybeRefOrGetter<ScrambleAnimationParams>,
   scrambleOptions?: MaybeRefOrGetter<ScrambleTextParams>,
   options?: NanimeInstanceOptions,
 ): JSAnimation {
@@ -42,7 +42,7 @@ export function useScrambleText(
   const mounted = useMounted()
 
   const resolveTargets = () => normalizeAnimeTarget(target)
-  const resolveAnimationOptions = () => toValue(animationOptions) || {}
+  const resolveAnimationOptions = (): AnimationParams => toValue(animationOptions) || {}
   const resolveScrambleOptions = () => toValue(scrambleOptions) || {}
 
   if (flag === AnimationComponentFlags.Watchable) {

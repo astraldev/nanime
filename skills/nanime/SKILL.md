@@ -142,6 +142,16 @@ useScrambleText(title, {}, () => ({ text: track.value.title }))
 For `useSplitText`, keep `v-once` and pass the new text through its `html`
 option.
 
+### Scramble timing goes in the third argument
+
+AnimeJS `scrambleText()` sets its own `duration`, `delay` and `ease`, so the
+same keys in `useScrambleText`'s second argument are ignored. Keep the second
+argument for playback and callbacks:
+
+```ts
+useScrambleText(title, { onComplete: next }, () => ({ text: text.value, duration: 2000 }))
+```
+
 ### Rebuilds restart the animation
 
 When a reactive target or parameter changes, the composable reverts the old

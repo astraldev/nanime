@@ -1,5 +1,6 @@
 import type { ComponentPublicInstance, MaybeRef, MaybeRefOrGetter, Ref } from 'vue'
 import type {
+  AnimationParams,
   ScrollObserver,
   ScrollObserverAxisCallback,
   ScrollObserverParams,
@@ -17,6 +18,17 @@ export interface NanimeInstanceOptions {
    * @default `nanime.keepTime` in `nuxt.config`, which is `false` unless set
    */
   keepTime?: boolean
+}
+
+/**
+ * Animation options for `useScrambleText`. `duration`, `delay` and `ease`
+ * are not accepted here: the scramble sets its own, so pass them in the
+ * scramble options instead.
+ */
+export type ScrambleAnimationParams = AnimationParams & {
+  duration?: never
+  delay?: never
+  ease?: never
 }
 
 /** Options for `useSplitText`. */

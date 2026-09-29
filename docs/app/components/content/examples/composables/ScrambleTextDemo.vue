@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import type { ScrambleTextParams } from '#nanime/types'
 import ExampleWrapper from '~/components/shared/ExampleWrapper.vue'
 
-const el = useTemplateRef('text')
-
-const index = ref(0)
 const texts = [
   'Hello from nanime!',
   'Scramble text with animejs!',
@@ -12,33 +8,25 @@ const texts = [
   'Care to star us on github? :)',
 ]
 
+const label = useTemplateRef('label')
+const index = ref(0)
+
 function next() {
   index.value = (index.value + 1) % texts.length
 }
 
-const animationConfig = {
-  ease: 'inCirc',
-  duration: 2500,
-  delay: 2500,
-  onComplete: next,
-}
-
-const scrambleConfig = computed((): ScrambleTextParams => ({
+useScrambleText(label, { onComplete: next }, () => ({
   text: texts[index.value],
   chars: 'symbols',
-  perturbation: 0.3,
-  settleRate: 25,
-  settleDuration: 350,
-  revealRate: 20,
+  duration: 5000,
+  delay: 2500,
 }))
-
-useScrambleText(el, animationConfig, scrambleConfig)
 </script>
 
 <template>
   <ExampleWrapper class="flex items-center justify-center">
     <p
-      ref="text"
+      ref="label"
       class="font-mono text-lg"
     >
       Hello from nanime!
