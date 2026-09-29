@@ -1,10 +1,14 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
-import { shallowRef, toValue, watchEffect, type MaybeRefOrGetter, nextTick } from 'vue'
-import type { WAAPIAnimationParams } from 'animejs'
-import { normalizeWaapiAnimeTarget } from '../utils/targets'
+import { onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
+import type { DOMTargetsParam, WAAPIAnimationParams } from 'animejs'
+import { normalizeWaapiAnimeTarget, sameTargets } from '../utils/targets'
+import { snapshotParameters } from '../utils/snapshot-parameters'
 import { waapi, type WAAPIAnimation } from 'animejs/waapi'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
+import { deepEqualWithSkip } from '../utils/deep-equal'
+
+const callbacks = ['onComplete']
 
 /**
  * Runs an Anime.js `waapi.animate()` on `target` when the component mounts
@@ -17,18 +21,37 @@ export function useWaapiAnimate(
   parameters?: MaybeRefOrGetter<WAAPIAnimationParams>,
 ): WAAPIAnimation {
   const flag = getAnimationComponentFlag()
-
-  const animation = shallowRef(waapi.animate([], {}))
   const mounted = useMounted()
+  const animation = shallowRef(waapi.animate([], {}))
+
+  const resolveTargets = () => normalizeWaapiAnimeTarget(target)
+  const resolveParameters = () => toValue(parameters) || {}
+
+  const rebuildAnimation = (targets: DOMTargetsParam) => {
+    animation.value?.revert()
+    animation.value = waapi.animate(targets, unwrapNanimeProxies(resolveParameters()))
+  }
 
   if (flag === AnimationComponentFlags.Watchable) {
-    watchEffect(() => {
-      const targets = normalizeWaapiAnimeTarget(target)
-      if (!mounted.value || !targets) return
-      if (animation.value) animation.value.revert()
-      const newAnimation = waapi.animate(targets, unwrapNanimeProxies(toValue(parameters) || {}))
-      animation.value = newAnimation
-    })
+    let previous: { targets: DOMTargetsParam, snapshot: Record<string, unknown> } | null = null
+
+    const sync = () => {
+      if (!mounted.value) return
+      const targets = resolveTargets()
+      if (!targets) return
+      const snapshot = snapshotParameters(resolveParameters())
+      if (
+        previous
+        && sameTargets(previous.targets, targets)
+        && deepEqualWithSkip(previous.snapshot, snapshot, callbacks)
+      ) return
+
+      previous = { targets, snapshot }
+      rebuildAnimation(targets)
+    }
+
+    watch([resolveTargets, () => snapshotParameters(resolveParameters())], sync)
+    onMounted(sync)
 
     tryOnScopeDispose(() => {
       animation.value?.revert()
@@ -36,11 +59,9 @@ export function useWaapiAnimate(
   }
   else {
     nextTick(() => {
-      const targets = normalizeWaapiAnimeTarget(target)
+      const targets = resolveTargets()
       if (!targets) return
-      if (animation.value) animation.value.revert()
-      const newAnimation = waapi.animate(targets, unwrapNanimeProxies(toValue(parameters) || {}))
-      animation.value = newAnimation
+      rebuildAnimation(targets)
     })
   }
 
