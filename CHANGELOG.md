@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.3.1
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.3.0...v0.3.1)
+
+### 🩹 Fixes
+
+- **components:** Keep the layout group rule out of Tailwind v3's base layer ([86d08c2](https://github.com/astraldev/nanime/commit/86d08c2))
+- **AnimeLayoutGroup:** Stop warning about valid selector lists in elements ([6e43d48](https://github.com/astraldev/nanime/commit/6e43d48))
+
+### 📖 Documentation
+
+- **AnimeLayoutGroup:** Suggest one shared attribute for elements ([bbbf862](https://github.com/astraldev/nanime/commit/bbbf862))
+- Changelog for 0.3.1 ([b9736f5](https://github.com/astraldev/nanime/commit/b9736f5))
+
+### 🏡 Chore
+
+- Stop tracking the announcements folder ([81ee0b6](https://github.com/astraldev/nanime/commit/81ee0b6))
+
+### ❤️ Contributors
+
+- Ekure Edem
+
 ## v0.3.0
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.2.1...v0.3.0)
