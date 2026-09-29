@@ -20,10 +20,20 @@ const sameEntries = (next: readonly unknown[], prev: readonly unknown[]) =>
 const isList = (value: AnimeLayoutElements): value is Extract<AnimeLayoutElements, readonly unknown[]> =>
   Array.isArray(value)
 
+function isValidSelector(selector: string) {
+  try {
+    document.createDocumentFragment().querySelector(selector)
+    return true
+  }
+  catch {
+    return false
+  }
+}
+
 function checkSelector(selector: string) {
-  if (typeof CSS === 'undefined' || warned.has(selector) || CSS.supports(`selector(${selector})`)) return
+  if (typeof document === 'undefined' || warned.has(selector) || isValidSelector(selector)) return
   warned.add(selector)
-  warn(`[nanime] <AnimeLayoutGroup> elements selector "${selector}" is not a valid selector, so it matches nothing.`)
+  warn(`[nanime] <AnimeLayoutGroup> elements selector "${selector}" is not a valid selector. Invalid entries in it match nothing.`)
 }
 
 export default defineComponent(
