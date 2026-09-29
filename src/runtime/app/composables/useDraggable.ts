@@ -1,12 +1,11 @@
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
-import { nextTick, shallowRef, toValue, watch, watchPostEffect } from 'vue'
-import { normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, type DraggableTypes } from '../utils/targets'
-import type { Draggable, DraggableAxisParam, DraggableParams, TargetsParam } from 'animejs'
+import { nextTick, shallowRef, watch, watchPostEffect } from 'vue'
+import { hasTargets, normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, sameTargets, type DraggableTypes } from '../utils/targets'
+import type { Draggable, DraggableAxisParam, DraggableParams } from 'animejs'
 import { createDraggable } from 'animejs/draggable'
 import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
 import { normalizeReffable, type MakeRefable } from '../utils/instance/make-reffable'
 import type { Prettify } from '../utils/instance/prettify'
-import defu from 'defu'
 
 const REFFABLE_PROPS = [
   'containerPadding',
@@ -27,6 +26,9 @@ const CHAINABLE_METHODS = new Set([
   'setX', 'setY', 'scrollInView', 'animateInView',
 ])
 
+const sameSources = (next: readonly unknown[], prev: readonly unknown[]) =>
+  next.every((entry, index) => sameTargets(entry, prev[index]))
+
 type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container' | 'x' | 'y'> & {
   trigger?: DraggableTypes['trigger']
   container?: DraggableTypes['container']
@@ -35,10 +37,12 @@ type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container
 }, RefableProps, Draggable>
 
 /**
- * Makes `target` draggable with Anime.js `createDraggable()` once it is
- * mounted. Refs in `options` update the draggable in place, and a new
- * target, trigger or container rebuilds it. Calls made before mount are
- * buffered.
+ * Makes `target` draggable with an Anime.js `createDraggable()` when the
+ * component mounts and reverts it when the scope is disposed.
+ *
+ * When a ref in `options` changes, the draggable updates in place. When
+ * `target`, `trigger` or `container` points to a new element, it is rebuilt.
+ * Methods called before mount run once the draggable exists.
  */
 export function useDraggable(
   target: DraggableTypes['target'],
@@ -51,30 +55,27 @@ export function useDraggable(
     chainableMethods: CHAINABLE_METHODS,
   })
 
-  let oldTarget: TargetsParam
+  let enabled = true
 
   watch(
     [
-      () => target,
-      () => options?.trigger,
-      () => options?.container,
-      () => mounted.value,
+      mounted,
+      () => normalizeAnimeTarget(target),
+      () => normalizeLayoutTarget(options?.trigger),
+      () => normalizeDraggableContainer(options?.container),
     ],
-    () => {
-      if (!mounted.value) return
-      const targets = normalizeAnimeTarget(target)
-      if (oldTarget === targets) return
-      if (dragController.value) dragController.value.revert()
-      oldTarget = targets
-
-      const trigger = normalizeLayoutTarget(toValue(options)?.trigger)
-      const container = normalizeDraggableContainer(toValue(options)?.container)
+    ([isMounted, targets, trigger, container], previous) => {
+      if (!isMounted) return
+      if (dragController.value && previous && sameSources([targets, trigger, container], previous.slice(1))) return
+      if (dragController.value) enabled = dragController.value.enabled
+      dragController.value?.revert()
+      dragController.value = null
+      if (!hasTargets(targets)) return
 
       const resolveAxis = <T extends DraggableOptions['x'] | DraggableOptions['y']>(axis: T) => {
-        if (!axis || typeof axis !== 'object') return axis
-        return defu(axis, {
-          snap: (d: Draggable) => normalizeReffable(axis.snap, d),
-        })
+        if (!axis || typeof axis !== 'object' || axis.snap === undefined) return axis
+        const snap = axis.snap
+        return { ...axis, snap: (d: Draggable) => normalizeReffable(snap, d) }
       }
 
       const dragEngine = createDraggable(targets, {
@@ -94,6 +95,7 @@ export function useDraggable(
         y: resolveAxis(options?.y),
       })
 
+      if (!enabled) dragEngine.disable()
       dragController.value = dragEngine
       flushBuffer()
     }, {
@@ -101,19 +103,20 @@ export function useDraggable(
     })
 
   watchPostEffect(() => {
-    if (!options || !dragController.value) return
+    const draggable = dragController.value
+    if (!options || !draggable) return
 
     // Access all refable values to register them as dependencies
     REFFABLE_PROPS.forEach((key) => {
-      if (key in options) toValue(options[key])
+      if (key in options) normalizeReffable(options[key], draggable)
     })
 
     if (typeof options.x === 'object' && options.x !== null) {
-      toValue((options.x).snap)
+      normalizeReffable(options.x.snap, draggable)
     }
 
     if (typeof options.y === 'object' && options.y !== null) {
-      toValue((options.y).snap)
+      normalizeReffable(options.y.snap, draggable)
     }
 
     nextTick(() => dragController.value?.refresh())

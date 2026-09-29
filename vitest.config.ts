@@ -24,6 +24,11 @@ export default defineConfig({
           name: 'full-nuxt-apps',
           include: ['test/fixtures/**/*.{test,spec}.ts'],
           environment: 'nuxt',
+          environmentOptions: {
+            nuxt: {
+              domEnvironment: 'jsdom',
+            },
+          },
         },
       }),
       await defineVitestProject({
@@ -34,6 +39,7 @@ export default defineConfig({
           environmentOptions: {
             nuxt: {
               rootDir: fileURLToPath(new URL('./test/fixtures/keep-time', import.meta.url)),
+              domEnvironment: 'jsdom',
             },
           },
         },
@@ -43,6 +49,11 @@ export default defineConfig({
           name: 'suites',
           include: ['test/suites/**/*.{test,spec}.ts'],
           environment: 'nuxt',
+          environmentOptions: {
+            nuxt: {
+              domEnvironment: 'jsdom',
+            },
+          },
         },
       }),
     ],

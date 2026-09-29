@@ -104,3 +104,8 @@ ul:has(> li > button[aria-label]) + h2 {
 td:has(> .comparison-good) {
   background-color: color-mix(in oklab, var(--hex-green-1) 14%, transparent);
 }
+
+.code-preview pre,
+.code-preview pre code {
+  white-space: pre;
+}

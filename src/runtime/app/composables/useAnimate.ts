@@ -1,6 +1,7 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
-import { shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
-import { normalizeAnimeTarget } from '../utils/targets'
+import { onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
+import { normalizeAnimeTarget, sameTargets } from '../utils/targets'
+import { snapshotParameters } from '../utils/snapshot-parameters'
 import type { AnimationParams, TargetsParam } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { keepTime } from 'animejs/utils'
@@ -14,9 +15,12 @@ import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
 /**
- * Runs an Anime.js `animate()` on `target` once it is mounted. The animation
- * is rebuilt when `target` or `parameters` change, and reverted when the
- * scope is disposed.
+ * Runs an Anime.js `animate()` on `target` when the component mounts and
+ * reverts it when the scope is disposed.
+ *
+ * When `target` or `parameters` change, the animation is rebuilt. Pass
+ * `keepTime: true` to continue from the current playhead instead of
+ * restarting.
  */
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
@@ -48,23 +52,24 @@ export function useAnimate(
   }
 
   if (flag === AnimationComponentFlags.Watchable) {
-    let previous: { targets: TargetsParam, params: AnimationParams } | null = null
+    let previous: { targets: TargetsParam, snapshot: Record<string, unknown> } | null = null
 
-    watch(
-      [mounted, resolveTargets, resolveBoundParameters],
-      ([isMounted, targets, params]) => {
-        if (!isMounted) return
-        if (
-          previous
-          && previous.targets === targets
-          && deepEqualWithSkip(previous.params, params, callbacks)
-        ) return
+    const sync = () => {
+      if (!mounted.value) return
+      const targets = resolveTargets()
+      const snapshot = snapshotParameters(resolveParameters())
+      if (
+        previous
+        && sameTargets(previous.targets, targets)
+        && deepEqualWithSkip(previous.snapshot, snapshot, callbacks)
+      ) return
 
-        previous = { targets, params }
-        rebuildAnimation(targets, params)
-      },
-      { immediate: true },
-    )
+      previous = { targets, snapshot }
+      rebuildAnimation(targets, resolveBoundParameters())
+    }
+
+    watch([resolveTargets, () => snapshotParameters(resolveParameters())], sync)
+    onMounted(sync)
 
     tryOnScopeDispose(() => {
       animation.value?.revert()

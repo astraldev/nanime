@@ -1,6 +1,6 @@
 import type { AnimeTransitionStyle } from '../../public/types'
 
-export const swap: AnimeTransitionStyle = {
+export const swap = {
   enter: {
     opacity: [0, 1],
     y: [10, 0],
@@ -15,4 +15,4 @@ export const swap: AnimeTransitionStyle = {
     duration: 160,
     ease: 'in(2)',
   },
-}
+} satisfies AnimeTransitionStyle

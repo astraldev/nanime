@@ -24,13 +24,11 @@ const props = withDefaults(defineProps<{
 const statusEl = useTemplateRef('statusEl')
 
 if (props.scrambleStatus) {
-  useScrambleText(
-    statusEl,
-    { duration: 500, ease: 'outQuad' },
-    () => ({
-      text: props.status ?? '',
-    }),
-  )
+  useScrambleText(statusEl, {}, () => ({
+    text: props.status ?? '',
+    duration: 500,
+    ease: 'outQuad',
+  }))
 }
 
 function onSliderInput(event: Event, slider: ExampleSlider) {

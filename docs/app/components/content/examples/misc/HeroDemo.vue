@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { animate } from 'animejs/animation'
 import { stagger } from '#nanime/utils'
 import { spring } from '#nanime/easings'
 import ExampleWrapper from '../../../shared/ExampleWrapper.vue'
@@ -59,6 +60,16 @@ useAnimate(boxes, () => ({
   },
 }))
 
+function lightUp(event: PointerEvent) {
+  const cell = event.currentTarget
+  if (!(cell instanceof HTMLElement) || !cell.lastElementChild) return
+  animate(cell.lastElementChild, {
+    opacity: [1, 0],
+    duration: 900,
+    ease: 'outQuad',
+  })
+}
+
 onMounted(() => {
   query = window.matchMedia('(max-width: 640px)')
   updateIsSmall()
@@ -79,9 +90,15 @@ onUnmounted(() => {
       <div
         v-for="i in COLS * ROWS"
         :key="i"
-        ref="boxes"
-        class="bg-white/[.035] border border-primary/5 aspect-square w-full opacity-0"
-      />
+        class="relative aspect-square w-full"
+        @pointerenter="lightUp"
+      >
+        <div
+          ref="boxes"
+          class="bg-white/[.035] border border-primary/5 size-full opacity-0 pointer-events-none"
+        />
+        <div class="absolute inset-0 bg-primary/50 shadow-[0_0_1rem_0_currentColor] opacity-0 pointer-events-none" />
+      </div>
     </div>
   </ExampleWrapper>
 </template>

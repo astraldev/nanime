@@ -1,4 +1,11 @@
 .anime-move,
-[data-anime-transition] {
+[data-anime-transition],
+[data-nanime-animating] * {
   transition: none !important;
+}
+
+@layer base {
+  :where(div, section, article, main, aside, nav, header, footer, form, fieldset, ul, ol):where([data-nanime-layout-group]) {
+    display: flow-root;
+  }
 }

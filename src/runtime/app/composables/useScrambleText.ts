@@ -1,10 +1,11 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
-import { normalizeAnimeTarget } from '../utils/targets'
+import { hasTargets, normalizeAnimeTarget, sameTargets } from '../utils/targets'
+import { snapshotParameters } from '../utils/snapshot-parameters'
 import type { AnimationParams, ScrambleTextParams } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { keepTime } from 'animejs/utils'
-import type { NanimeInstanceOptions } from '../public/types'
+import type { NanimeInstanceOptions, ScrambleAnimationParams } from '../public/types'
 import { scrambleText } from 'animejs/text'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
@@ -15,13 +16,16 @@ import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
 /**
- * Scrambles the text of `target` with Anime.js `scrambleText()`. The
- * animation is rebuilt when the target or either options object changes,
- * and reverted when the scope is disposed.
+ * Scrambles the text of `target` with Anime.js `scrambleText()` when the
+ * component mounts and reverts it when the scope is disposed.
+ *
+ * When `target`, `animationOptions` or `scrambleOptions` change, the
+ * animation is rebuilt. Pass `keepTime: true` to continue from the current
+ * playhead instead of restarting.
  */
 export function useScrambleText(
   target: Parameters<typeof normalizeAnimeTarget>[0],
-  animationOptions?: MaybeRefOrGetter<AnimationParams>,
+  animationOptions?: MaybeRefOrGetter<ScrambleAnimationParams>,
   scrambleOptions?: MaybeRefOrGetter<ScrambleTextParams>,
   options?: NanimeInstanceOptions,
 ): JSAnimation {
@@ -38,23 +42,28 @@ export function useScrambleText(
   const mounted = useMounted()
 
   const resolveTargets = () => normalizeAnimeTarget(target)
-  const resolveAnimationOptions = () => toValue(animationOptions) || {}
+  const resolveAnimationOptions = (): AnimationParams => toValue(animationOptions) || {}
   const resolveScrambleOptions = () => toValue(scrambleOptions) || {}
 
   if (flag === AnimationComponentFlags.Watchable) {
     let previous: {
       targets: NonNullable<ReturnType<typeof normalizeAnimeTarget>>
-      animOptions: AnimationParams
-      scrambleOpts: ScrambleTextParams
+      animOptions: Record<string, unknown>
+      scrambleOpts: Record<string, unknown>
     } | null = null
 
     watch(
-      [mounted, resolveTargets, resolveAnimationOptions, resolveScrambleOptions],
+      [
+        mounted,
+        resolveTargets,
+        () => snapshotParameters(resolveAnimationOptions()),
+        () => snapshotParameters(resolveScrambleOptions()),
+      ],
       ([isMounted, targets, animOptions, scrambleOpts]) => {
-        if (!isMounted || !targets) return
+        if (!isMounted || !hasTargets(targets)) return
         if (
           previous
-          && previous.targets === targets
+          && sameTargets(previous.targets, targets)
           && deepEqualWithSkip(previous.animOptions, animOptions, callbacks)
           && deepEqualWithSkip(previous.scrambleOpts, scrambleOpts)
         ) return
@@ -62,8 +71,8 @@ export function useScrambleText(
         previous = { targets, animOptions, scrambleOpts }
         if (!keepsTime && animation.value) animation.value.revert()
         animation.value = rebuildAnimation(targets, {
-          ...animOptions,
-          innerHTML: scrambleText(scrambleOpts),
+          ...resolveAnimationOptions(),
+          innerHTML: scrambleText(resolveScrambleOptions()),
         })
       },
       { immediate: true },

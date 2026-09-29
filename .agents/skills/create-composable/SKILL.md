@@ -273,7 +273,7 @@ This lets users pass either a raw value or a `Ref`/getter for those props.
 3. **Docs page** — Create in `docs/content/2.composables/` using the `scaffold-composable-sample` skill. This is **required**, not optional.
 4. **Example component** — Create a live demo in `docs/app/components/content/examples/composables/`, written to `create-docs/references/demo-spec.md`. Referenced by the docs page via `::render-code-block-preview`. This is **required**.
 5. **Composables index card** — Add a card entry in `docs/content/2.composables/0.introduction.md` linking to the new docs page.
-6. **Playground** — Create a test page in `docs/app/pages/playground/` (use the `create-playground-page` skill)
+6. **Playground** — Create a local test page in `docs/app/pages/playground/` (use the `create-playground-page` skill). Don't commit it; delete it or move it to `../nanime-tests` when done.
 7. **Tests** — Write utility tests in `test/suites/utilities/` (use the `create-utility-tests` skill)
 
 ---
@@ -283,7 +283,7 @@ This lets users pass either a raw value or a `Ref`/getter for those props.
 ```sh
 pnpm test:types    # Must pass — no any, no unsafe casts
 pnpm test          # All 4 vitest projects must pass
-pnpm dev           # Docs site on :3001 with the playground pages — SSR + client navigation
+pnpm dev           # Docs site on :3001, with your local playground page — SSR + client navigation
 ```
 
 Test SSR explicitly: load the playground page via full page refresh (server render), then navigate to it via client-side link (client render). Both must work without errors.
@@ -321,6 +321,6 @@ Test SSR explicitly: load the playground page via full page refresh (server rend
 - [ ] Docs page in `docs/content/2.composables/`
 - [ ] Example component in `docs/app/components/content/examples/composables/`
 - [ ] Card added to `docs/content/2.composables/0.introduction.md`
-- [ ] Playground page in `docs/app/pages/playground/`
+- [ ] Tested on a local playground page, which is not committed
 - [ ] Tests in `test/suites/utilities/`
 - [ ] `pnpm test:types` and `pnpm test` pass

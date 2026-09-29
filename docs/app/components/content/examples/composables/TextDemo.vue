@@ -7,11 +7,12 @@ const { chars } = useSplitText(text, {
   chars: true,
 })
 
-useAnimate(chars, {
-  y: [{ to: '-30%' }, { to: 0 }],
+useWaapiAnimate(chars, {
+  y: ['-30%', 0],
   delay: stagger(50),
-  duration: 600,
-  ease: 'inOutCirc',
+  duration: 1000,
+  ease: 'outBounce',
+  alternate: true,
   loop: true,
 })
 </script>

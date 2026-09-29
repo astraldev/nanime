@@ -25,12 +25,32 @@ No other top-level headings.
 - `description`: verb-first, one line, ends with a period, names the AnimeJS fn
 - `navigation.icon`: `i-ph-*` only
 
+## What a page documents
+
+A page documents the `nanime` layer: what the composable accepts that
+AnimeJS does not (refs, getters, template refs), when it builds, rebuilds
+and reverts, what the returned proxy changes, and the gotchas `nanime`
+causes. Everything AnimeJS already documents (its options, their defaults,
+its methods, its properties) is linked, never copied. A reader who needs
+`dragSpeed` or `stretch()` reads the AnimeJS page for it.
+
 ## Badge row
 
-- One slot: mode
-- `Instant play` -> composable supports instant/static mode, wrapped in
-  `::nuxt-link{to="/composables/introduction#instant-play"}`
-- No badge row at all on a composable without instant mode
+- `Instant play` -> composable supports instant mode, linked to
+  `/composables/introduction#instant-play`
+- `Buffered` -> composable returns a buffered proxy, linked to
+  `/composables/introduction#buffered`
+- Both, in that order, when both apply. No badge row when neither does.
+- One markup for every badge:
+
+  ```md
+  ::nuxt-link{to="/composables/introduction#instant-play"}
+  :badge{icon="mage:zap-fill" label="Instant play" size="md" variant="soft"}
+  ::
+  ::nuxt-link{to="/composables/introduction#buffered"}
+  :badge{icon="ph:stack" label="Buffered" size="md" variant="soft"}
+  ::
+  ```
 - No `Client only` or `Reactive params` badge. Both were true on nearly every
   page, so they carried no signal. Those two facts are stated once on
   `docs/content/2.composables/0.introduction.md` instead.
@@ -39,7 +59,9 @@ No other top-level headings.
 ## Intro
 
 - Two paragraphs max
-- P1: "`useX` wraps [animeFn](url){target=_blank} from AnimeJS" + one Vue-terms sentence
+- P1: "`useX` wraps [animeFn](url){target="_blank"} from AnimeJS" + one
+  sentence on what the composable does in Vue terms. Not a list of AnimeJS
+  features.
 - P2 (optional): lifecycle — when it rebuilds, when it reverts
 - No example links here
 
@@ -62,28 +84,72 @@ No other top-level headings.
 - One top-level `::field` per signature argument, in signature order
 - Never nest `::field` inside `::field`. MDC flattens the child blocks, so the
   members render level with the argument and the page reads as one flat list.
-- Object-typed arguments carry a members table instead: Option | Type | Default,
-  inside the argument's own `::field`
-- List what a Nanime user actually sets; exhaustive upstream options stay behind
-  the See-also link
+- An argument that takes AnimeJS params reads as plain prose: what it
+  accepts, when a change rebuilds, and the link. "Accepts a plain object, a
+  `ref` or a getter. The timeline rebuilds when it changes. See the
+  [AnimeJS timeline documentation](url){target="_blank"} for the options."
+  No table of AnimeJS options or their defaults.
+- Anything `nanime` adds on top of those options (options that also accept
+  refs, a composable's return value accepted where AnimeJS wants an
+  instance, options read only once) goes in a `::::note` inside the same
+  `:::field`, after the sentence. Keep the sentence itself short.
+- A members table (Option | Type | Default) is for an argument `nanime`
+  owns outright, such as `NanimeInstanceOptions` (`keepTime`)
 - `required` flag only on non-optional args — must match the `?` in the signature
 - Type strings copied verbatim from source, never paraphrased in prose
 - Defaults stated last in the description, as: Defaults to `true`.
 
 ## `## Returns`
 
-- Sentence one: name the return type and its kind (reactive proxy / buffered
-  proxy / plain object of refs). The composables return `toReactive(...)`, a
-  `reactive` proxy over a `shallowRef` — never call it a `shallowReactive`
-  wrapper.
-- Then a members table: Member | Type | Notes
-- Table lists what the reader reads or calls, not every upstream member
-- Notes column flags anything that breaks expectation (non-reactive, buffered,
-  destructuring-unsafe) and links to the matching caveat
+One shape for every page that returns an AnimeJS instance:
+
+1. One sentence naming the proxy kind and the AnimeJS type, with a link
+   to its AnimeJS page for methods and properties. "Returns a reactive
+   proxy around the AnimeJS `JSAnimation`{lang="ts-type"}. Its methods and
+   properties are in the [AnimeJS animation documentation](url){target="_blank"}."
+2. When `nanime` adds or changes members, a table of those members only
+   (Member | Type | Notes), introduced by "The members `nanime` changes:".
+   Examples: `patch()` on useAnimeLayout, `add()` taking template refs and
+   replaying on rebuild on useAnimeTimeline, `link()` taking another
+   composable's return value on useAnimeScroll. The Notes cell says what
+   changed, not what the method does in AnimeJS.
+3. Proxy behaviour that is not about one member (queued before mount,
+   `undefined` before mount, destructuring) goes in one or two sentences of
+   prose, never a list.
+
+Linking to a caveat: put the link on the phrase it explains, inside the
+sentence. "Call methods on the returned object, because a
+[destructured method throws](#...)." Never end a sentence with a "See
+[caveat name](#...)" tail, in prose, notes or table cells.
+
+Never list AnimeJS members `nanime` leaves unchanged. When `nanime` owns
+the returned object outright, as with `useSplitText`, the table lists all
+of it.
+
+Proxy kinds, from the source:
+
+- `toReactive(...)` (useAnimate, useWaapiAnimate, useAnimatable,
+  useScrambleText): a `reactive` proxy over a `shallowRef`. Never call it
+  a `shallowReactive` wrapper. Methods come back without their instance.
+- `createBufferedProxy(...)` (useDraggable, useAnimeTimeline,
+  useAnimeScroll, useAnimeLayout): chainable methods are queued before
+  mount and look up the current instance on each call. Other members read
+  `undefined` until the instance exists.
 
 ## `## Caveats`
 
 - Gotchas only — silent failures and expectation-breakers. Not tips, not feature tours.
+- Only gotchas `nanime` causes. A gotcha that happens with plain AnimeJS
+  too (CSS transitions on a dragged `transform`, WAAPI not animating plain
+  objects) is not a caveat. At most it is one sentence at the point of use.
+- A caveat shared across pages uses the same heading everywhere, so its
+  anchor is the same:
+  - `### Do not destructure the returned instance` on every `toReactive`
+    page
+  - `### Properties do not update templates` on every page whose returned
+    instance has `progress`
+  - `### Read properties after mount` on every
+    buffered page
 - Each caveat is an `###` heading, imperative or symptom form
 - Code block first, then one paragraph: symptom, cause, fix
 - Wrong -> right, in that order, when showing both
@@ -110,7 +176,10 @@ Appendix rules.
 ## `## See also`
 
 - Flat list, this order: related composables, examples, upstream AnimeJS
-- No upstream links anywhere else on the page except the intro sentence
+- Upstream links appear only in the intro sentence, the Parameters link to
+  AnimeJS options, the Returns link to AnimeJS methods, a caveat whose fix
+  rests on an AnimeJS method, and See also
+- Every upstream link carries `{target="_blank"}`
 
 ## Callouts — severity ladder
 
@@ -140,8 +209,9 @@ Decides callout vs Caveat. Applies to all four levels.
 - `::warning` or `::caution` at the point of use, one sentence, linking to the
   caveat by anchor
 - The full symptom/cause/fix in `## Caveats`
-- Example: the Returns row for `progress` carries a `::warning` that scrolling
-  re-renders nothing, linking to `#progress-does-not-update-in-a-template`
+- Example: the Returns list item for `progress` says scrolling re-renders
+  nothing and links to `#properties-do-not-update-templates`. No second
+  `::warning` repeating it.
 
 ## Callouts — banned
 

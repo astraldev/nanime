@@ -10,14 +10,22 @@ hand, including edge cases that don't belong in the docs.
 
 # Where pages live
 
-There is no separate `playground/` app. Test pages live in the docs app
-under `docs/app/pages/playground/`, e.g.
-`docs/app/pages/playground/transitions.vue`. They are served at
-`/playground/<name>` by `pnpm dev` (port 3001) and are not linked from the
-docs navigation.
+There is no separate `playground/` app. Build test pages in the docs app
+under `docs/app/pages/playground/`, served at `/playground/<name>` by
+`pnpm dev` (port 3001). They are local and temporary: the docs site ships
+no playground pages, so never commit them. When you're done, delete the
+page, or move one worth keeping to the same path in `../nanime-tests`.
+Shared helpers in `docs/app/components/playground/` are committed.
 
 The docs app loads the module's built `dist/`, not `src/`. After changing
-`src/`, restart `pnpm dev`, which rebuilds the module, before testing.
+`src/`, run `pnpm prepack` to rebuild `dist/`, then reload the page. The
+running dev server picks the new files up; restart `pnpm dev` only if it
+doesn't.
+
+If a Tailwind class used only by a new or rewritten page is missing (an
+`absolute bottom-full` tooltip landing on its trigger, say), the dev
+server's class scan has gone stale. Touch `docs/app/assets/css/main.css`
+to make it rescan.
 
 # How to create a page
 
@@ -36,18 +44,64 @@ The docs app loads the module's built `dist/`, not `src/`. After changing
    `node_modules/animejs/dist/modules/<module>/`. There is no `anime-core`
    submodule. Use only APIs the module exposes.
 
+# Comparing defaults side by side
+
+To compare settings for a component (old default against a candidate),
+build one page per component with one section per real use case (modal,
+toast stack, tag input, accordion, …). Delete the pages once the decision
+is made; the docs site ships no comparison pages. The shared pieces in
+`docs/app/components/playground/` stay:
+
+- `PlaygroundCompare`: a titled section that renders its slot once per
+  column, each inside `PlaygroundDefaultsScope`, so the components in the
+  slot take no animation props and get the column's defaults through
+  `provideAnimeDefaults`. Columns share state, so one click runs all.
+- `PlaygroundTuning`: lists each column's values next to sliders bound
+  with `v-model`; its default slot takes extra controls.
+- `PlaygroundChoice`: a `v-model` button group with an optional label
+  function.
+- Column types (`CompareColumn`, `TuningSlider`) are in
+  `docs/app/utils/playground.ts`.
+
+Give the "old default" column its values explicitly (or a style name like
+`'fade'`), not `{}`, so it keeps showing the old behaviour after the
+built-in default changes.
+
 # Rules
 
 1. No `as` casts and no `any`.
 2. No comments.
 3. Don't change the composable or component to make the page work. If the
    page exposes a bug, report it.
-4. Verify in a visible browser. The in-app browser pane often reports
-   `document.visibilityState === 'hidden'`. When hidden,
+4. Verify with numbers, not screenshots. The in-app browser pane often
+   reports `document.visibilityState === 'hidden'`. When hidden,
    `requestAnimationFrame` doesn't fire and Anime.js pauses, so nothing
-   animates. Say plainly that visual checks were not possible rather than
-   guessing. Inline styles written synchronously (e.g. by layout at the
-   start of a move) can still be read with `javascript_tool`.
+   animates on its own. Drive it by hand with `javascript_tool` after each
+   page load:
+
+   ```js
+   window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16)
+   const engine = window.AnimeJS[0].engine
+   engine.pauseOnDocumentHidden = false
+   engine.useDefaultMainLoop = false
+   if (engine.paused) engine.resume()
+   const tick = async (frames, sample) => {
+     const out = []
+     for (let i = 0; i < frames; i++) {
+       await new Promise(r => setTimeout(r, 16))
+       engine.update()
+       out.push(sample(i))
+     }
+     return out
+   }
+   ```
+
+   Trigger the interaction, then `tick(30, () => …)` and sample what matters
+   per frame: rects relative to the parent, inline styles, text line counts
+   via `Range.getClientRects()`. The rAF patch matters too: Anime.js layout
+   restores muted transitions in a `requestAnimationFrame`, so without it
+   `transition: none !important` looks stuck. If you can't measure it, say
+   the check wasn't done rather than guessing.
 
 # Verification
 

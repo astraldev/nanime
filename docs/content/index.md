@@ -1,9 +1,9 @@
 ---
 title: nanime
-description: Anime.js v4 as SSR-safe Vue composables for Nuxt. Animate, drag, split text, scroll and sync timelines, auto-imported and cleaned up on unmount
+description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
 seo:
   title: Anime.js Composables for Nuxt and Vue 3
-  description: Anime.js v4 as SSR-safe Vue composables for Nuxt. Animate, drag, split text, scroll and sync timelines, auto-imported and cleaned up on unmount
+  description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
 ---
 
 ::u-page-hero
@@ -13,16 +13,29 @@ orientation: horizontal
   :::render-code-block-preview{:code='false' src="examples/misc/HeroDemo.vue"}
   :::
 
+#headline
+  :::u-button
+  ---
+  color: neutral
+  size: sm
+  to: https://github.com/astraldev/nanime#versioning
+  target: _blank
+  trailing-icon: i-ph-arrow-right
+  variant: subtle
+  ---
+  Minor releases can break until 1.0
+  :::
+
 #title
 Anime.js composables for [Nuxt]{.text-primary}
 
 #description
-AnimeJS wrapped in Vue composables. They resolve targets, skip server renders, and clean up on unmount.
+Call AnimeJS from `setup()` with no `onMounted`, no cleanup and no imports. Animations wait for the element to mount and revert when the component unmounts.
 
 #links
   :::u-button
   ---
-  icon: i-lucide-arrow-right
+  icon: i-ph-arrow-right
   size: xl
   to: /getting-started/installation
   ---
@@ -79,15 +92,15 @@ What you get
   :::u-page-card
   ---
   spotlight: true
-  icon: i-ph-swap
+  icon: i-ph-arrows-left-right
   spotlightColor: var(--color-primary)
   to: /components/transitions
   ---
   #title
-  Transition [components]{.text-primary} :badge[New]{variant="subtle"}
+  Transition and layout [components]{.text-primary} :badge[New]{variant="subtle"}
 
   #description
-  Animate v-if and v-for changes, including list moves, with no CSS to write
+  Animate v-if, v-for and layout changes, including list moves, with no CSS to write
   :::
 
   :::u-page-card
@@ -123,7 +136,7 @@ What you get
   spotlight: true
   icon: i-ph-arrows-clockwise
   spotlightColor: var(--color-primary)
-  to: /getting-started/configuration
+  to: /composables/introduction
   ---
   #title
   [Reactive]{.text-primary} parameters
@@ -157,7 +170,7 @@ What you get
   Built for [AI agents]{.text-primary} :badge[New]{variant="subtle"}
 
   #description
-  An agent skill, llms.txt and an MCP server, so coding agents get nanime right
+  Install the agent skill or connect the MCP server, and coding agents write nanime code instead of raw AnimeJS
   :::
 
   :::u-page-card
@@ -165,13 +178,12 @@ What you get
   spotlight: true
   icon: i-ph-feather
   spotlightColor: var(--color-primary)
-  to: /composables/utilities
   ---
   #title
   [Small]{.text-primary}
 
   #description
-  No runtime dependencies beyond AnimeJS and one tiny helper
+  The runtime depends on AnimeJS and defu, nothing else
   :::
 ::
 
@@ -182,5 +194,5 @@ What you get
 See it in action
 
 #description
-Dashboards that rearrange, feeds that grow, panels that open and close. Change your data, and every element springs to its new place.
+Dashboards that rearrange, feeds that grow, panels that open and close. When the data changes, each element animates to its new place.
 ::

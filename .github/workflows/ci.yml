@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm i -g --force corepack@latest && corepack enable
+      - uses: pnpm/action-setup@v6
 
       - name: Install dependencies
         run: CI=true npx nypm@latest i
@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm i -g --force corepack@latest && corepack enable
+      - uses: pnpm/action-setup@v6
 
       - name: Install dependencies
         run: CI=true npx nypm@latest i

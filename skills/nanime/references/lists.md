@@ -4,14 +4,24 @@
 
 Wrap the `v-for` in `<AnimeTransitionGroup>`. New items run the enter
 animation, removed items the leave animation, and the rest slide to their
-new positions. See [transitions.md](transitions.md), including how to
-stagger items there.
+new positions. See [transitions.md](transitions.md), including staggering.
 
-## Entrance stagger for a list that is not a transition group
+## Draggable items
+
+Give each item its own component, with `useDraggable` inside it. To drop
+an item out of the list, hide its handle with `v-if` inside an
+`<AnimeTransition>` and remove it from the array only in `@after-leave`.
+`useDraggable` reverts its draggable when the component unmounts, and the
+revert moves the element back to where the drag started. Removing the item
+on release makes it jump back to its slot before it fades.
+
+## Entrance stagger without a transition group
 
 Target the items through the container ref, not a `v-for` ref array.
 
 ```ts
+import { stagger } from '#nanime/utils'
+
 const grid = useTemplateRef('grid')
 
 useAnimate(
@@ -20,26 +30,6 @@ useAnimate(
 )
 ```
 
-`stagger` comes from `#nanime/utils`.
-
 A getter over a `v-for` ref array changes identity whenever the list grows.
-That reverts and rebuilds the animation, so every card replays. The getter
-above tracks only `grid`, which settles once at mount.
-
-## Animating one item from a handler
-
-A click handler has no effect scope, so calling `useAnimate` there leaks (see
-SKILL.md). When a transition group doesn't fit, keep the handle yourself:
-
-```ts
-import { animate } from '#nanime/utils'
-import type { JSAnimation } from '#nanime/types'
-
-const pulse = shallowRef<JSAnimation | null>(null)
-onScopeDispose(() => pulse.value?.revert())
-
-function highlight(el: HTMLElement) {
-  pulse.value?.revert()
-  pulse.value = animate(el, { scale: [1, 1.1, 1], duration: 400 })
-}
-```
+That rebuilds the animation, so every card replays. The getter above tracks
+only `grid`, which settles once at mount.

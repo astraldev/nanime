@@ -1,7 +1,7 @@
 {
   "name": "nanime",
-  "version": "0.2.1",
-  "description": "Anime.js v4 composables for Nuxt and Vue 3. SSR-safe, reactive, auto-imported.",
+  "version": "0.3.0",
+  "description": "Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text",
   "author": "Ekure Edem <61796351+astraldev@users.noreply.github.com>",
   "homepage": "https://nanimejs.netlify.app",
   "bugs": "https://github.com/astraldev/nanime/issues",
@@ -88,8 +88,7 @@
     "animejs": "catalog:runtime",
     "changelogen": "catalog:tooling",
     "eslint": "catalog:tooling",
-    "h3-next": "npm:h3@^2.0.1-rc.22",
-    "happy-dom": "catalog:tooling",
+    "jsdom": "catalog:tooling",
     "lefthook": "catalog:tooling",
     "nuxt": "catalog:nuxt",
     "typescript": "catalog:nuxt",
@@ -97,5 +96,5 @@
     "vue": "catalog:nuxt",
     "vue-tsc": "catalog:tooling"
   },
-  "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b"
+  "packageManager": "pnpm@12.6.0+sha512.3ef68f951cb111ac204b4a5a16f0b2ddf0da56a96e0413e81d855d9f0b55ef926714709028e1cd00c405c2c5fb7b9e8ec4dc46777c805d0373c2f2ff00fd20ec"
 }

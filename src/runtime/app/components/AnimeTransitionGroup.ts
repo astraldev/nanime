@@ -1,44 +1,15 @@
 import { createLayout, type AutoLayout } from 'animejs/layout'
 import { TransitionGroup, cloneVNode, defineComponent, getCurrentInstance, getTransitionRawChildren, h, onBeforeUpdate, onUpdated, type VNode } from 'vue'
-import type { AnimationParams, AnimeMoveParams, AnimeTransitionStyleName } from '../public/types'
+import type { AnimationParams, AnimeTransitionGroupProps } from '../public/types'
 import { tryOnScopeDispose } from '../utils/vue-helpers'
+import { useComponentDefaults } from '../utils/component-defaults'
+import { markLayoutAnimations } from '../utils/layout-animations'
+import { MOVE_CLASS } from '../utils/markers'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
+import { transitionGroupStyle } from '../transitions/styles/group'
 
-export interface AnimeTransitionGroupProps {
-  /**
-   * Element rendered around the items.
-   * @default 'div'
-   */
-  tag?: string
-  /**
-   * How items appear: a transition style name, or Anime.js params.
-   * @default 'fade'
-   */
-  enterAnimation?: AnimeTransitionStyleName | AnimationParams
-  /**
-   * How items disappear: a transition style name, or Anime.js params.
-   * @default 'fade'
-   */
-  leaveAnimation?: AnimeTransitionStyleName | AnimationParams
-  /**
-   * How items move to a new position: a transition style name,
-   * `{ duration, delay, ease }`, or `false` to skip moves.
-   * @default { duration: 400, ease: 'out(3)' }
-   */
-  moveAnimation?: AnimeTransitionStyleName | AnimeMoveParams | false
-  /**
-   * Run the enter animation on the first render too.
-   * @default false
-   */
-  appear?: boolean
-  /**
-   * Take leaving items out of the flow as soon as they start leaving, so the
-   * rest close the gap while they animate out.
-   * @default true
-   */
-  absoluteLeave?: boolean
-}
+export type { AnimeTransitionGroupProps } from '../public/types'
 
 type StyledElement = HTMLElement | SVGElement
 type Styles = Record<string, string>
@@ -84,15 +55,17 @@ const pinnedStyles = (el: HTMLElement): Styles => ({
 export default defineComponent(
   (props: AnimeTransitionGroupProps, { slots }) => {
     const instance = getCurrentInstance()
-    const styles = useTransitionStyles()
-    const enterParams = () => styles.enter(props.enterAnimation)
-    const leaveParams = () => styles.leave(props.leaveAnimation)
-    const moveParams = () => styles.move(props.moveAnimation)
+    const { option } = useComponentDefaults('transitionGroup')
+    const styles = useTransitionStyles(transitionGroupStyle)
+    const enterParams = () => styles.enter(option(props, 'enterAnimation'))
+    const leaveParams = () => styles.leave(option(props, 'leaveAnimation'))
+    const moveParams = () => styles.move(option(props, 'moveAnimation'))
+    const absoluteLeave = () => option(props, 'absoluteLeave') ?? true
     const transitionStyles = () => animatedStyles([enterParams(), leaveParams()])
 
     let layout: AutoLayout | null = null
 
-    const leavesToPin = new Map<HTMLElement, Styles>()
+    const leavesToPin = new Map<StyledElement, Styles>()
     const pinnedOriginals = new WeakMap<Element, Styles>()
 
     let hiddenFromMove = new Set<Element>()
@@ -102,11 +75,11 @@ export default defineComponent(
       enter: enterParams,
       leave: leaveParams,
       onLeaveStart(el) {
-        if (props.absoluteLeave && el instanceof HTMLElement && el.offsetParent) leavesToPin.set(el, pinnedStyles(el))
+        if (absoluteLeave() && el instanceof HTMLElement && el.offsetParent) leavesToPin.set(el, pinnedStyles(el))
       },
       onEnd(el) {
         if (hiddenFromMove.has(el)) endedDuringMove.set(el, readStyles(el, transitionStyles()))
-        if (el instanceof HTMLElement) leavesToPin.delete(el)
+        leavesToPin.delete(el)
         const originals = pinnedOriginals.get(el)
         pinnedOriginals.delete(el)
         if (originals) setStyles(el, originals)
@@ -141,10 +114,10 @@ export default defineComponent(
 
     onBeforeUpdate(() => {
       const root = instance?.subTree.el
-      if (moveParams() === false || !(root instanceof HTMLElement)) return dropLayout()
+      if (!moveParams() || !(root instanceof HTMLElement)) return dropLayout()
       if (layout?.root !== root) dropLayout()
       runLayout(root, () => {
-        layout ??= createLayout(root, { enterFrom: {}, leaveTo: {} })
+        layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }))
         layout.record()
       })
     })
@@ -153,7 +126,7 @@ export default defineComponent(
       pinLeavingItems()
       const current = layout
       const move = moveParams()
-      if (!current || move === false) return
+      if (!current || !move) return
       const { duration, delay, ease } = move
       const onComplete = () => {
         restoreEndedDuringMove()
@@ -193,7 +166,13 @@ export default defineComponent(
       runner.expectLeaving(takeLeaving(new Set(children.map(child => child.key))))
       return h(
         TransitionGroup,
-        { tag: props.tag, css: false, moveClass: 'anime-move', appear: props.appear, ...runner.hooks },
+        {
+          tag: option(props, 'tag') ?? 'div',
+          css: false,
+          moveClass: MOVE_CLASS,
+          appear: option(props, 'appear'),
+          ...runner.hooks,
+        },
         { default: () => children },
       )
     }
@@ -201,12 +180,12 @@ export default defineComponent(
   {
     name: 'AnimeTransitionGroup',
     props: {
-      tag: { type: String, default: 'div' },
+      tag: { type: String, default: undefined },
       enterAnimation: null,
       leaveAnimation: null,
       moveAnimation: null,
-      appear: { type: Boolean, default: false },
-      absoluteLeave: { type: Boolean, default: true },
+      appear: { type: Boolean, default: undefined },
+      absoluteLeave: { type: Boolean, default: undefined },
     },
   },
 )

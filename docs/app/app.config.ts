@@ -5,6 +5,14 @@ export default defineAppConfig({
   header: {
     title: 'nanime',
   },
+  ui: {
+    header: {
+      slots: {
+        container: 'relative',
+        center: 'absolute left-1/2 -translate-x-1/2',
+      },
+    },
+  },
   search: {
     fts: true,
   },
@@ -25,7 +33,7 @@ export default defineAppConfig({
   github: {
     rootDir: 'docs',
   },
-  // Used by the transitions playground and the custom styles demo. Functions survive here, unlike runtimeConfig.
+  // Used by the custom styles demo. Functions survive here, unlike runtimeConfig.
   nanime: {
     transitions: {
       pop: {

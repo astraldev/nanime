@@ -2,8 +2,7 @@ import type { AnimationParams, FunctionValue } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import type { BaseTransitionProps } from 'vue'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
-
-export const ACTIVE_ATTRIBUTE = 'data-anime-transition'
+import { TRANSITION_ATTRIBUTE } from '../utils/markers'
 
 type StyledElement = HTMLElement | SVGElement
 
@@ -50,22 +49,24 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
     if (isStyled(el)) running.get(el)?.cancel()
   }
 
-  function run(el: Element, params: AnimationParams, batch: StyledElement[], done: () => void) {
+  function run(el: Element, params: AnimationParams, batch: StyledElement[], done: () => void, isLeave: boolean) {
     stop(el)
     if (!isStyled(el)) return done()
 
+    let animation: JSAnimation | null = null
     let ended = false
     const end = () => {
       if (ended) return
       ended = true
       running.delete(el)
-      el.removeAttribute(ACTIVE_ATTRIBUTE)
+      if (isLeave) animation?.revert()
+      el.removeAttribute(TRANSITION_ATTRIBUTE)
       options.onEnd?.(el)
       done()
     }
 
-    el.setAttribute(ACTIVE_ATTRIBUTE, '')
-    const animation = animate(el, {
+    el.setAttribute(TRANSITION_ATTRIBUTE, '')
+    animation = animate(el, {
       ...resolveForBatch(params, el, batch),
       onComplete(self) {
         params.onComplete?.(self)
@@ -77,6 +78,7 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
       },
     })
     if (!ended) running.set(el, animation)
+    else if (isLeave) animation.revert()
   }
 
   const hooks: BaseTransitionProps<Element> = {
@@ -84,15 +86,14 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
       addToBatch(entering, [el])
     },
     onEnter(el, done) {
-      run(el, options.enter(), entering, done)
+      run(el, options.enter(), entering, done, false)
     },
     onLeave(el, done) {
       options.onLeaveStart?.(el)
-      run(el, options.leave(), leaving, done)
+      run(el, options.leave(), leaving, done, true)
     },
     onEnterCancelled: stop,
     onLeaveCancelled: stop,
-    onAfterLeave: stop,
   }
 
   return {

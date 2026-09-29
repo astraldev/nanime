@@ -1,4 +1,4 @@
-import { isReactive, toValue, type MaybeRef } from 'vue'
+import { isReactive, toValue, type MaybeRef, type MaybeRefOrGetter } from 'vue'
 import type { MaybeElementRef, VueInstance } from './vue-helpers'
 import type { TargetsParam, DOMTargetsParam, DOMTargetSelector, DraggableParams } from 'animejs'
 
@@ -28,6 +28,14 @@ export function normalizeWaapiAnimeTarget(target: WaapiTargets): DOMTargetsParam
   return resolved
 }
 
+export const hasTargets = (targets: TargetsParam | null | undefined) =>
+  Array.isArray(targets) ? targets.length > 0 : Boolean(targets)
+
+export const sameTargets = (next: unknown, prev: unknown) =>
+  Array.isArray(next) && Array.isArray(prev)
+    ? next.length === prev.length && next.every((entry, index) => entry === prev[index])
+    : next === prev
+
 type AnimeTargets = TargetsParam | MaybeElementRef | MaybeElementRef[]
 export function normalizeAnimeTarget(target: AnimeTargets): TargetsParam {
   const resolved = isReactive(target) ? target : toValue(target)
@@ -50,7 +58,7 @@ export function normalizeAnimeTarget(target: AnimeTargets): TargetsParam {
   return resolved
 }
 
-type AnimeLayoutTargets = DOMTargetSelector | MaybeElementRef<HTMLElement | SVGElement | VueInstance | null> | null | undefined
+type AnimeLayoutTargets = DOMTargetSelector | MaybeRefOrGetter<HTMLElement | SVGElement | VueInstance | null | undefined> | null | undefined
 export function normalizeLayoutTarget(target: AnimeLayoutTargets): DOMTargetSelector | null {
   const resolved = toValue(target)
 

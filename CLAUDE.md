@@ -8,13 +8,14 @@ Nuxt module (`nanime`) wrapping [Anime.js v4](https://animejs.com/) with Vue 3 r
 |---|---|
 | Module entry | `src/module.ts` |
 | Composables | `src/runtime/app/composables/` |
-| Components | `src/runtime/app/components/` (`AnimeTransition`, `AnimeTransitionGroup`) |
+| Components | `src/runtime/app/components/` (`AnimeTransition`, `AnimeTransitionGroup`, `AnimeLayoutGroup`) |
+| Component defaults | `app.config.ts` `nanime.components` (`transition`, `transitionGroup`, `layoutGroup`), scoped via `provideAnimeDefaults()`; resolved in `src/runtime/app/utils/component-defaults.ts` (prop > provider > app config > built-in) |
 | Public API (`#nanime/*` aliases) | `src/runtime/app/public/` (`types.ts`, `utils.ts`, `easings.ts`, `proxies/`) |
 | Internal helpers | `src/runtime/app/utils/` (`targets.ts`, `proxy/`, `instance/`, `vue-helpers.ts`) |
 | Transition internals | `src/runtime/app/transitions/` (`runner.ts`, `resolve.ts`, `styles/`) |
 | Anime.js source | `node_modules/animejs/dist/modules/` (no submodule) |
-| Docs site (Docus) | `docs/` — dev on port 3001, also hosts playground pages at `docs/app/pages/playground/` |
-| Tests | `test/` — moving to a private repo |
+| Docs site (Docus) | `docs/` — dev on port 3001. Local playground pages go in `docs/app/pages/playground/` and are never committed; shared helpers live in `docs/app/components/playground/` |
+| Tests | `test/` — moving to a private repo; use-case and regression tests already live in `../nanime-tests` |
 | Agent skills | `.agents/skills/` (also symlinked at `.agent/skills`) |
 
 ## Anime.js Setup
@@ -86,14 +87,16 @@ Key conventions:
 - Clean up with `tryOnScopeDispose`
 - Return `toReactive(shallowRef)` for ergonomic destructuring
 
-Existing composables: `useAnimate`, `useAnimatable`, `useAnimeLayout`, `useAnimeScroll`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`
+Existing composables: `useAnimate`, `useAnimatable`, `useAnimeLayout`, `useAnimeScroll`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`, plus `provideAnimeDefaults`
+
+A new configurable component gets a key in `NanimeComponentDefaults` (`public/types/components.ts`); nothing else to register. Read its props through `useComponentDefaults(name).option(props, key) ?? builtIn`. Boolean and defaulted props use `default: undefined` so "not passed" stays detectable. DOM markers (attributes, classes) live in `src/runtime/app/utils/markers.ts`.
 
 Code comments: none in internal code. Every public type, prop and module option gets a JSDoc line (with `@default` where there is one), because users see it on hover.
 
 ## Scripts
 
 ```sh
-pnpm dev              # Docs site on :3001, including /playground pages (runs dev:prepare first)
+pnpm dev              # Docs site on :3001, plus any local /playground pages (runs dev:prepare first)
 pnpm dev:prepare      # Build the module and prepare the docs app; the docs load dist/, so restart after src/ changes
 pnpm test             # Run all vitest projects
 pnpm test:types       # Nuxt typecheck
@@ -111,6 +114,10 @@ Publishing must go through **pnpm**, never `npm publish`. Dependencies use pnpm
 catalog specifiers (`catalog:nuxt`), and only pnpm rewrites those into real
 ranges when packing. An `npm publish` ships `"animejs": "catalog:runtime"` and
 every install of it fails.
+
+Adding, bumping or hoisting a dependency: read `.agents/rules/dependencies.md`
+first. The layout is strict (no `shamefully-hoist`), so `docs/` must declare
+every package it imports.
 
 ## Pre-commit Hooks (Lefthook)
 
@@ -147,6 +154,8 @@ Vitest projects in `vitest.config.ts`:
 
 `unit` and `e2e` projects are configured but their folders are empty. Tests are moving to a private repo.
 
+Use-case and regression tests (per-composable bug hunts, `it.fails` pins for known bugs) and the debug playground pages that went with them live outside this repo in `../nanime-tests`, at the same paths they had here (`test/suites/...`, `docs/app/...`). Their imports are relative (`../../../src/runtime/...`), so copy a file back to the same path to run it, and don't commit it. Add new tests of that kind there, not in `test/`.
+
 ## Agent Skills
 
 Skills in `.agents/skills/` — each has a `SKILL.md` defining its workflow:
@@ -156,7 +165,7 @@ Skills in `.agents/skills/` — each has a `SKILL.md` defining its workflow:
 | `create-composable` | End-to-end workflow for SSR-safe, memory-safe, version-adaptive composables |
 | `create-docs` | Generate Docus documentation pages. Specs in `references/`: `composable-page-spec.md`, `component-page-spec.md`, `demo-spec.md` (every live demo), `prose-style.md` |
 | `scaffold-composable-sample` | Scaffold composable doc page with standard structure |
-| `create-playground-page` | Create test pages under `docs/app/pages/playground/` |
+| `create-playground-page` | Create local, uncommitted test pages under `docs/app/pages/playground/` |
 | `create-utility-tests` | Write vitest utility tests (Nuxt test-utils) |
 | `create-showcase-doc` | Write/rewrite a showcase example page (`docs/content/5.examples/`), including verifying its AI build prompt against a real independent agent |
 | `skill-creator` | Meta-skill for authoring new skills |
