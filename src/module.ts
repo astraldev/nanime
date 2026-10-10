@@ -105,7 +105,6 @@ export default defineNuxtModule<ModuleOptions>({
       for (const name of ['AnimeTransition', 'AnimeTransitionGroup', 'AnimeLayoutGroup']) {
         addComponent({ name, filePath: resolver.resolve(`./runtime/app/components/${name}`) })
       }
-      _nuxt.options.css.push(resolver.resolve('./runtime/app/components/anime-transition.css'))
     }
 
     _nuxt.options.alias[`#${__configKey}/composables`] = resolver.resolve('./runtime/app/public/composables')
