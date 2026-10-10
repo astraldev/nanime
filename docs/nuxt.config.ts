@@ -49,6 +49,9 @@ export default defineNuxtConfig({
     '/examples/loading-sequence': { redirect: { to: '/examples/road-trip', statusCode: 301 } },
     '/examples/scroll-road-trip': { redirect: { to: '/examples/road-trip', statusCode: 301 } },
     '/changes': { redirect: { to: '/changes/changelog', statusCode: 301 } },
+    '/comparisons': { redirect: { to: '/comparisons/vs-nuxt-modules', statusCode: 301 } },
+    '/getting-started/vs-nuxt-modules': { redirect: { to: '/comparisons/vs-nuxt-modules', statusCode: 301 } },
+    '/getting-started/vs-vue-packages': { redirect: { to: '/comparisons/vs-vue-packages', statusCode: 301 } },
   },
   sourcemap: {
     server: false,
