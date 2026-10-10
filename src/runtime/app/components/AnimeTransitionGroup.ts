@@ -1,8 +1,9 @@
 import { createLayout, type AutoLayout } from 'animejs/layout'
-import { TransitionGroup, cloneVNode, defineComponent, getCurrentInstance, getTransitionRawChildren, h, onBeforeUpdate, onUpdated, type VNode } from 'vue'
+import { TransitionGroup, cloneVNode, defineComponent, getCurrentInstance, getTransitionRawChildren, h, nextTick, onUpdated, type VNode } from 'vue'
 import type { AnimationParams, AnimeTransitionGroupProps } from '../public/types'
 import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { useComponentDefaults } from '../utils/component-defaults'
+import { watchDeps } from '../utils/deps'
 import { markLayoutAnimations } from '../utils/layout-animations'
 import { MOVE_CLASS } from '../utils/markers'
 import { createTransitionRunner } from '../transitions/runner'
@@ -64,6 +65,7 @@ export default defineComponent(
     const transitionStyles = () => animatedStyles([enterParams(), leaveParams()])
 
     let layout: AutoLayout | null = null
+    let recorded = false
 
     const leavesToPin = new Map<StyledElement, Styles>()
     const pinnedOriginals = new WeakMap<Element, Styles>()
@@ -108,11 +110,12 @@ export default defineComponent(
     function dropLayout() {
       layout?.revert()
       layout = null
+      recorded = false
       hiddenFromMove = new Set()
       endedDuringMove.clear()
     }
 
-    onBeforeUpdate(() => {
+    function recordMoves() {
       const root = instance?.subTree.el
       if (!moveParams() || !(root instanceof HTMLElement)) return dropLayout()
       if (layout?.root !== root) dropLayout()
@@ -120,13 +123,14 @@ export default defineComponent(
         layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }))
         layout.record()
       })
-    })
+      recorded = true
+    }
 
-    onUpdated(() => {
-      pinLeavingItems()
+    function animateMoves() {
       const current = layout
       const move = moveParams()
-      if (!current || !move) return
+      if (!recorded || !current || !move) return
+      recorded = false
       const { duration, delay, ease } = move
       const onComplete = () => {
         restoreEndedDuringMove()
@@ -135,6 +139,17 @@ export default defineComponent(
       runLayout(current.root, () => current.animate({ duration, delay, ease, onComplete }))
       hiddenFromMove = new Set(runner.running())
       endedDuringMove.clear()
+    }
+
+    watchDeps(() => props.deps, option(props, 'shallow') ?? false, () => {
+      if (recorded) return
+      recordMoves()
+      nextTick(animateMoves)
+    })
+
+    onUpdated(() => {
+      pinLeavingItems()
+      animateMoves()
     })
 
     tryOnScopeDispose(() => {
@@ -161,9 +176,20 @@ export default defineComponent(
         .sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1)
     }
 
+    let keys: VNode['key'][] = []
+
+    function keysChanged(next: VNode['key'][]) {
+      const changed = next.length !== keys.length || next.some((key, index) => key !== keys[index])
+      keys = next
+      return changed
+    }
+
     return () => {
       const children = getTransitionRawChildren(slots.default?.() ?? []).map(trackMount)
-      runner.expectLeaving(takeLeaving(new Set(children.map(child => child.key))))
+      const childKeys = children.map(child => child.key)
+      const listChanged = keysChanged(childKeys)
+      if (instance?.isMounted && !recorded && (listChanged || !props.deps)) recordMoves()
+      runner.expectLeaving(takeLeaving(new Set(childKeys)))
       return h(
         TransitionGroup,
         {
@@ -186,6 +212,8 @@ export default defineComponent(
       moveAnimation: null,
       appear: { type: Boolean, default: undefined },
       absoluteLeave: { type: Boolean, default: undefined },
+      deps: null,
+      shallow: { type: Boolean, default: undefined },
     },
   },
 )
