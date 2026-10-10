@@ -5,6 +5,7 @@ import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { useComponentDefaults } from '../utils/component-defaults'
 import { watchDeps } from '../utils/deps'
 import { markLayoutAnimations } from '../utils/layout-animations'
+import { isMotionReduced } from '../utils/reduced-motion'
 import { MOVE_CLASS } from '../utils/markers'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
@@ -60,7 +61,7 @@ export default defineComponent(
     const styles = useTransitionStyles(transitionGroupStyle)
     const enterParams = () => styles.enter(option(props, 'enterAnimation'))
     const leaveParams = () => styles.leave(option(props, 'leaveAnimation'))
-    const moveParams = () => styles.move(option(props, 'moveAnimation'))
+    const moveParams = () => isMotionReduced() ? false : styles.move(option(props, 'moveAnimation'))
     const absoluteLeave = () => option(props, 'absoluteLeave') ?? true
     const transitionStyles = () => animatedStyles([enterParams(), leaveParams()])
 

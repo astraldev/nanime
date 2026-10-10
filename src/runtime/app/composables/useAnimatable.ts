@@ -5,6 +5,14 @@ import { hasTargets, normalizeAnimeTarget, sameTargets } from '../utils/targets'
 import type { AnimatableObject, AnimatableParams, TargetsParam } from 'animejs'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
+import { isMotionReduced, zeroNestedTimings } from '../utils/reduced-motion'
+
+function withReducedAnimatableMotion(params: AnimatableParams): AnimatableParams {
+  if (!isMotionReduced()) return params
+  const reduced = Object.assign(zeroNestedTimings(params), { duration: 0, ease: 'linear' })
+  for (const [key, value] of Object.entries(reduced)) if (typeof value === 'number') Reflect.set(reduced, key, 0)
+  return reduced
+}
 
 /**
  * Creates an Anime.js `createAnimatable()` for `target` when the component
@@ -21,6 +29,7 @@ export function useAnimatable(
 
   const animatable = shallowRef(createAnimatable({}, {}))
   const mounted = useMounted()
+  const resolveOptions = () => withReducedAnimatableMotion(toValue(options) || {})
 
   const resolveTargets = () => normalizeAnimeTarget(target)
 
@@ -34,7 +43,7 @@ export function useAnimatable(
       previous = targets
       animatable.value.revert()
       animatable.value = hasTargets(targets)
-        ? createAnimatable(targets, toValue(options) || {})
+        ? createAnimatable(targets, resolveOptions())
         : createAnimatable({}, {})
     }
 
@@ -49,7 +58,7 @@ export function useAnimatable(
     nextTick(() => {
       const targets = resolveTargets()
       if (!hasTargets(targets)) return
-      animatable.value = createAnimatable(targets, toValue(options) || {})
+      animatable.value = createAnimatable(targets, resolveOptions())
     })
   }
 

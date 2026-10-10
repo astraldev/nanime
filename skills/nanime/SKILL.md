@@ -152,6 +152,34 @@ argument for playback and callbacks:
 useScrambleText(title, { onComplete: next }, () => ({ text: text.value, duration: 2000 }))
 ```
 
+### Give list and layout groups `deps`
+
+Without `deps`, `<AnimeTransitionGroup>` and `<AnimeLayoutGroup>` measure
+every element inside them on each re-render, even when nothing moved. A
+parent that passes a new object or array prop on every render re-renders
+them each time. Pass `deps` by default:
+
+```vue
+<AnimeTransitionGroup :deps="[]">       <!-- moves on add, remove, reorder -->
+<AnimeTransitionGroup :deps="[view]">   <!-- also when view resizes items -->
+<AnimeLayoutGroup :deps="[expanded]">   <!-- only when expanded changes -->
+```
+
+List every value whose change moves or resizes items. `:deps="[]"` on an
+`<AnimeLayoutGroup>` turns its animation off. Each move still measures every
+element inside the group, so keep item markup lean. On an
+`<AnimeTransitionGroup>` whose items only enter and leave, set
+`:move-animation="false"`.
+
+### Reduced motion is a module option
+
+`nanime.reducedMotion` in `nuxt.config.ts` takes `'never'` (default),
+`'system'` (follows `prefers-reduced-motion`) or `'always'`. When motion is
+reduced, animations from the composables, transitions and groups jump to
+their end state. `useDraggable` and `useAnimeScroll` are not affected. To
+let visitors choose, call `updateAppConfig({ nanime: { reducedMotion } })`.
+Don't add your own `prefers-reduced-motion` checks around nanime calls.
+
 ### Rebuilds restart the animation
 
 When a reactive target or parameter changes, the composable reverts the old

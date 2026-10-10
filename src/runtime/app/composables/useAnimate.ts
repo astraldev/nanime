@@ -10,6 +10,7 @@ import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/ins
 import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { resolveKeepTime } from '../utils/global-options'
+import { withReducedMotion } from '../utils/reduced-motion'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
@@ -33,7 +34,7 @@ export function useAnimate(
 
   const keepsTime = resolveKeepTime(options?.keepTime)
 
-  const create = (targets: TargetsParam, params: AnimationParams) => animate(targets, params)
+  const create = (targets: TargetsParam, params: AnimationParams) => animate(targets, withReducedMotion(params))
   const createKeepingTime = keepsTime ? keepTime(create) : create
 
   const resolveTargets = () => normalizeAnimeTarget(target)

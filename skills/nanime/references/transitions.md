@@ -56,7 +56,7 @@ one's size once the leave ends.
 
 ```vue
 <template>
-  <AnimeTransitionGroup tag="ul" class="relative flex flex-wrap gap-2" enter-animation="scale" leave-animation="scale">
+  <AnimeTransitionGroup tag="ul" class="relative flex flex-wrap gap-2" :deps="[]" enter-animation="scale" leave-animation="scale">
     <li v-for="item in items" :key="item.id">{{ item.label }}</li>
   </AnimeTransitionGroup>
 </template>
@@ -84,20 +84,30 @@ It takes the props above except `mode`, with its own defaults, plus:
 - Every item needs a stable `:key`, such as an id. With an index key,
   removing an item makes the last element leave while the rest swap their
   content in place, so nothing slides.
-- Without `deps`, every re-render of the group runs a move pass over
-  everything inside it, even when nothing moved. A value read in the group's
-  slot that settles after mount, such as a template ref passed to each item
-  as a prop, re-renders the group once on load. Pass a getter instead
-  (`:target="() => bin"`) so the slot reads nothing that changes.
-- With `deps`, the move pass runs only when items are added, removed or
-  reordered, or when a `deps` value changes (watched deeply unless
-  `shallow`). Use it when the parent passes new object or array props on
-  every render. `:deps="[]"` animates list changes only. List values that
-  resize items, such as a view toggle, so their moves still animate.
 - A leave, a move and an enter in the same update all start together. To
   let the new item appear after the others have made room, give the enter
   a `delay` about as long as the leave. The enter's start values apply at
   once, so the item stays hidden while it waits.
+
+### Pass `deps`
+
+Without `deps`, every re-render of the group measures everything inside
+it, even when nothing moved. Pass it on every group:
+
+```vue
+<AnimeTransitionGroup :deps="[]">       <!-- add, remove, reorder -->
+<AnimeTransitionGroup :deps="[view]">   <!-- also when view resizes items -->
+```
+
+- Entries are watched deeply. Add `shallow` to react only when an entry is
+  replaced.
+- Each move measures every element inside the group, down to the text in
+  each item. Keep item markup lean.
+- Use `:move-animation="false"` when items only enter and leave. The group
+  then measures nothing.
+- Without `deps`, a value read in the slot that settles after mount, such
+  as a template ref passed to each item as a prop, re-renders the group and
+  runs a move pass. Pass a getter instead (`:target="() => bin"`).
 
 ### Staggering items
 

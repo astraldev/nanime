@@ -1,6 +1,6 @@
 import { defineNuxtModule, createResolver, addComponent, addImportsDir, addVitePlugin } from '@nuxt/kit'
 import { defu } from 'defu'
-import type { NanimeAppConfig } from './runtime/app/public/types'
+import type { NanimeAppConfig, NanimeReducedMotion } from './runtime/app/public/types'
 
 export interface ModuleOptions {
   /**
@@ -22,6 +22,11 @@ export interface ModuleOptions {
    * @default false
    */
   keepTime: boolean
+  /**
+   * When animations jump to their end state. `'system'` follows `prefers-reduced-motion`.
+   * @default 'never'
+   */
+  reducedMotion: NanimeReducedMotion
 }
 
 declare module 'nuxt/schema' {
@@ -32,7 +37,7 @@ declare module 'nuxt/schema' {
     nanime: ModuleOptions
   }
   interface PublicRuntimeConfig {
-    nanime: { keepTime: boolean }
+    nanime: { keepTime: boolean, reducedMotion: NanimeReducedMotion }
   }
   // CustomAppConfig types what useAppConfig() reads; AppConfigInput checks app.config.ts.
   interface CustomAppConfig {
@@ -73,6 +78,7 @@ export default defineNuxtModule<ModuleOptions>({
     composables: true,
     components: true,
     keepTime: false,
+    reducedMotion: 'never',
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -88,7 +94,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     _nuxt.options.runtimeConfig.public.nanime = defu(
       _nuxt.options.runtimeConfig.public.nanime,
-      { keepTime: _options.keepTime },
+      { keepTime: _options.keepTime, reducedMotion: _options.reducedMotion },
     )
 
     if (_options.composables) {
