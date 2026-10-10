@@ -10,6 +10,7 @@ import {
 } from '../utils/extract-props'
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 import { snapshotParameters } from '../utils/snapshot-parameters'
+import { deepEqualWithSkip } from '../utils/deep-equal'
 import type { SplitTextOptions } from '../public/types'
 
 type SplitEffect = Parameters<TextSplitter['addEffect']>[0]
@@ -108,7 +109,10 @@ export function useSplitText(
     nextTick(syncArrays)
   }
 
+  let previous: { element: HTMLElement, snapshot: Record<string, unknown> } | null = null
+
   const teardown = () => {
+    previous = null
     if (splitter.value) {
       resyncSource(splitter.value)
       splitter.value.revert()
@@ -123,18 +127,17 @@ export function useSplitText(
     [
       mounted,
       resolveTarget,
-      () => {
-        const params = resolveParameters()
-        return params && snapshotParameters(params)
-      },
+      () => snapshotParameters(resolveParameters() ?? {}),
     ],
-    ([isMounted, target]) => {
+    ([isMounted, target, snapshot]) => {
       if (!isMounted) return
       const element = typeof target === 'string' ? document.querySelector(target) : target
       if (!(element instanceof HTMLElement)) {
         teardown()
         return
       }
+      if (previous?.element === element && deepEqualWithSkip(previous.snapshot, snapshot)) return
+      previous = { element, snapshot }
       rebuildSplitter(element, resolveParameters())
     },
     { immediate: true },

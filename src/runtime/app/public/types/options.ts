@@ -10,6 +10,9 @@ import type {
   TargetsParam,
 } from 'animejs'
 
+/** When animations jump to their end state. `'system'` follows `prefers-reduced-motion`. */
+export type NanimeReducedMotion = 'system' | 'always' | 'never'
+
 /** Options for `useAnimate`, `useAnimeTimeline` and `useScrambleText`. */
 export interface NanimeInstanceOptions {
   /**

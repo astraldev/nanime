@@ -65,6 +65,19 @@ export interface AnimeTransitionGroupProps<StyleName extends string = AnimeTrans
    * @default true
    */
   absoluteLeave?: boolean
+  /**
+   * Values that trigger a move animation when they change, including changes
+   * nested inside them. Adding, removing or reordering items always animates.
+   * A function entry is read as a getter, such as `() => state.view`. Without
+   * `deps`, every re-render of the group measures and animates moves.
+   */
+  deps?: readonly unknown[]
+  /**
+   * Animate only when an entry of `deps` is replaced, not when something
+   * nested inside it changes. Read once, when the group is created.
+   * @default false
+   */
+  shallow?: boolean
 }
 
 type AnimeLayoutElement = string | HTMLElement | SVGElement | ComponentPublicInstance | null | undefined
@@ -117,7 +130,7 @@ export interface NanimeComponentDefaults {
   /** Default props for `<AnimeTransition>`. */
   transition?: AnimeTransitionProps<ConfigTransitionStyleName>
   /** Default props for `<AnimeTransitionGroup>`. */
-  transitionGroup?: AnimeTransitionGroupProps<ConfigTransitionStyleName>
+  transitionGroup?: Omit<AnimeTransitionGroupProps<ConfigTransitionStyleName>, 'deps'>
   /** Default props for `<AnimeLayoutGroup>`. */
   layoutGroup?: Omit<AnimeLayoutGroupProps, 'deps' | 'elements'> & {
     /** Selectors for the elements that move on their own, matched inside each group. */

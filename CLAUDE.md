@@ -89,7 +89,7 @@ Key conventions:
 
 Existing composables: `useAnimate`, `useAnimatable`, `useAnimeLayout`, `useAnimeScroll`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`, plus `provideAnimeDefaults`
 
-A new configurable component gets a key in `NanimeComponentDefaults` (`public/types/components.ts`); nothing else to register. Read its props through `useComponentDefaults(name).option(props, key) ?? builtIn`. Boolean and defaulted props use `default: undefined` so "not passed" stays detectable. DOM markers (attributes, classes) live in `src/runtime/app/utils/markers.ts`.
+A new configurable component gets a key in `NanimeComponentDefaults` (`public/types/components.ts`); nothing else to register. Read its props through `useComponentDefaults(name).option(props, key) ?? builtIn`. Boolean and defaulted props use `default: undefined` so "not passed" stays detectable. DOM markers (attributes, classes) live in `src/runtime/app/utils/markers.ts`, and the CSS that targets them in `markers.css`, which `markers.ts` imports so it ships only with the code that sets the markers.
 
 Code comments: none in internal code. Every public type, prop and module option gets a JSDoc line (with `@default` where there is one), because users see it on hover.
 

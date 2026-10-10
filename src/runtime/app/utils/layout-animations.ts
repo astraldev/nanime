@@ -1,6 +1,8 @@
 import type { AutoLayout, LayoutAnimationParams } from 'animejs/layout'
 import type { Timeline } from 'animejs'
+import { createTimeline } from 'animejs/timeline'
 import { LAYOUT_ANIMATING_ATTRIBUTE } from './markers'
+import { isMotionReduced } from './reduced-motion'
 
 type PinnedStyle = 'box-sizing' | 'line-height' | 'position' | 'white-space'
 
@@ -55,6 +57,7 @@ export function markLayoutAnimations(layout: AutoLayout): AutoLayout {
   }
 
   layout.record = () => {
+    if (isMotionReduced()) return layout
     record()
     release()
     return layout
@@ -67,6 +70,7 @@ export function markLayoutAnimations(layout: AutoLayout): AutoLayout {
   }
 
   layout.animate = (params: LayoutAnimationParams = {}) => {
+    if (isMotionReduced()) return createTimeline({ onComplete: params.onComplete ?? layout.params.onComplete })
     release()
     const oneLineTexts = readOneLineTexts(root)
     const onComplete = params.onComplete ?? layout.params.onComplete

@@ -7,6 +7,7 @@ import { waapi, type WAAPIAnimation } from 'animejs/waapi'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
+import { withReducedMotion } from '../utils/reduced-motion'
 
 const callbacks = ['onComplete']
 
@@ -29,7 +30,7 @@ export function useWaapiAnimate(
 
   const rebuildAnimation = (targets: DOMTargetsParam) => {
     animation.value?.revert()
-    animation.value = waapi.animate(targets, unwrapNanimeProxies(resolveParameters()))
+    animation.value = waapi.animate(targets, withReducedMotion(unwrapNanimeProxies(resolveParameters())))
   }
 
   if (flag === AnimationComponentFlags.Watchable) {

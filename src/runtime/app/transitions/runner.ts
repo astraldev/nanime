@@ -3,6 +3,7 @@ import { animate, type JSAnimation } from 'animejs/animation'
 import type { BaseTransitionProps } from 'vue'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 import { TRANSITION_ATTRIBUTE } from '../utils/markers'
+import { withReducedMotion } from '../utils/reduced-motion'
 
 type StyledElement = HTMLElement | SVGElement
 
@@ -66,7 +67,7 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
     }
 
     el.setAttribute(TRANSITION_ATTRIBUTE, '')
-    animation = animate(el, {
+    animation = animate(el, withReducedMotion({
       ...resolveForBatch(params, el, batch),
       onComplete(self) {
         params.onComplete?.(self)
@@ -76,7 +77,7 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
         params.onPause?.(self)
         if (self.cancelled) end()
       },
-    })
+    }))
     if (!ended) running.set(el, animation)
     else if (isLeave) animation.revert()
   }

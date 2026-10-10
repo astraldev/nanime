@@ -7,6 +7,16 @@ reordering, use `<AnimeTransitionGroup>` first ([transitions.md](transitions.md)
 - `<AnimeLayoutGroup>` when the change comes from state you can list in `deps`.
 - `useAnimeLayout` when you need to `await` the animation or change timing per call.
 
+Both groups take `deps` and `shallow`, but they mean different things:
+
+| | `<AnimeTransitionGroup>` | `<AnimeLayoutGroup>` |
+|---|---|---|
+| Built for | `v-for` items entering, leaving, reordering | mounted elements changing size or position |
+| Enter and leave | `enterAnimation` / `leaveAnimation` per item | `v-show` fades, `v-if` removes at once |
+| `deps` | extra triggers on top of list changes (`[]` = list changes only) | the only trigger |
+| Timing | `moveAnimation`: `duration`, `delay`, `ease` | `layoutOptions`: any `createLayout()` param |
+| What moves | every element inside | every element inside, or `elements` |
+
 Layout options (`children`, `enterFrom`, `leaveTo`, `swapAt`, …):
 https://animejs.com/documentation/layout
 
@@ -26,7 +36,11 @@ then animates them to their new size and position.
 - `deps` entries are watched deeply. A getter entry such as
   `[() => store.view]` is called and its result watched. Add `shallow` to
   react only when an entry is replaced.
-- Without `deps`, every re-render of the group animates.
+- Always pass `deps`. Without it, every re-render of the group measures
+  every element inside it and animates, even when nothing moved, such as a
+  parent passing a new object or array prop on every render.
+- Each animation measures every element inside the group, whatever
+  `elements` says. Keep the markup inside lean.
 - Toggle children with `v-show` to get enter and leave fades while the rest
   slides. With `v-if`, a removed child vanishes at once and only its
   neighbours animate.

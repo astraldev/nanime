@@ -12,6 +12,7 @@ import { markNanimeInstance } from '../utils/proxy'
 import { resolveKeepTime } from '../utils/global-options'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
+import { isMotionReduced } from '../utils/reduced-motion'
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
@@ -35,7 +36,11 @@ export function useScrambleText(
   const buildAnimation = (
     targets: NonNullable<ReturnType<typeof normalizeAnimeTarget>>,
     params: AnimationParams,
-  ) => animate(targets, params)
+  ) => {
+    const built = animate(targets, params)
+    if (isMotionReduced()) built.complete()
+    return built
+  }
   const rebuildAnimation = keepsTime ? keepTime(buildAnimation) : buildAnimation
 
   const animation = shallowRef(animate({}, {}))
@@ -86,7 +91,7 @@ export function useScrambleText(
     nextTick(() => {
       const targets = resolveTargets()
       if (!targets) return
-      animation.value = animate(targets, {
+      animation.value = buildAnimation(targets, {
         ...resolveAnimationOptions(),
         innerHTML: scrambleText(resolveScrambleOptions()),
       })
