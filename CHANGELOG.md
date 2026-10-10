@@ -1,5 +1,42 @@
 # Changelog
 
+## v0.3.2
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.3.1...v0.3.2)
+
+### 🚀 Enhancements
+
+- **AnimeTransitionGroup:** Add deps and shallow props ([f01b4f2](https://github.com/astraldev/nanime/commit/f01b4f2))
+- Add reducedMotion option ([0ba8eba](https://github.com/astraldev/nanime/commit/0ba8eba))
+
+### 🔥 Performance
+
+- Tree-shake unused composables and transition CSS ([d534faf](https://github.com/astraldev/nanime/commit/d534faf))
+
+### 🩹 Fixes
+
+- **docs:** Redirect OG image URLs missing from the build to a fallback image ([eef0be0](https://github.com/astraldev/nanime/commit/eef0be0))
+- **useSplitText:** Skip re-splitting when parameters are equal ([abc2dd1](https://github.com/astraldev/nanime/commit/abc2dd1))
+
+### 📖 Documentation
+
+- **performance:** Add what each API adds to the bundle ([fd24836](https://github.com/astraldev/nanime/commit/fd24836))
+- Tighten shallow and deps wording, spell AnimeJS in the skill ([13cdb7f](https://github.com/astraldev/nanime/commit/13cdb7f))
+- Changelog for 0.3.2 ([48e6511](https://github.com/astraldev/nanime/commit/48e6511))
+- Correct the 0.3.2 performance entry ([3214664](https://github.com/astraldev/nanime/commit/3214664))
+- Fold the 0.3.2 docs entries into one ([f25948d](https://github.com/astraldev/nanime/commit/f25948d))
+- Name the pages and components in the 0.3.2 docs entry ([b113c74](https://github.com/astraldev/nanime/commit/b113c74))
+- State the outcome in the 0.3.2 packaging entry ([b3cf96d](https://github.com/astraldev/nanime/commit/b3cf96d))
+- Move the comparison pages into their own section ([10320eb](https://github.com/astraldev/nanime/commit/10320eb))
+
+### 🤖 CI
+
+- Publish on the release published event only ([f020276](https://github.com/astraldev/nanime/commit/f020276))
+
+### ❤️ Contributors
+
+- Ekure Edem
+
 ## v0.3.1
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.3.0...v0.3.1)
