@@ -79,7 +79,7 @@ It takes the props above except `mode`, with its own defaults, plus:
 - Give the group `position: relative`. With `absoluteLeave`, a leaving item
   switches to `position: absolute` against it, so the others close the gap
   while it animates out.
-- Moves (reorder, shuffle, the gap closing) use Anime.js layout. Mutate the
+- Moves (reorder, shuffle, the gap closing) use AnimeJS layout. Mutate the
   array and the items slide. No `useAnimeLayout` or `patch()` call is needed.
 - Every item needs a stable `:key`, such as an id. With an index key,
   removing an item makes the last element leave while the rest swap their
