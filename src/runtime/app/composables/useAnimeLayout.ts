@@ -15,14 +15,33 @@ type NanimeLayout = AutoLayout & {
   /**
    * Records the current layout, runs `callback`, waits for Vue to update the
    * DOM, then animates to the new layout. Resolves when the animation
-   * finishes. A call made while another is still waiting for the DOM
+   * finishes or a later `record()` or `patch()` interrupts it. A call made while another is still waiting for the DOM
    * update runs its callback and joins that animation.
    */
   patch: (callback: () => unknown, params?: LayoutAnimationParams) => Promise<void>
 }
 
+const interrupted = new WeakMap<AutoLayout, () => void>()
+
+function animateUntilSettled(layout: AutoLayout | null, params?: LayoutAnimationParams) {
+  return new Promise<void>((resolve) => {
+    if (!layout) return resolve()
+    interrupted.set(layout, resolve)
+    const timeline = layout.animate(params)
+    if (timeline.cancelled) return resolve()
+    void timeline.then(() => resolve())
+  })
+}
+
 function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams, current: () => AutoLayout | null): NanimeLayout {
   const layout = markLayoutAnimations(createLayout(root, { ...params }))
+  const record = layout.record.bind(layout)
+  layout.record = () => {
+    record()
+    interrupted.get(layout)?.()
+    interrupted.delete(layout)
+    return layout
+  }
   let pending: Promise<void> | null = null
   return Object.assign(layout, {
     async patch(callback: () => unknown, animationParams?: LayoutAnimationParams) {
@@ -36,9 +55,16 @@ function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams, c
         await callback()
         await nextTick()
       })()
-      pending = updated
-        .finally(() => { pending = null })
-        .then(async () => { await current()?.animate(animationParams) })
+      pending = updated.then(
+        async () => {
+          pending = null
+          await animateUntilSettled(current(), animationParams)
+        },
+        (error: unknown) => {
+          pending = null
+          throw error
+        },
+      )
       return pending
     },
   })
