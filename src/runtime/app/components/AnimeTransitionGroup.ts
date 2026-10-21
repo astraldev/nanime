@@ -2,6 +2,7 @@ import { createLayout, type AutoLayout } from 'animejs/layout'
 import { TransitionGroup, cloneVNode, defineComponent, getCurrentInstance, getTransitionRawChildren, h, nextTick, onUpdated, type VNode } from 'vue'
 import type { AnimationParams, AnimeTransitionGroupProps } from '../public/types'
 import { tryOnScopeDispose } from '../utils/vue-helpers'
+import { onTabHidden } from '../utils/tab-hidden'
 import { useComponentDefaults } from '../utils/component-defaults'
 import { watchDeps } from '../utils/deps'
 import { markLayoutAnimations } from '../utils/layout-animations'
@@ -153,6 +154,12 @@ export default defineComponent(
       animateMoves()
     })
 
+    onTabHidden(() => {
+      if (!option(props, 'completeOnTabHidden')) return
+      runner.complete()
+      layout?.timeline?.complete()
+    })
+
     tryOnScopeDispose(() => {
       dropLayout()
       leavesToPin.clear()
@@ -215,6 +222,7 @@ export default defineComponent(
       absoluteLeave: { type: Boolean, default: undefined },
       deps: null,
       shallow: { type: Boolean, default: undefined },
+      completeOnTabHidden: { type: Boolean, default: undefined },
     },
   },
 )

@@ -6,6 +6,7 @@ import type { AnimeLayoutElements, AnimeLayoutGroupProps } from '../public/types
 import { useAnimeLayout } from '../composables/useAnimeLayout'
 import { assignDefined, useComponentDefaults } from '../utils/component-defaults'
 import { watchDeps } from '../utils/deps'
+import { onTabHidden } from '../utils/tab-hidden'
 import { LAYOUT_GROUP_ATTRIBUTE } from '../utils/markers'
 import { normalizeLayoutTarget } from '../utils/targets'
 
@@ -63,6 +64,10 @@ export default defineComponent(
     const layout = useAnimeLayout(root, layoutParams)
     watchDeps(() => props.deps, option(props, 'shallow') ?? false, () => layout.patch?.(noop))
 
+    onTabHidden(() => {
+      if (option(props, 'completeOnTabHidden')) layout.timeline?.complete()
+    })
+
     onBeforeUpdate(() => {
       if (!props.deps) layout.record()
     })
@@ -81,6 +86,7 @@ export default defineComponent(
       shallow: { type: Boolean, default: undefined },
       elements: null,
       layoutOptions: null,
+      completeOnTabHidden: { type: Boolean, default: undefined },
     },
   },
 )

@@ -1,6 +1,7 @@
 import { BaseTransition, defineComponent, h } from 'vue'
 import type { AnimeTransitionProps } from '../public/types'
 import { tryOnScopeDispose } from '../utils/vue-helpers'
+import { onTabHidden } from '../utils/tab-hidden'
 import { useComponentDefaults } from '../utils/component-defaults'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
@@ -15,6 +16,10 @@ export default defineComponent(
     const runner = createTransitionRunner({
       enter: () => styles.enter(option(props, 'enterAnimation')),
       leave: () => styles.leave(option(props, 'leaveAnimation')),
+    })
+
+    onTabHidden(() => {
+      if (option(props, 'completeOnTabHidden')) runner.complete()
     })
 
     tryOnScopeDispose(runner.dispose)
@@ -32,6 +37,7 @@ export default defineComponent(
       leaveAnimation: null,
       mode: null,
       appear: { type: Boolean, default: undefined },
+      completeOnTabHidden: { type: Boolean, default: undefined },
     },
   },
 )

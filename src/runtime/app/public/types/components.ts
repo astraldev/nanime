@@ -29,6 +29,13 @@ export interface AnimeTransitionProps<StyleName extends string = AnimeTransition
    * @default false
    */
   appear?: boolean
+  /**
+   * Jump running animations to their end when the browser tab is hidden.
+   * AnimeJS pauses every animation while the tab is hidden, which otherwise
+   * leaves elements mid-way until the tab is visible again.
+   * @default false
+   */
+  completeOnTabHidden?: boolean
 }
 
 /** Props of `<AnimeTransitionGroup>`. */
@@ -78,6 +85,13 @@ export interface AnimeTransitionGroupProps<StyleName extends string = AnimeTrans
    * @default false
    */
   shallow?: boolean
+  /**
+   * Jump running animations to their end when the browser tab is hidden.
+   * AnimeJS pauses every animation while the tab is hidden, which otherwise
+   * leaves elements mid-way until the tab is visible again.
+   * @default false
+   */
+  completeOnTabHidden?: boolean
 }
 
 type AnimeLayoutElement = string | HTMLElement | SVGElement | ComponentPublicInstance | null | undefined
@@ -123,6 +137,13 @@ export interface AnimeLayoutGroupProps {
    * @default { ease: spring({ bounce: 0.15, duration: 300 }) }
    */
   layoutOptions?: Omit<AutoLayoutParams, 'children'>
+  /**
+   * Jump running animations to their end when the browser tab is hidden.
+   * AnimeJS pauses every animation while the tab is hidden, which otherwise
+   * leaves elements mid-way until the tab is visible again.
+   * @default false
+   */
+  completeOnTabHidden?: boolean
 }
 
 /** Default props for nanime components, from `app.config.ts` or `provideAnimeDefaults()`. */

@@ -102,6 +102,7 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
     expectLeaving: (els: Element[]) => addToBatch(leaving, els),
     running: () => running.keys(),
     refresh: () => running.forEach(animation => animation.seek(animation.currentTime)),
+    complete: () => [...running.values()].forEach(animation => animation.complete()),
     dispose: () => [...running.keys()].forEach(stop),
   }
 }
