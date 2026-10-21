@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.3.4
+
+[compare changes](https://github.com/astraldev/nanime/compare/0ce2a96...v0.3.4)
+
+### 🩹 Fixes
+
+- **useAnimeLayout:** Keep layout items settled and patch() resolving across overlapping patches ([3134e9b](https://github.com/astraldev/nanime/commit/3134e9b))
+
+### 📖 Documentation
+
+- Say when patch() resolves and add the 0.3.4 changelog ([42daa40](https://github.com/astraldev/nanime/commit/42daa40))
+
+### ❤️ Contributors
+
+- Ekure Edem
+
 ## v0.3.3
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.3.2...v0.3.3)
