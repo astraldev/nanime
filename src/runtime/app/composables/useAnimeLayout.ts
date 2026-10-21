@@ -15,19 +15,31 @@ type NanimeLayout = AutoLayout & {
   /**
    * Records the current layout, runs `callback`, waits for Vue to update the
    * DOM, then animates to the new layout. Resolves when the animation
-   * finishes.
+   * finishes. A call made while another is still waiting for the DOM
+   * update runs its callback and joins that animation.
    */
   patch: (callback: () => unknown, params?: LayoutAnimationParams) => Promise<void>
 }
 
 function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams, current: () => AutoLayout | null): NanimeLayout {
   const layout = markLayoutAnimations(createLayout(root, { ...params }))
+  let pending: Promise<void> | null = null
   return Object.assign(layout, {
     async patch(callback: () => unknown, animationParams?: LayoutAnimationParams) {
+      if (pending) {
+        const joined = pending
+        await callback()
+        return joined
+      }
       current()?.record()
-      await callback()
-      await nextTick()
-      await current()?.animate(animationParams)
+      const updated = (async () => {
+        await callback()
+        await nextTick()
+      })()
+      pending = updated
+        .finally(() => { pending = null })
+        .then(async () => { await current()?.animate(animationParams) })
+      return pending
     },
   })
 }
