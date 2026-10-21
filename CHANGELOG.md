@@ -1,5 +1,42 @@
 # Changelog
 
+## v0.3.4
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.3.2...v0.3.4)
+
+### 🚀 Enhancements
+
+- Add completeOnTabHidden prop to the transition and layout components ([932137c](https://github.com/astraldev/nanime/commit/932137c))
+
+### 🩹 Fixes
+
+- **useAnimeLayout:** Join patch calls made before the DOM update ([f68c8d3](https://github.com/astraldev/nanime/commit/f68c8d3))
+- **useAnimeLayout:** Keep layout items settled and patch() resolving across overlapping patches ([4938f0a](https://github.com/astraldev/nanime/commit/4938f0a))
+
+### 📖 Documentation
+
+- Document completeOnTabHidden and the 0.3.3 changes ([e58e52f](https://github.com/astraldev/nanime/commit/e58e52f))
+- Say when patch() resolves and add the 0.3.4 changelog ([0330b3d](https://github.com/astraldev/nanime/commit/0330b3d))
+
+### 🏡 Chore
+
+- Sync release with main for v0.1.12 ([0637710](https://github.com/astraldev/nanime/commit/0637710))
+- Sync release with main ([b2655f8](https://github.com/astraldev/nanime/commit/b2655f8))
+- Sync release with main ([3f52a46](https://github.com/astraldev/nanime/commit/3f52a46))
+- Sync release with main for v0.2.0 ([e5dd43f](https://github.com/astraldev/nanime/commit/e5dd43f))
+- Sync release with main for OG image and layout demo fixes ([c628f84](https://github.com/astraldev/nanime/commit/c628f84))
+- Sync release with main for demo and animatable note updates ([33312bb](https://github.com/astraldev/nanime/commit/33312bb))
+- Sync release with main for v0.2.1 ([fa1d0f1](https://github.com/astraldev/nanime/commit/fa1d0f1))
+- Sync release with main for the docs page weight cut ([73aec99](https://github.com/astraldev/nanime/commit/73aec99))
+- Sync release with main for v0.3.0 ([aa9d5ca](https://github.com/astraldev/nanime/commit/aa9d5ca))
+- Sync release with main for v0.3.1 ([cee2fa5](https://github.com/astraldev/nanime/commit/cee2fa5))
+- Sync release with main for v0.3.2 ([dc5051b](https://github.com/astraldev/nanime/commit/dc5051b))
+- **release:** V0.3.3 ([0ce2a96](https://github.com/astraldev/nanime/commit/0ce2a96))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.3.3
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.3.2...v0.3.3)
