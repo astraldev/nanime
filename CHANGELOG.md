@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.3.3
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.3.2...v0.3.3)
+
+### 🚀 Enhancements
+
+- Add completeOnTabHidden prop to the transition and layout components ([932137c](https://github.com/astraldev/nanime/commit/932137c))
+
+### 🩹 Fixes
+
+- **useAnimeLayout:** Join patch calls made before the DOM update ([f68c8d3](https://github.com/astraldev/nanime/commit/f68c8d3))
+
+### 📖 Documentation
+
+- Document completeOnTabHidden and the 0.3.3 changes ([e58e52f](https://github.com/astraldev/nanime/commit/e58e52f))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.3.2
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.3.1...v0.3.2)
