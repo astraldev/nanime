@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.3.5
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.3.4...v0.3.5)
+
+### 🩹 Fixes
+
+- **AnimeTransition:** Defer leave done() when the animation ends synchronously ([75d11b2](https://github.com/astraldev/nanime/commit/75d11b2))
+
+### 📖 Documentation
+
+- Add the 0.3.5 changelog ([753aca3](https://github.com/astraldev/nanime/commit/753aca3))
+
+### ❤️ Contributors
+
+- Ekure Edem
+
 ## v0.3.4
 
 [compare changes](https://github.com/astraldev/nanime/compare/0ce2a96...v0.3.4)
