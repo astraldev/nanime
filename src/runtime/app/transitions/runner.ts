@@ -52,10 +52,11 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
 
   function run(el: Element, params: AnimationParams, batch: StyledElement[], done: () => void, isLeave: boolean) {
     stop(el)
-    if (!isStyled(el)) return done()
+    if (!isStyled(el)) return queueMicrotask(done)
 
     let animation: JSAnimation | null = null
     let ended = false
+    let starting = true
     const end = () => {
       if (ended) return
       ended = true
@@ -63,7 +64,8 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
       if (isLeave) animation?.revert()
       el.removeAttribute(TRANSITION_ATTRIBUTE)
       options.onEnd?.(el)
-      done()
+      if (starting) queueMicrotask(done)
+      else done()
     }
 
     el.setAttribute(TRANSITION_ATTRIBUTE, '')
@@ -78,6 +80,7 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
         if (self.cancelled) end()
       },
     }))
+    starting = false
     if (!ended) running.set(el, animation)
     else if (isLeave) animation.revert()
   }
