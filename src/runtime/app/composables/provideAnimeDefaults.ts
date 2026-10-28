@@ -1,10 +1,10 @@
 import { computed, inject, provide, toValue, type MaybeRefOrGetter } from 'vue'
-import type { NanimeComponentDefaults } from '../public/types'
+import type { NanimeDefaults } from '../public/types'
 import { PROVIDED_DEFAULTS } from '../utils/component-defaults'
 
 /**
- * Sets default props for the nanime components rendered inside this
- * component.
+ * Sets default props for the nanime components, and default parameters for
+ * the composables, used inside this component.
  *
  * Each entry (`transition`, `transitionGroup`, `layoutGroup`) replaces the
  * same entry from an outer `provideAnimeDefaults()` call as a whole, and the
@@ -14,8 +14,12 @@ import { PROVIDED_DEFAULTS } from '../utils/component-defaults'
  * outer one, and a prop set to `undefined` falls back to `app.config.ts`.
  * Values are never merged any deeper: `layoutOptions` and animation params
  * replace the lower ones whole.
+ *
+ * `composables.animate` and `composables.draggable` work the same way, each
+ * replacing the outer one whole and falling back to `nanime.composables`.
+ * Parameters passed to the composable call win.
  */
-export function provideAnimeDefaults(defaults: MaybeRefOrGetter<NanimeComponentDefaults>) {
+export function provideAnimeDefaults(defaults: MaybeRefOrGetter<NanimeDefaults>) {
   const outer = inject(PROVIDED_DEFAULTS, null)
   provide(PROVIDED_DEFAULTS, computed(() => {
     // this call
@@ -26,6 +30,10 @@ export function provideAnimeDefaults(defaults: MaybeRefOrGetter<NanimeComponentD
       transition: own.transition ?? above?.transition,
       transitionGroup: own.transitionGroup ?? above?.transitionGroup,
       layoutGroup: own.layoutGroup ?? above?.layoutGroup,
-    } satisfies Record<keyof NanimeComponentDefaults, unknown>
+      composables: {
+        animate: own.composables?.animate ?? above?.composables?.animate,
+        draggable: own.composables?.draggable ?? above?.composables?.draggable,
+      },
+    } satisfies Record<keyof NanimeDefaults, unknown>
   }))
 }

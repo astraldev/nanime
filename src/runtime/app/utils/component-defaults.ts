@@ -1,7 +1,7 @@
-import { inject, type ComputedRef, type InjectionKey } from 'vue'
+import { hasInjectionContext, inject, type ComputedRef, type InjectionKey } from 'vue'
 import type { AnimationParams } from 'animejs'
 import { useAppConfig } from '#imports'
-import type { AnimeMoveParams, NanimeComponentDefaults } from '../public/types'
+import type { AnimeMoveParams, NanimeComponentDefaults, NanimeComposableDefaults, NanimeDefaults } from '../public/types'
 
 type ComponentName = keyof NanimeComponentDefaults
 type Defaults<Name extends ComponentName> = NonNullable<NanimeComponentDefaults[Name]>
@@ -19,7 +19,7 @@ interface ResolvedAnimation {
   move?: string | AnimeMoveParams | false
 }
 
-export const PROVIDED_DEFAULTS: InjectionKey<ComputedRef<NanimeComponentDefaults>> = Symbol('nanime-provided-defaults')
+export const PROVIDED_DEFAULTS: InjectionKey<ComputedRef<NanimeDefaults>> = Symbol('nanime-provided-defaults')
 
 function splitAnimation(options: AnimationOptions | undefined): ResolvedAnimation {
   const animation = options?.animation
@@ -41,6 +41,13 @@ function animationDefaultsOf(defaults: NanimeComponentDefaults | undefined, name
   if (name === 'transition') return defaults?.transition
   if (name === 'transitionGroup') return defaults?.transitionGroup
   return undefined
+}
+
+export function useComposableDefaults<Name extends keyof NanimeComposableDefaults>(name: Name): () => NanimeComposableDefaults[Name] {
+  const appConfig = useAppConfig()
+  const provided = hasInjectionContext() ? inject(PROVIDED_DEFAULTS, null) : null
+
+  return () => provided?.value.composables?.[name] ?? appConfig.nanime?.composables?.[name]
 }
 
 export function useComponentDefaults<Name extends ComponentName>(name: Name) {
