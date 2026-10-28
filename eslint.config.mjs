@@ -18,7 +18,7 @@ export default createConfigForNuxt({
 })
   .append([
     {
-      ignores: ['experimental/core/**'],
+      ignores: ['src/runtime/app/experimental/core/**'],
     },
     {
       rules: {
