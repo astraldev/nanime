@@ -169,3 +169,5 @@ Skills in `.agents/skills/` — each has a `SKILL.md` defining its workflow:
 | `create-utility-tests` | Write vitest utility tests (Nuxt test-utils) |
 | `create-showcase-doc` | Write/rewrite a showcase example page (`docs/content/5.examples/`), including verifying its AI build prompt against a real independent agent |
 | `skill-creator` | Meta-skill for authoring new skills |
+
+User-facing skills ship in `skills/` with the package. `skills/nanime/` documents the module; `skills/patch-animejs-tracked-layout/` documents a local Anime.js install patch for very large layout scenes.

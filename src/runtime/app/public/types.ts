@@ -1,6 +1,5 @@
 export * from './types/anime'
 export * from './types/options'
-export * from './types/features'
 export type { AnimeMoveParams, AnimeTransitionStyle, AnimeTransitionStyleName } from './types/transitions'
 export * from './types/components'
 export * from './types/app-config'

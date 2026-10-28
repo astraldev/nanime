@@ -1,6 +1,5 @@
-import { existsSync } from 'node:fs'
-import { defineNuxtModule, createResolver, addComponent, addImportsDir, addPlugin, addTypeTemplate, addVitePlugin } from '@nuxt/kit'
-import type { NanimeConfig, NanimeReducedMotion, NanimeTrackTargetsOnly } from './runtime/app/public/types'
+import { defineNuxtModule, createResolver, addComponent, addImportsDir, addPlugin, addVitePlugin } from '@nuxt/kit'
+import type { NanimeConfig, NanimeReducedMotion } from './runtime/app/public/types'
 
 export interface ModuleOptions {
   /**
@@ -27,17 +26,6 @@ export interface ModuleOptions {
    * @default 'never'
    */
   reducedMotion: NanimeReducedMotion
-  /** Features that are not stable yet and may change in any release. */
-  experimental: {
-    /**
-     * Makes `trackTargetsOnly` available on `<AnimeLayoutGroup>` and `useAnimeLayout`, which measure only the layout
-     * targets, their ancestors and their siblings instead of every descendant. `'off'` hides the option from the
-     * types and keeps the patched AnimeJS layout out of the bundle, `'opt-in'` lets a layout set it, and `'global'`
-     * turns it on for every layout unless it sets `trackTargetsOnly: false`.
-     * @default 'off'
-     */
-    trackTargetsOnly: NanimeTrackTargetsOnly
-  }
 }
 
 declare module 'nuxt/schema' {
@@ -90,36 +78,9 @@ export default defineNuxtModule<ModuleOptions>({
     components: true,
     keepTime: false,
     reducedMotion: 'never',
-    experimental: { trackTargetsOnly: 'off' },
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
-    const trackTargetsOnly = _options.experimental.trackTargetsOnly
-
-    if (trackTargetsOnly !== 'off') {
-      if (!existsSync(resolver.resolve('./runtime/app/experimental/core/layout/layout.js'))) {
-        throw new Error('[nanime] experimental.trackTargetsOnly needs the patched AnimeJS layout; run `pnpm patch:animejs` first.')
-      }
-      addTypeTemplate({
-        filename: 'types/nanime-experimental.d.ts',
-        getContents: () => [
-          `import type { TrackTargetsOnlyOptions } from '${resolver.resolve('./runtime/app/public/types')}'`,
-          '',
-          'declare global {',
-          '  interface NanimeExperimentalLayoutOptions extends TrackTargetsOnlyOptions {}',
-          '}',
-          '',
-        ].join('\n'),
-      })
-    }
-
-    addVitePlugin(() => ({
-      name: '__features',
-      config(config) {
-        config.define ||= {}
-        config.define.__NANIME_TRACK_TARGETS_ONLY__ = JSON.stringify(trackTargetsOnly)
-      },
-    }))
 
     addVitePlugin(() => ({
       name: '__optimize-deps',

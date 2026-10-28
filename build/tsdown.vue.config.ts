@@ -12,7 +12,4 @@ export default defineConfig({
   alias: {
     'nuxt/schema': nuxtShim,
   },
-  define: {
-    __NANIME_TRACK_TARGETS_ONLY__: JSON.stringify('off'),
-  },
 })

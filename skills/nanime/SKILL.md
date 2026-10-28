@@ -36,6 +36,10 @@ or transition CSS. The effect almost always has a nanime path.
 | Mounted elements changing position or size (FLIP) | `<AnimeLayoutGroup>`, or `useAnimeLayout` to `await` it | [layout.md](references/layout.md) |
 | Testing an animation without a browser | | [verifying.md](references/verifying.md) |
 
+For a layout scene with hundreds of elements, the walk itself becomes the
+cost. [patch-animejs-tracked-layout](../patch-animejs-tracked-layout/SKILL.md)
+patches the installed Anime.js to measure only the named targets.
+
 For an Anime.js parameter, return shape or util, read
 https://animejs.com/documentation. nanime passes those through unchanged.
 For nanime's own API, read https://nanimejs.netlify.app/llms-full.txt or query

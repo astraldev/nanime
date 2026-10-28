@@ -1,0 +1,12 @@
+diff --git a/dist/modules/layout/layout.d.ts b/dist/modules/layout/layout.d.ts
+index b8d8c42..11f09fc 100644
+--- a/dist/modules/layout/layout.d.ts
++++ b/dist/modules/layout/layout.d.ts
+@@ -87,6 +87,7 @@ export type LayoutAnimationParams = LayoutSpecificAnimationParams & TimerParams
+ export type LayoutOptions = {
+     children?: LayoutChildrenParam;
+     properties?: Array<string>;
++    trackTargetsOnly?: boolean;
+ };
+ export type AutoLayoutParams = LayoutAnimationParams & LayoutOptions;
+ export type LayoutNodeProperties = Record<string, number | string | FunctionValue> & {

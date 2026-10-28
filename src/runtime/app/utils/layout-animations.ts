@@ -6,15 +6,7 @@ import type { IsReducedMotion } from './reduced-motion'
 
 type PinnedStyle = 'box-sizing' | 'line-height' | 'position' | 'white-space'
 
-function hasOwnText(element: Element) {
-  return [...element.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
-}
-
-function getTrackedElements(layout: AutoLayout) {
-  return [...layout.oldState.nodes.values()].map(node => node.$el)
-}
-
-function readOneLineTexts(root: Element, tracked: Iterable<Element> | null) {
+function readOneLineTexts(root: Element) {
   const checked = new Set<HTMLElement>()
   const oneLine = new Set<HTMLElement>()
   const range = document.createRange()
@@ -26,12 +18,6 @@ function readOneLineTexts(root: Element, tracked: Iterable<Element> | null) {
     const lines = new Set([...range.getClientRects()].map(rect => Math.round(rect.top)))
     if (lines.size === 1) oneLine.add(element)
   }
-  if (tracked) {
-    for (const element of tracked) {
-      if (element instanceof HTMLElement && hasOwnText(element)) check(element)
-    }
-    return oneLine
-  }
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
   for (let text = walker.nextNode(); text; text = walker.nextNode()) {
     const parent = text.parentElement
@@ -41,11 +27,10 @@ function readOneLineTexts(root: Element, tracked: Iterable<Element> | null) {
 }
 
 interface MarkLayoutOptions {
-  trackTargetsOnly?: boolean
   isReduced?: IsReducedMotion
 }
 
-export function markLayoutAnimations(layout: AutoLayout, { trackTargetsOnly = false, isReduced = () => false }: MarkLayoutOptions = {}): AutoLayout {
+export function markLayoutAnimations(layout: AutoLayout, { isReduced = () => false }: MarkLayoutOptions = {}): AutoLayout {
   const record = layout.record.bind(layout)
   const animate = layout.animate.bind(layout)
   const revert = layout.revert.bind(layout)
@@ -94,8 +79,7 @@ export function markLayoutAnimations(layout: AutoLayout, { trackTargetsOnly = fa
   layout.animate = (params: LayoutAnimationParams = {}) => {
     if (isReduced()) return createTimeline({ onComplete: params.onComplete ?? layout.params.onComplete })
     release()
-    const tracked = trackTargetsOnly ? getTrackedElements(layout) : null
-    const oneLineTexts = readOneLineTexts(root, tracked)
+    const oneLineTexts = readOneLineTexts(root)
     const onComplete = params.onComplete ?? layout.params.onComplete
     const timeline = animate({
       ...params,

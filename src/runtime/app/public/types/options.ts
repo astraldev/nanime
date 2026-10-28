@@ -1,4 +1,5 @@
 import type { ComponentPublicInstance, MaybeRef, MaybeRefOrGetter, Ref } from 'vue'
+import type { AutoLayoutParams } from 'animejs/layout'
 import type {
   AnimationParams,
   ScrollObserver,
@@ -12,6 +13,9 @@ import type {
 
 /** When animations jump to their end state. `'system'` follows `prefers-reduced-motion`. */
 export type NanimeReducedMotion = 'system' | 'always' | 'never'
+
+/** Params of `useAnimeLayout` and `<AnimeLayoutGroup>`: Anime.js `createLayout()` params. */
+export type AnimeLayoutParams = AutoLayoutParams
 
 /** Options for `useAnimate`, `useAnimeTimeline` and `useScrambleText`. */
 export interface NanimeInstanceOptions {

@@ -56,7 +56,6 @@ export default defineComponent(
     function layoutParams(): AnimeLayoutParams {
       const options: AnimeLayoutParams = { ...parseOption(props, 'layoutOptions') }
       if (options.ease === undefined && options.duration === undefined) options.ease = builtInEase
-      options.trackTargetsOnly = parseOption(props, 'trackTargetsOnly')
       const elements = parseOption(props, 'elements')
       return elements === undefined ? options : { ...options, children: resolveElements(elements) }
     }
@@ -87,7 +86,6 @@ export default defineComponent(
       elements: null,
       layoutOptions: null,
       completeOnTabHidden: { type: Boolean, default: undefined },
-      trackTargetsOnly: { type: Boolean, default: undefined },
     },
   },
 )

@@ -1,34 +1,7 @@
-diff --git a/layout/layout.js b/layout/layout.js
-index 832a637..1cd30a2 100644
---- a/layout/layout.js
-+++ b/layout/layout.js
-@@ -9,8 +9,8 @@ import { mergeObjects, isUnd, isSvg, isStr, isFnc, isArr } from '../core/helpers
- import { registerTargets } from '../core/targets.js';
- import { parseEase } from '../easings/eases/parser.js';
- import { setValue, getFunctionValue } from '../core/values.js';
--import { createTimeline } from '../timeline/timeline.js';
--import { waapi } from '../waapi/waapi.js';
-+import { createTimeline } from 'animejs/timeline';
-+import { waapi } from 'animejs/waapi';
- import { scope, defaults, globals } from '../core/globals.js';
- 
- /**
-@@ -32,13 +32,13 @@ import { scope, defaults, globals } from '../core/globals.js';
- /**
-  * @import {
-  *   Timeline,
-- * } from '../timeline/timeline.js'
-+ * } from 'animejs/timeline'
- */
- 
- /**
-  * @import {
-  *   WAAPIAnimation
-- * } from '../waapi/waapi.js'
-+ * } from 'animejs/waapi'
- */
- 
- /**
+diff --git a/dist/modules/layout/layout.js b/dist/modules/layout/layout.js
+index 832a637..5485da1 100644
+--- a/dist/modules/layout/layout.js
++++ b/dist/modules/layout/layout.js
 @@ -577,12 +577,39 @@ class LayoutSnapshot {
      this.scrollX = 0;
      /** @type {Number} */
@@ -130,16 +103,3 @@ index 832a637..1cd30a2 100644
            // All children must be in position absolute or fixed
            if ($el !== $root || this.absoluteCoords) {
              $el.style.position = this.absoluteCoords ? 'fixed' : 'absolute';
-diff --git a/core/values.js b/core/values.js
-index a70cd3d..50c6dab 100644
---- a/core/values.js
-+++ b/core/values.js
-@@ -8,7 +8,7 @@
- import { valueTypes, unitsExecRgx, digitWithExponentRgx, tweenTypes, isDomSymbol, isSvgSymbol, validTransforms, shortTransforms, proxyTargetSymbol, cssVariableMatchRgx, emptyString, cssVarPrefix } from './consts.js';
- import { isUnd, isCol, isValidSVGAttribute, stringStartsWith, isFnc, isStr, round, lerp, cloneArray } from './helpers.js';
- import { parseInlineTransforms } from './transforms.js';
--import { resolveAdapterEntry } from '../adapters/registry.js';
-+const resolveAdapterEntry = () => null;
- import { convertColorStringValuesToRgbaArray } from './colors.js';
- 
- /**
