@@ -60,3 +60,7 @@ Temporary Items
 
 # Social copy, kept local
 announcements/
+
+# Patched AnimeJS copy, rebuilt by `pnpm patch:animejs`
+experimental/core/*
+!experimental/core/.gitkeep
