@@ -37,4 +37,10 @@ else {
   for (const file of files) cpSync(join(modules, file), join(core, file), { recursive: true })
   const result = spawnSync('git', ['apply', '--directory=src/runtime/app/experimental/core', patch], { cwd: join(here, '..'), encoding: 'utf8' })
   if (result.status !== 0) throw new Error(`[nanime] patch does not apply to animejs@${version}:\n${result.stderr}`)
+  writeFileSync(join(core, 'layout', 'layout.d.ts'), `import type { DOMTargetSelector } from 'animejs'
+import type { AutoLayout, AutoLayoutParams } from 'animejs/layout'
+import type { TrackTargetsOnlyOptions } from '../../../public/types/features'
+
+export declare function createLayout(root: DOMTargetSelector, params?: AutoLayoutParams & TrackTargetsOnlyOptions): AutoLayout
+`)
 }

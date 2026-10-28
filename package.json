@@ -62,7 +62,7 @@
     "dev:prepare": "pnpm patch:animejs && nuxt-module-build build --stub && nuxt-module-build prepare && pnpm -C docs prepare",
     "release": "pnpm lint && pnpm test && pnpm prepack && changelogen --release && git push --follow-tags",
     "build": "pnpm prepare && npm run prepack",
-    "prepare": "nuxt-module-build prepare",
+    "prepare": "pnpm patch:animejs && nuxt-module-build prepare",
     "docs:build": "pnpm -C docs build",
     "docs:prepare": "pnpm -C docs prepare",
     "lint": "eslint .",

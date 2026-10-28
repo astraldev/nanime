@@ -6,24 +6,41 @@ import { isMotionReduced } from './reduced-motion'
 
 type PinnedStyle = 'box-sizing' | 'line-height' | 'position' | 'white-space'
 
-function readOneLineTexts(root: Element) {
+function hasOwnText(element: Element) {
+  return [...element.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+}
+
+function getTrackedElements(layout: AutoLayout) {
+  return [...layout.oldState.nodes.values()].map(node => node.$el)
+}
+
+function readOneLineTexts(root: Element, tracked: Iterable<Element> | null) {
   const checked = new Set<HTMLElement>()
   const oneLine = new Set<HTMLElement>()
   const range = document.createRange()
   if (typeof range.getClientRects !== 'function') return oneLine
+  const check = (element: HTMLElement) => {
+    if (checked.has(element)) return
+    checked.add(element)
+    range.selectNodeContents(element)
+    const lines = new Set([...range.getClientRects()].map(rect => Math.round(rect.top)))
+    if (lines.size === 1) oneLine.add(element)
+  }
+  if (tracked) {
+    for (const element of tracked) {
+      if (element instanceof HTMLElement && hasOwnText(element)) check(element)
+    }
+    return oneLine
+  }
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
   for (let text = walker.nextNode(); text; text = walker.nextNode()) {
     const parent = text.parentElement
-    if (!(parent instanceof HTMLElement) || checked.has(parent) || !text.textContent?.trim()) continue
-    checked.add(parent)
-    range.selectNodeContents(parent)
-    const lines = new Set([...range.getClientRects()].map(rect => Math.round(rect.top)))
-    if (lines.size === 1) oneLine.add(parent)
+    if (parent instanceof HTMLElement && text.textContent?.trim()) check(parent)
   }
   return oneLine
 }
 
-export function markLayoutAnimations(layout: AutoLayout): AutoLayout {
+export function markLayoutAnimations(layout: AutoLayout, trackTargetsOnly = false): AutoLayout {
   const record = layout.record.bind(layout)
   const animate = layout.animate.bind(layout)
   const revert = layout.revert.bind(layout)
@@ -72,7 +89,8 @@ export function markLayoutAnimations(layout: AutoLayout): AutoLayout {
   layout.animate = (params: LayoutAnimationParams = {}) => {
     if (isMotionReduced()) return createTimeline({ onComplete: params.onComplete ?? layout.params.onComplete })
     release()
-    const oneLineTexts = readOneLineTexts(root)
+    const tracked = trackTargetsOnly ? getTrackedElements(layout) : null
+    const oneLineTexts = readOneLineTexts(root, tracked)
     const onComplete = params.onComplete ?? layout.params.onComplete
     const timeline = animate({
       ...params,
