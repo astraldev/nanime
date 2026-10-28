@@ -51,7 +51,7 @@ export function useComposableDefaults<Name extends keyof NanimeComposableDefault
 }
 
 export function useComponentDefaults<Name extends ComponentName>(name: Name) {
-  const provided = inject(PROVIDED_DEFAULTS, null)
+  const provided = hasInjectionContext() ? inject(PROVIDED_DEFAULTS, null) : null
   const config = useNanimeConfig()
   const preset = useActivePreset()
 
