@@ -100,3 +100,11 @@ async function toggleWide() {
   `await nextTick()`, `layout.animate()`, in that order.
 
 Docs: https://nanimejs.netlify.app/composables/use-anime-layout
+
+## Very large scenes
+
+`createLayout()` walks every descendant of its root on each update. When a
+layout holds hundreds of elements and the cost shows up as jank, patch the
+installed Anime.js so it measures only the named targets, their ancestors and
+the siblings of both: see [patch-animejs-tracked-layout](../../patch-animejs-tracked-layout/SKILL.md).
+It is an install patch, not a nanime option, and it keeps the same public API.

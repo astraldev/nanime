@@ -18,9 +18,6 @@ export default createConfigForNuxt({
 })
   .append([
     {
-      ignores: ['src/runtime/app/experimental/core/**'],
-    },
-    {
       rules: {
         'vue/multi-word-component-names': 'off',
       },

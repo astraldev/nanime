@@ -1,9 +1,3 @@
-declare global {
-  interface NanimeExperimentalLayoutOptions {
-    trackTargetsOnly?: boolean
-  }
-}
-
 export * from '../../src/runtime/app/public/composables'
 export * from '../../src/runtime/app/public/types'
 export * from '../../src/runtime/app/public/easings'

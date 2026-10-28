@@ -2,7 +2,6 @@ import type { ComponentPublicInstance } from 'vue'
 import type { AnimationParams } from 'animejs'
 import type { AutoLayoutParams } from 'animejs/layout'
 import type { AnimeMoveParams, AnimeTransitionStyleName, ConfigTransitionStyleName } from './transitions'
-import type {} from './features'
 
 /** Order of the leave and enter animations when one element replaces another. */
 export type AnimeTransitionMode = 'in-out' | 'out-in' | 'default'
@@ -128,8 +127,8 @@ type AnimeLayoutElement = string | HTMLElement | SVGElement | ComponentPublicIns
  */
 export type AnimeLayoutElements = AnimeLayoutElement | readonly (AnimeLayoutElement | readonly AnimeLayoutElement[])[]
 
-/** Props of `<AnimeLayoutGroup>`, plus the experimental ones enabled in the module options. */
-export interface AnimeLayoutGroupProps extends NanimeExperimentalLayoutOptions {
+/** Props of `<AnimeLayoutGroup>`. */
+export interface AnimeLayoutGroupProps {
   /**
    * Element rendered around the children.
    * @default 'div'
