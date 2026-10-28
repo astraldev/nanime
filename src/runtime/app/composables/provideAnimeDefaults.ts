@@ -1,6 +1,6 @@
 import { computed, inject, provide, toValue, type MaybeRefOrGetter } from 'vue'
 import type { NanimeDefaults } from '../public/types'
-import { PROVIDED_DEFAULTS } from '../utils/component-defaults'
+import { PROVIDED_DEFAULTS } from '../utils/config'
 
 /**
  * Sets default props for the nanime components, and default parameters for
@@ -18,6 +18,13 @@ import { PROVIDED_DEFAULTS } from '../utils/component-defaults'
  * `composables.animate` and `composables.draggable` work the same way, each
  * replacing the outer one whole and falling back to `nanime.composables`.
  * Parameters passed to the composable call win.
+ *
+ * `keepTime` is the default for the composables inside, below a composable's
+ * own `keepTime` option and above `app.config.ts`.
+ *
+ * `preset` swaps the preset for everything inside, replacing the one set higher
+ * up or in `nanime.preset` in `app.config.ts`. A preset is the lowest layer,
+ * below the props, this call and `app.config.ts`.
  */
 export function provideAnimeDefaults(defaults: MaybeRefOrGetter<NanimeDefaults>) {
   const outer = inject(PROVIDED_DEFAULTS, null)
@@ -30,6 +37,8 @@ export function provideAnimeDefaults(defaults: MaybeRefOrGetter<NanimeDefaults>)
       transition: own.transition ?? above?.transition,
       transitionGroup: own.transitionGroup ?? above?.transitionGroup,
       layoutGroup: own.layoutGroup ?? above?.layoutGroup,
+      preset: own.preset ?? above?.preset,
+      keepTime: own.keepTime ?? above?.keepTime,
       composables: {
         animate: own.composables?.animate ?? above?.composables?.animate,
         draggable: own.composables?.draggable ?? above?.composables?.draggable,

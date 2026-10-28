@@ -4,6 +4,7 @@ import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { onTabHidden } from '../utils/tab-hidden'
 import { useComponentDefaults } from '../utils/component-defaults'
 import { createTransitionRunner } from '../transitions/runner'
+import { useReducedMotion } from '../utils/reduced-motion'
 import { useTransitionStyles } from '../transitions/resolve'
 import { fade } from '../transitions/styles/fade'
 
@@ -13,7 +14,9 @@ export default defineComponent(
   (props: AnimeTransitionProps, { slots }) => {
     const { parseAnimation, parseOption } = useComponentDefaults('transition')
     const styles = useTransitionStyles(fade)
+    const { withReducedMotion } = useReducedMotion()
     const runner = createTransitionRunner({
+      withReducedMotion,
       enter: () => styles.enter(parseAnimation(props).enter),
       leave: () => styles.leave(parseAnimation(props).leave),
     })

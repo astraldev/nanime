@@ -2,7 +2,7 @@ import type { AutoLayout, LayoutAnimationParams } from 'animejs/layout'
 import type { Timeline } from 'animejs'
 import { createTimeline } from 'animejs/timeline'
 import { LAYOUT_ANIMATING_ATTRIBUTE } from './markers'
-import { isMotionReduced } from './reduced-motion'
+import type { IsReducedMotion } from './reduced-motion'
 
 type PinnedStyle = 'box-sizing' | 'line-height' | 'position' | 'white-space'
 
@@ -40,7 +40,7 @@ function readOneLineTexts(root: Element, tracked: Iterable<Element> | null) {
   return oneLine
 }
 
-export function markLayoutAnimations(layout: AutoLayout, trackTargetsOnly = false): AutoLayout {
+export function markLayoutAnimations(layout: AutoLayout, isReduced: IsReducedMotion, trackTargetsOnly = false): AutoLayout {
   const record = layout.record.bind(layout)
   const animate = layout.animate.bind(layout)
   const revert = layout.revert.bind(layout)
@@ -74,7 +74,7 @@ export function markLayoutAnimations(layout: AutoLayout, trackTargetsOnly = fals
   }
 
   layout.record = () => {
-    if (isMotionReduced()) return layout
+    if (isReduced()) return layout
     record()
     release()
     return layout
@@ -87,7 +87,7 @@ export function markLayoutAnimations(layout: AutoLayout, trackTargetsOnly = fals
   }
 
   layout.animate = (params: LayoutAnimationParams = {}) => {
-    if (isMotionReduced()) return createTimeline({ onComplete: params.onComplete ?? layout.params.onComplete })
+    if (isReduced()) return createTimeline({ onComplete: params.onComplete ?? layout.params.onComplete })
     release()
     const tracked = trackTargetsOnly ? getTrackedElements(layout) : null
     const oneLineTexts = readOneLineTexts(root, tracked)

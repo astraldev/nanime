@@ -1,5 +1,5 @@
 import type {
-  AnimeLayoutGroupProps,
+  NanimeComponentDefaults,
   AnimeTransitionGroupProps,
   AnimeTransitionProps,
   AnimeTransitionStyle,
@@ -20,7 +20,7 @@ export interface AnimationPreset<Shared extends string = string> {
     /** Default props for `<AnimeTransitionGroup>`. */
     transitionGroup: Omit<AnimeTransitionGroupProps<PresetStyleName<Shared>>, 'deps'>
     /** Default props for `<AnimeLayoutGroup>`. */
-    layout: Omit<AnimeLayoutGroupProps, 'deps' | 'elements'>
+    layoutGroup: NonNullable<NanimeComponentDefaults['layoutGroup']>
   }
   /** Default parameters for each composable. */
   composables: Partial<NanimeComposableDefaults>

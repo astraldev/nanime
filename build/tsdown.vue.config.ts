@@ -10,7 +10,6 @@ export default defineConfig({
   unbundle: true,
   css: { inject: true },
   alias: {
-    '#imports': nuxtShim,
     'nuxt/schema': nuxtShim,
   },
   define: {

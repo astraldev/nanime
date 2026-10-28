@@ -2,6 +2,7 @@ import type { AnimationParams, DraggableParams } from 'animejs'
 import type { AnimeTransitionStyle } from './transitions'
 import type { NanimeComponentDefaults } from './components'
 import type { NanimeReducedMotion } from './options'
+import type { AnimationPreset } from '../../utils/presets'
 
 /** Default `useDraggable()` options. `trigger` and `container` belong to one element, so they are not defaults. */
 export type DraggableDefaults = Omit<DraggableParams, 'trigger' | 'container'>
@@ -14,16 +15,24 @@ export interface NanimeComposableDefaults {
   draggable?: DraggableDefaults
 }
 
-/** What `provideAnimeDefaults()` accepts: component defaults plus a `composables` entry. */
+/** What `provideAnimeDefaults()` accepts: component defaults, a `composables` entry and a `preset`. */
 export interface NanimeDefaults extends NanimeComponentDefaults {
   /** Default parameters for each composable. */
   composables?: NanimeComposableDefaults
+  /** Preset for everything inside, replacing the one set higher up. A preset sits below `app.config.ts` and the props. */
+  preset?: AnimationPreset
+  /** Default `keepTime` for the composables inside. A composable's own `keepTime` option wins. */
+  keepTime?: boolean
 }
 
-/** The `nanime` key in `app.config.ts`. */
-export interface NanimeAppConfig {
+/** The `nanime` key in `app.config.ts`, which sits over the module options. */
+export interface NanimeConfig {
+  /** Overrides `keepTime` from `nuxt.config.ts`. A composable's own `keepTime` option and `provideAnimeDefaults()` win over it. */
+  keepTime?: boolean
   /** Overrides `reducedMotion` from `nuxt.config.ts`, and can change at runtime. */
   reducedMotion?: NanimeReducedMotion
+  /** The preset for the whole app. Import one from `nanime/presets/*` or write your own. Props, `provideAnimeDefaults()` and the rest of this config win over it. */
+  preset?: AnimationPreset
   /** Named transition styles. A name shared with a built-in replaces it. */
   transitions?: Record<string, AnimeTransitionStyle>
   /** Default props for each component. A prop passed to the component wins. */

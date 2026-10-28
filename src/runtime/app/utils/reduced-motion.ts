@@ -1,4 +1,4 @@
-import { useAppConfig, useRuntimeConfig } from '#imports'
+import { useNanimeConfig } from './config'
 
 let systemPrefersReduced = false
 let listening = false
@@ -13,11 +13,7 @@ function listen() {
   })
 }
 
-export function isMotionReduced() {
-  listen()
-  const setting = useAppConfig().nanime?.reducedMotion ?? useRuntimeConfig().public.nanime?.reducedMotion ?? 'never'
-  return setting === 'always' || (setting === 'system' && systemPrefersReduced)
-}
+export type IsReducedMotion = () => boolean
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   if (typeof value !== 'object' || value === null) return false
@@ -42,7 +38,21 @@ export function zeroNestedTimings<Params extends object>(params: Params): Params
   return copy
 }
 
-export function withReducedMotion<Params extends object>(params: Params): Params {
-  if (!isMotionReduced()) return params
-  return Object.assign(zeroNestedTimings(params), { duration: 0, delay: 0, loopDelay: 0, loop: 0, ease: 'linear' })
+export function useReducedMotion() {
+  const config = useNanimeConfig()
+
+  const isReduced: IsReducedMotion = () => {
+    listen()
+    const setting = config().reducedMotion ?? 'never'
+    return setting === 'always' || (setting === 'system' && systemPrefersReduced)
+  }
+
+  function withReducedMotion<Params extends object>(params: Params): Params {
+    if (!isReduced()) return params
+    return Object.assign(zeroNestedTimings(params), { duration: 0, delay: 0, loopDelay: 0, loop: 0, ease: 'linear' })
+  }
+
+  return { isReduced, withReducedMotion }
 }
+
+export type WithReducedMotion = ReturnType<typeof useReducedMotion>['withReducedMotion']
