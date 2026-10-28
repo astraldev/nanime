@@ -1,6 +1,8 @@
 import { nextTick, onMounted, shallowRef, toValue, watch, type MaybeRef, type MaybeRefOrGetter } from 'vue'
 import { createLayout, type AutoLayout, type AutoLayoutParams, type LayoutAnimationParams } from 'animejs/layout'
 import type { DOMTargetSelector } from 'animejs'
+import { loadPatchedLayout, resolveTrackTargetsOnly } from '../experimental/track-targets-only'
+import type { AnimeLayoutParams, TrackTargetsOnlyOptions } from '../public/types'
 import { normalizeLayoutTarget } from '../utils/targets'
 import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
@@ -33,8 +35,8 @@ function animateUntilSettled(layout: AutoLayout | null, params?: LayoutAnimation
   })
 }
 
-function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams, current: () => AutoLayout | null): NanimeLayout {
-  const layout = markLayoutAnimations(createLayout(root, { ...params }))
+function createNanimeLayout(base: AutoLayout, trackTargetsOnly: boolean, current: () => AutoLayout | null): NanimeLayout {
+  const layout = markLayoutAnimations(base, trackTargetsOnly)
   const record = layout.record.bind(layout)
   layout.record = () => {
     record()
@@ -80,7 +82,7 @@ function createNanimeLayout(root: DOMTargetSelector, params: AutoLayoutParams, c
  */
 export function useAnimeLayout(
   target: MaybeRef<Parameters<typeof normalizeLayoutTarget>[0]>,
-  parameters?: MaybeRefOrGetter<AutoLayoutParams>,
+  parameters?: MaybeRefOrGetter<AnimeLayoutParams>,
 ): BufferedProxyReturns<NanimeLayout> {
   const mounted = useMounted()
   const layout = shallowRef<NanimeLayout | null>(null)
@@ -90,12 +92,25 @@ export function useAnimeLayout(
   })
 
   const resolveRoot = () => normalizeLayoutTarget(toValue(target))
-  const resolveParameters = () => toValue(parameters) || {}
+  const resolveParameters = (): AutoLayoutParams & TrackTargetsOnlyOptions => toValue(parameters) || {}
 
-  const rebuildLayout = (root: DOMTargetSelector, params: AutoLayoutParams) => {
-    layout.value?.revert()
-    layout.value = createNanimeLayout(root, params, () => layout.value)
+  let generation = 0
+
+  const attach = (base: AutoLayout, trackTargetsOnly: boolean) => {
+    layout.value = createNanimeLayout(base, trackTargetsOnly, () => layout.value)
     flushBuffer()
+  }
+
+  const rebuildLayout = (root: DOMTargetSelector, params: AutoLayoutParams & TrackTargetsOnlyOptions) => {
+    const build = ++generation
+    const trackTargetsOnly = resolveTrackTargetsOnly(params.trackTargetsOnly)
+    layout.value?.revert()
+    layout.value = null
+    const create = trackTargetsOnly ? loadPatchedLayout() : createLayout
+    if (!(create instanceof Promise)) return attach(create(root, { ...params }), trackTargetsOnly)
+    void create.then((createPatched) => {
+      if (build === generation) attach(createPatched(root, { ...params }), true)
+    })
   }
 
   let previous: { root: DOMTargetSelector, snapshot: Record<string, unknown> } | null = null
@@ -119,6 +134,7 @@ export function useAnimeLayout(
   onMounted(sync)
 
   tryOnScopeDispose(() => {
+    generation++
     layout.value?.revert()
     layout.value = null
   })

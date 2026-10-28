@@ -1,8 +1,7 @@
 import { defineComponent, h, onBeforeUpdate, onUpdated, shallowRef, useId, warn } from 'vue'
-import type { AutoLayoutParams } from 'animejs/layout'
 import { spring } from 'animejs/easings'
 import type { DOMTargetSelector } from 'animejs'
-import type { AnimeLayoutElements, AnimeLayoutGroupProps } from '../public/types'
+import type { AnimeLayoutElements, AnimeLayoutGroupProps, AnimeLayoutParams } from '../public/types'
 import { useAnimeLayout } from '../composables/useAnimeLayout'
 import { assignDefined, useComponentDefaults } from '../utils/component-defaults'
 import { watchDeps } from '../utils/deps'
@@ -54,9 +53,10 @@ export default defineComponent(
       })
     }
 
-    function layoutParams(): AutoLayoutParams {
-      const options = assignDefined<AutoLayoutParams>({}, ...layers.value.map(layer => layer.layoutOptions), props.layoutOptions)
+    function layoutParams(): AnimeLayoutParams {
+      const options = assignDefined<AnimeLayoutParams>({}, ...layers.value.map(layer => layer.layoutOptions), props.layoutOptions)
       if (options.ease === undefined && options.duration === undefined) options.ease = builtInEase
+      options.trackTargetsOnly = option(props, 'trackTargetsOnly')
       const elements = option(props, 'elements')
       return elements === undefined ? options : { ...options, children: resolveElements(elements) }
     }
@@ -87,6 +87,7 @@ export default defineComponent(
       elements: null,
       layoutOptions: null,
       completeOnTabHidden: { type: Boolean, default: undefined },
+      trackTargetsOnly: { type: Boolean, default: undefined },
     },
   },
 )
