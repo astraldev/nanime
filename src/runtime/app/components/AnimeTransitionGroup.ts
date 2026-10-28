@@ -124,7 +124,7 @@ export default defineComponent(
       if (!moveParams() || !(root instanceof HTMLElement)) return dropLayout()
       if (layout?.root !== root) dropLayout()
       runLayout(root, () => {
-        layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }), isReduced)
+        layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }), { isReduced })
         layout.record()
       })
       recorded = true
