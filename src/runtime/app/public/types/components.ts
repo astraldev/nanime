@@ -7,8 +7,27 @@ import type {} from './features'
 /** Order of the leave and enter animations when one element replaces another. */
 export type AnimeTransitionMode = 'in-out' | 'out-in' | 'default'
 
+/** `enter` and `leave` of one transition, each a transition style name or Anime.js params. */
+export interface AnimeTransitionAnimation<StyleName extends string = AnimeTransitionStyleName> {
+  /** How the element appears. */
+  enter?: StyleName | AnimationParams
+  /** How the element disappears. */
+  leave?: StyleName | AnimationParams
+}
+
+/** `enter`, `leave` and `move` of `<AnimeTransitionGroup>`. */
+export interface AnimeTransitionGroupAnimation<StyleName extends string = AnimeTransitionStyleName> extends AnimeTransitionAnimation<StyleName> {
+  /** How items move to a new position: a style name, `{ duration, delay, ease }`, or `false` to skip moves. */
+  move?: StyleName | AnimeMoveParams | false
+}
+
 /** Props of `<AnimeTransition>`. */
 export interface AnimeTransitionProps<StyleName extends string = AnimeTransitionStyleName> {
+  /**
+   * Enter and leave together: a transition style name that supplies both, or
+   * `{ enter, leave }`. `enterAnimation` and `leaveAnimation` win for their part.
+   */
+  animation?: StyleName | AnimeTransitionAnimation<StyleName>
   /**
    * How the element appears: a transition style name, or Anime.js params.
    * @default 'fade'
@@ -46,6 +65,12 @@ export interface AnimeTransitionGroupProps<StyleName extends string = AnimeTrans
    * @default 'div'
    */
   tag?: string
+  /**
+   * Enter, leave and move together: a transition style name that supplies all
+   * three, or `{ enter, leave, move }`. `enterAnimation`, `leaveAnimation` and
+   * `moveAnimation` win for their part.
+   */
+  animation?: StyleName | AnimeTransitionGroupAnimation<StyleName>
   /**
    * How items appear: a transition style name, or Anime.js params.
    * @default a fade in over 250ms, `out(3)`
@@ -132,7 +157,8 @@ export interface AnimeLayoutGroupProps extends NanimeExperimentalLayoutOptions {
    */
   shallow?: boolean
   /**
-   * Anime.js `createLayout()` params, merged over the configured defaults.
+   * Anime.js `createLayout()` params. They replace the `layoutOptions` set
+   * through `provideAnimeDefaults()` or `app.config.ts` as a whole.
    * Use `elements` instead of `children`. Setting `ease` or `duration`
    * replaces the default spring.
    * @default { ease: spring({ bounce: 0.15, duration: 300 }) }
