@@ -1,10 +1,9 @@
 import type {
-  AnimationParams,
   AnimeLayoutGroupProps,
   AnimeTransitionGroupProps,
   AnimeTransitionProps,
   AnimeTransitionStyle,
-  DraggableParams,
+  NanimeComposableDefaults,
 } from '../public/types'
 import type { ConfigTransitionStyleName } from '../public/types/transitions'
 
@@ -24,12 +23,7 @@ export interface AnimationPreset<Shared extends string = string> {
     layout: Omit<AnimeLayoutGroupProps, 'deps' | 'elements'>
   }
   /** Default parameters for each composable. */
-  composables: {
-    /** Default parameters for `useAnimate()`. */
-    animate: AnimationParams
-    /** Default parameters for `useDraggable()`. */
-    draggable: DraggableParams
-  }
+  composables: Partial<NanimeComposableDefaults>
 }
 
 /** Declares a preset, checking that the style names it uses are ones it defines or a built-in. */

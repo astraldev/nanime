@@ -10,6 +10,7 @@ import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/ins
 import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { resolveKeepTime } from '../utils/global-options'
+import { useComposableDefaults } from '../utils/component-defaults'
 import { withReducedMotion } from '../utils/reduced-motion'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
@@ -38,7 +39,8 @@ export function useAnimate(
   const createKeepingTime = keepsTime ? keepTime(create) : create
 
   const resolveTargets = () => normalizeAnimeTarget(target)
-  const resolveParameters = () => toValue(parameters) || {}
+  const resolveDefaults = useComposableDefaults('animate')
+  const resolveParameters = (): AnimationParams => ({ ...resolveDefaults(), ...toValue(parameters) })
   const resolveBoundParameters = () => unwrapNanimeProxies(resolveParameters())
 
   const rebuildAnimation = (targets: TargetsParam, params: AnimationParams) => {

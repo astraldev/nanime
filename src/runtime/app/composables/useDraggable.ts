@@ -6,6 +6,7 @@ import { createDraggable } from 'animejs/draggable'
 import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
 import { normalizeReffable, type MakeRefable } from '../utils/instance/make-reffable'
 import type { Prettify } from '../utils/instance/prettify'
+import { useComposableDefaults } from '../utils/component-defaults'
 
 const REFFABLE_PROPS = [
   'containerPadding',
@@ -49,6 +50,7 @@ export function useDraggable(
   options?: DraggableOptions,
 ): BufferedProxyReturns<Draggable> {
   const mounted = useMounted()
+  const resolveDefaults = useComposableDefaults('draggable')
   const dragController = shallowRef<Draggable | null>(null)
 
   const { proxy, flushBuffer } = createBufferedProxy<Draggable>(dragController, {
@@ -78,7 +80,9 @@ export function useDraggable(
         return { ...axis, snap: (d: Draggable) => normalizeReffable(snap, d) }
       }
 
+      const defaults = resolveDefaults()
       const dragEngine = createDraggable(targets, {
+        ...defaults,
         ...options,
         trigger: trigger || undefined,
         container: container || undefined,
@@ -91,8 +95,8 @@ export function useDraggable(
           })
           return acc
         })(),
-        x: resolveAxis(options?.x),
-        y: resolveAxis(options?.y),
+        x: resolveAxis(options?.x ?? defaults?.x),
+        y: resolveAxis(options?.y ?? defaults?.y),
       })
 
       if (!enabled) dragEngine.disable()
