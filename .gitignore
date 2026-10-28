@@ -62,5 +62,5 @@ Temporary Items
 announcements/
 
 # Patched AnimeJS copy, rebuilt by `pnpm patch:animejs`
-experimental/core/*
-!experimental/core/.gitkeep
+src/runtime/app/experimental/core/*
+!src/runtime/app/experimental/core/.gitkeep

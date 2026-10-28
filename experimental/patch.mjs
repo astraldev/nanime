@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const core = join(here, 'core')
+const core = join(here, '..', 'src', 'runtime', 'app', 'experimental', 'core')
 const manifest = createRequire(import.meta.url).resolve('animejs/package.json')
 const { version } = JSON.parse(readFileSync(manifest, 'utf8'))
 const modules = join(dirname(manifest), 'dist', 'modules')
@@ -35,6 +35,6 @@ if (process.argv[2] === 'create') {
 else {
   if (!existsSync(patch)) throw new Error(`[nanime] no patch for animejs@${version}; regenerate it against this version`)
   for (const file of files) cpSync(join(modules, file), join(core, file), { recursive: true })
-  const result = spawnSync('git', ['apply', '--directory=experimental/core', patch], { cwd: join(here, '..'), encoding: 'utf8' })
+  const result = spawnSync('git', ['apply', '--directory=src/runtime/app/experimental/core', patch], { cwd: join(here, '..'), encoding: 'utf8' })
   if (result.status !== 0) throw new Error(`[nanime] patch does not apply to animejs@${version}:\n${result.stderr}`)
 }
