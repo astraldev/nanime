@@ -37,7 +37,7 @@ function animateUntilSettled(layout: AutoLayout | null, params?: LayoutAnimation
 }
 
 function createNanimeLayout(base: AutoLayout, isReduced: IsReducedMotion, trackTargetsOnly: boolean, current: () => AutoLayout | null): NanimeLayout {
-  const layout = markLayoutAnimations(base, isReduced, trackTargetsOnly)
+  const layout = markLayoutAnimations(base, { trackTargetsOnly, isReduced })
   const record = layout.record.bind(layout)
   layout.record = () => {
     record()

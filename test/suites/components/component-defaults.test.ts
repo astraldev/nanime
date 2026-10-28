@@ -1,9 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { defineComponent, h, provide } from 'vue'
+import { defineComponent, h } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { useAppConfig } from '#imports'
 import { useComponentDefaults } from '../../../src/runtime/app/utils/component-defaults'
-import { NANIME_CONFIG } from '../../../src/runtime/app/utils/config'
 import { provideAnimeDefaults } from '../../../src/runtime/app/composables/provideAnimeDefaults'
 import type { AnimeLayoutGroupProps, AnimeTransitionGroupProps, AnimeTransitionProps, NanimeComponentDefaults } from '../../../src/runtime/app/public/types'
 
@@ -51,10 +50,7 @@ function mountWith(...layers: NanimeComponentDefaults[]) {
     (child, defaults) => () => h(Provider, { defaults }, { default: child }),
     () => h(Probe),
   )
-  return mountSuspended(defineComponent(() => {
-    provide(NANIME_CONFIG, () => useAppConfig().nanime ?? {})
-    return tree
-  }))
+  return mountSuspended(defineComponent(() => tree))
 }
 
 describe('component defaults', () => {

@@ -1,7 +1,8 @@
 import { defineNuxtPlugin, useAppConfig, useRuntimeConfig } from '#imports'
+import type { Plugin } from '#app'
 import { NANIME_CONFIG } from './utils/config'
 
-export default defineNuxtPlugin((nuxtApp) => {
+const plugin: Plugin = defineNuxtPlugin((nuxtApp) => {
   const appConfig = useAppConfig()
   const runtime = useRuntimeConfig().public.nanime
 
@@ -14,3 +15,5 @@ export default defineNuxtPlugin((nuxtApp) => {
     composables: appConfig.nanime?.composables,
   }))
 })
+
+export default plugin

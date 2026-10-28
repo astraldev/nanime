@@ -51,6 +51,7 @@ export default defineConfig({
           environment: 'nuxt',
           environmentOptions: {
             nuxt: {
+              rootDir: fileURLToPath(new URL('./test/fixtures/basic', import.meta.url)),
               domEnvironment: 'jsdom',
             },
           },

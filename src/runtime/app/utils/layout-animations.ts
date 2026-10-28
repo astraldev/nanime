@@ -40,7 +40,12 @@ function readOneLineTexts(root: Element, tracked: Iterable<Element> | null) {
   return oneLine
 }
 
-export function markLayoutAnimations(layout: AutoLayout, isReduced: IsReducedMotion, trackTargetsOnly = false): AutoLayout {
+interface MarkLayoutOptions {
+  trackTargetsOnly?: boolean
+  isReduced?: IsReducedMotion
+}
+
+export function markLayoutAnimations(layout: AutoLayout, { trackTargetsOnly = false, isReduced = () => false }: MarkLayoutOptions = {}): AutoLayout {
   const record = layout.record.bind(layout)
   const animate = layout.animate.bind(layout)
   const revert = layout.revert.bind(layout)
