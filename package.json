@@ -56,10 +56,10 @@
     "skills"
   ],
   "scripts": {
-    "prepack": "nuxt-module-build build",
+    "prepack": "pnpm patch:animejs && nuxt-module-build build",
     "dev": "pnpm dev:prepare && pnpm -C docs dev",
     "dev:build": "pnpm -C docs build",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && pnpm -C docs prepare",
+    "dev:prepare": "pnpm patch:animejs && nuxt-module-build build --stub && nuxt-module-build prepare && pnpm -C docs prepare",
     "release": "pnpm lint && pnpm test && pnpm prepack && changelogen --release && git push --follow-tags",
     "build": "pnpm prepare && npm run prepack",
     "prepare": "nuxt-module-build prepare",
@@ -69,6 +69,8 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:types": "nuxt typecheck",
+    "patch:animejs": "node experimental/patch.mjs",
+    "patch:animejs:create": "node experimental/patch.mjs create",
     "clean": "rm -rf docs/.nuxt docs/.output .nuxt dist"
   },
   "dependencies": {
