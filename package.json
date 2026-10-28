@@ -38,6 +38,10 @@
     ".": {
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./vue": {
+      "types": "./dist/vue/index.d.mts",
+      "import": "./dist/vue/index.mjs"
     }
   },
   "main": "./dist/module.mjs",
@@ -45,6 +49,9 @@
     "*": {
       ".": [
         "./dist/types.d.mts"
+      ],
+      "vue": [
+        "./dist/vue/index.d.mts"
       ]
     }
   },
@@ -71,6 +78,7 @@
     "test:types": "nuxt typecheck",
     "patch:animejs": "node experimental/patch.mjs",
     "patch:animejs:create": "node experimental/patch.mjs create",
+    "build:vue": "tsdown --config build/tsdown.vue.config.ts",
     "clean": "rm -rf docs/.nuxt docs/.output .nuxt dist"
   },
   "dependencies": {
@@ -95,6 +103,9 @@
     "eslint": "catalog:tooling",
     "jsdom": "catalog:tooling",
     "lefthook": "catalog:tooling",
+    "@tsdown/css": "catalog:tooling",
+    "tsdown": "catalog:tooling",
+    "unrun": "catalog:tooling",
     "nuxt": "catalog:nuxt",
     "typescript": "catalog:nuxt",
     "vitest": "catalog:tooling",
