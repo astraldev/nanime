@@ -11,7 +11,7 @@ import { resolveKeepTime } from '../utils/global-options'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
-import { isMotionReduced, withReducedMotion } from '../utils/reduced-motion'
+import { useReducedMotion } from '../utils/reduced-motion'
 
 const CONTENT_METHODS = new Set([
   'add', 'set', 'remove', 'call', 'label', 'sync', 'stretch',
@@ -28,11 +28,6 @@ const CHAINABLE_METHODS = new Set([...CONTENT_METHODS, ...CONTROL_METHODS])
 const TARGET_METHODS = new Set(['set', 'remove'])
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
-
-function withReducedTimelineMotion(params: TimelineParams): TimelineParams {
-  if (!isMotionReduced()) return params
-  return { ...params, delay: 0, loopDelay: 0, loop: 0, defaults: withReducedMotion(params.defaults ?? {}) }
-}
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -56,6 +51,8 @@ export function useAnimeTimeline(
   const mounted = useMounted()
   const timeline = shallowRef<Timeline | null>(null)
 
+  const { isReduced, withReducedMotion } = useReducedMotion()
+
   const { proxy, flushBuffer } = createBufferedProxy<Timeline>(timeline, {
     chainableMethods: CHAINABLE_METHODS,
     replayMethods: CONTENT_METHODS,
@@ -77,6 +74,11 @@ export function useAnimeTimeline(
   })
 
   const resolveParameters = () => unwrapNanimeProxies(toValue(parameters) || {})
+
+  const withReducedTimelineMotion = (params: TimelineParams): TimelineParams => {
+    if (!isReduced()) return params
+    return { ...params, delay: 0, loopDelay: 0, loop: 0, defaults: withReducedMotion(params.defaults ?? {}) }
+  }
 
   const buildTimeline = (params: TimelineParams) => {
     const next = createTimeline(withReducedTimelineMotion(params))

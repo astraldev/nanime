@@ -7,7 +7,7 @@ import { waapi, type WAAPIAnimation } from 'animejs/waapi'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
-import { withReducedMotion } from '../utils/reduced-motion'
+import { useReducedMotion } from '../utils/reduced-motion'
 
 const callbacks = ['onComplete']
 
@@ -23,6 +23,9 @@ export function useWaapiAnimate(
 ): WAAPIAnimation {
   const flag = getAnimationComponentFlag()
   const mounted = useMounted()
+
+  const { withReducedMotion } = useReducedMotion()
+
   const animation = shallowRef(waapi.animate([], {}))
 
   const resolveTargets = () => normalizeWaapiAnimeTarget(target)

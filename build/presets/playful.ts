@@ -26,7 +26,7 @@ export default defineAnimationPreset({
   components: {
     transition: {},
     transitionGroup: {},
-    layout: {},
+    layoutGroup: {},
   },
 
   composables: {

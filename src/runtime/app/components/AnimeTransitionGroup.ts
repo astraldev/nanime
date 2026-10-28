@@ -6,7 +6,7 @@ import { onTabHidden } from '../utils/tab-hidden'
 import { useComponentDefaults } from '../utils/component-defaults'
 import { watchDeps } from '../utils/deps'
 import { markLayoutAnimations } from '../utils/layout-animations'
-import { isMotionReduced } from '../utils/reduced-motion'
+import { useReducedMotion } from '../utils/reduced-motion'
 import { MOVE_CLASS } from '../utils/markers'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
@@ -60,9 +60,10 @@ export default defineComponent(
     const instance = getCurrentInstance()
     const { parseAnimation, parseOption } = useComponentDefaults('transitionGroup')
     const styles = useTransitionStyles(transitionGroupStyle)
+    const { isReduced, withReducedMotion } = useReducedMotion()
     const enterParams = () => styles.enter(parseAnimation(props).enter)
     const leaveParams = () => styles.leave(parseAnimation(props).leave)
-    const moveParams = () => isMotionReduced() ? false : styles.move(parseAnimation(props).move)
+    const moveParams = () => isReduced() ? false : styles.move(parseAnimation(props).move)
     const absoluteLeave = () => parseOption(props, 'absoluteLeave') ?? true
     const transitionStyles = () => animatedStyles([enterParams(), leaveParams()])
 
@@ -76,6 +77,7 @@ export default defineComponent(
     const endedDuringMove = new Map<StyledElement, Styles>()
 
     const runner = createTransitionRunner({
+      withReducedMotion,
       enter: enterParams,
       leave: leaveParams,
       onLeaveStart(el) {
@@ -122,7 +124,7 @@ export default defineComponent(
       if (!moveParams() || !(root instanceof HTMLElement)) return dropLayout()
       if (layout?.root !== root) dropLayout()
       runLayout(root, () => {
-        layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }))
+        layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }), isReduced)
         layout.record()
       })
       recorded = true

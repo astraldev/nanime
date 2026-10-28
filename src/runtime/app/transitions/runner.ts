@@ -3,7 +3,7 @@ import { animate, type JSAnimation } from 'animejs/animation'
 import type { BaseTransitionProps } from 'vue'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 import { TRANSITION_ATTRIBUTE } from '../utils/markers'
-import { withReducedMotion } from '../utils/reduced-motion'
+import type { WithReducedMotion } from '../utils/reduced-motion'
 
 type StyledElement = HTMLElement | SVGElement
 
@@ -28,6 +28,7 @@ function resolveForBatch(params: AnimationParams, el: StyledElement, batch: Styl
 }
 
 export interface TransitionRunnerOptions {
+  withReducedMotion: WithReducedMotion
   enter: () => AnimationParams
   leave: () => AnimationParams
   onLeaveStart?: (el: Element) => void
@@ -69,7 +70,7 @@ export function createTransitionRunner(options: TransitionRunnerOptions) {
     }
 
     el.setAttribute(TRANSITION_ATTRIBUTE, '')
-    animation = animate(el, withReducedMotion({
+    animation = animate(el, options.withReducedMotion({
       ...resolveForBatch(params, el, batch),
       onComplete(self) {
         params.onComplete?.(self)

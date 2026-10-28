@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs'
-import { defineNuxtModule, createResolver, addComponent, addImportsDir, addTypeTemplate, addVitePlugin } from '@nuxt/kit'
-import { defu } from 'defu'
-import type { NanimeAppConfig, NanimeReducedMotion, NanimeTrackTargetsOnly } from './runtime/app/public/types'
+import { defineNuxtModule, createResolver, addComponent, addImportsDir, addPlugin, addTypeTemplate, addVitePlugin } from '@nuxt/kit'
+import type { NanimeConfig, NanimeReducedMotion, NanimeTrackTargetsOnly } from './runtime/app/public/types'
 
 export interface ModuleOptions {
   /**
@@ -53,10 +52,10 @@ declare module 'nuxt/schema' {
   }
   // CustomAppConfig types what useAppConfig() reads; AppConfigInput checks app.config.ts.
   interface CustomAppConfig {
-    nanime?: NanimeAppConfig
+    nanime?: NanimeConfig
   }
   interface AppConfigInput {
-    nanime?: NanimeAppConfig
+    nanime?: NanimeConfig
   }
 }
 
@@ -131,10 +130,13 @@ export default defineNuxtModule<ModuleOptions>({
       },
     }))
 
-    _nuxt.options.runtimeConfig.public.nanime = defu(
-      _nuxt.options.runtimeConfig.public.nanime,
-      { keepTime: _options.keepTime, reducedMotion: _options.reducedMotion },
-    )
+    const existing = _nuxt.options.runtimeConfig.public.nanime
+    _nuxt.options.runtimeConfig.public.nanime = {
+      keepTime: existing?.keepTime ?? _options.keepTime,
+      reducedMotion: existing?.reducedMotion ?? _options.reducedMotion,
+    }
+
+    addPlugin(resolver.resolve('./runtime/app/plugin'))
 
     if (_options.composables) {
       addImportsDir(resolver.resolve('./runtime/app/composables'))

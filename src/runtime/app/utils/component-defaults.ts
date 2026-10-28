@@ -1,7 +1,8 @@
-import { hasInjectionContext, inject, type ComputedRef, type InjectionKey } from 'vue'
+import { hasInjectionContext, inject } from 'vue'
 import type { AnimationParams } from 'animejs'
-import { useAppConfig } from '#imports'
-import type { AnimeMoveParams, NanimeComponentDefaults, NanimeComposableDefaults, NanimeDefaults } from '../public/types'
+import type { AnimeMoveParams, NanimeComponentDefaults, NanimeComposableDefaults } from '../public/types'
+import { PROVIDED_DEFAULTS, useNanimeConfig } from './config'
+import { useActivePreset } from './active-preset'
 
 type ComponentName = keyof NanimeComponentDefaults
 type Defaults<Name extends ComponentName> = NonNullable<NanimeComponentDefaults[Name]>
@@ -18,8 +19,6 @@ interface ResolvedAnimation {
   leave?: string | AnimationParams
   move?: string | AnimeMoveParams | false
 }
-
-export const PROVIDED_DEFAULTS: InjectionKey<ComputedRef<NanimeDefaults>> = Symbol('nanime-provided-defaults')
 
 function splitAnimation(options: AnimationOptions | undefined): ResolvedAnimation {
   const animation = options?.animation
@@ -44,15 +43,17 @@ function animationDefaultsOf(defaults: NanimeComponentDefaults | undefined, name
 }
 
 export function useComposableDefaults<Name extends keyof NanimeComposableDefaults>(name: Name): () => NanimeComposableDefaults[Name] {
-  const appConfig = useAppConfig()
   const provided = hasInjectionContext() ? inject(PROVIDED_DEFAULTS, null) : null
+  const config = useNanimeConfig()
+  const preset = useActivePreset()
 
-  return () => provided?.value.composables?.[name] ?? appConfig.nanime?.composables?.[name]
+  return () => provided?.value.composables?.[name] ?? config().composables?.[name] ?? preset()?.composables[name]
 }
 
 export function useComponentDefaults<Name extends ComponentName>(name: Name) {
-  const appConfig = useAppConfig()
   const provided = inject(PROVIDED_DEFAULTS, null)
+  const config = useNanimeConfig()
+  const preset = useActivePreset()
 
   function parseOption<Props, Key extends keyof Defaults<Name> & keyof Props>(props: Props, key: Key) {
     // the component's props
@@ -60,8 +61,10 @@ export function useComponentDefaults<Name extends ComponentName>(name: Name) {
     // provideAnimeDefaults(): the closest call that sets this component
     const providerEntry: Partial<Defaults<Name>> | undefined = provided?.value[name]
     // nanime.components in app.config.ts
-    const configEntry: Partial<Defaults<Name>> | undefined = appConfig.nanime?.components?.[name]
-    return fromProps ?? providerEntry?.[key] ?? configEntry?.[key]
+    const configEntry: Partial<Defaults<Name>> | undefined = config().components?.[name]
+    // the active preset
+    const presetEntry: Partial<Defaults<Name>> | undefined = preset()?.components[name]
+    return fromProps ?? providerEntry?.[key] ?? configEntry?.[key] ?? presetEntry?.[key]
   }
 
   function parseAnimation(props: AnimationOptions): ResolvedAnimation {
@@ -71,11 +74,13 @@ export function useComponentDefaults<Name extends ComponentName>(name: Name) {
     // provideAnimeDefaults(): the closest call that sets this component
     const fromProvider = splitAnimation(animationDefaultsOf(provided?.value, name))
     // nanime.components in app.config.ts
-    const fromConfig = splitAnimation(animationDefaultsOf(appConfig.nanime?.components, name))
+    const fromConfig = splitAnimation(animationDefaultsOf(config().components, name))
+    // the active preset
+    const fromPreset = splitAnimation(animationDefaultsOf(preset()?.components, name))
     return {
-      enter: fromProps.enter ?? fromProvider.enter ?? fromConfig.enter,
-      leave: fromProps.leave ?? fromProvider.leave ?? fromConfig.leave,
-      move: fromProps.move ?? fromProvider.move ?? fromConfig.move,
+      enter: fromProps.enter ?? fromProvider.enter ?? fromConfig.enter ?? fromPreset.enter,
+      leave: fromProps.leave ?? fromProvider.leave ?? fromConfig.leave ?? fromPreset.leave,
+      move: fromProps.move ?? fromProvider.move ?? fromConfig.move ?? fromPreset.move,
     }
   }
 

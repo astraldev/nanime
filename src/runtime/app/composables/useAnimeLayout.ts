@@ -8,6 +8,7 @@ import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import { markLayoutAnimations } from '../utils/layout-animations'
+import { useReducedMotion, type IsReducedMotion } from '../utils/reduced-motion'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 
@@ -35,8 +36,8 @@ function animateUntilSettled(layout: AutoLayout | null, params?: LayoutAnimation
   })
 }
 
-function createNanimeLayout(base: AutoLayout, trackTargetsOnly: boolean, current: () => AutoLayout | null): NanimeLayout {
-  const layout = markLayoutAnimations(base, trackTargetsOnly)
+function createNanimeLayout(base: AutoLayout, isReduced: IsReducedMotion, trackTargetsOnly: boolean, current: () => AutoLayout | null): NanimeLayout {
+  const layout = markLayoutAnimations(base, isReduced, trackTargetsOnly)
   const record = layout.record.bind(layout)
   layout.record = () => {
     record()
@@ -85,6 +86,7 @@ export function useAnimeLayout(
   parameters?: MaybeRefOrGetter<AnimeLayoutParams>,
 ): BufferedProxyReturns<NanimeLayout> {
   const mounted = useMounted()
+  const { isReduced } = useReducedMotion()
   const layout = shallowRef<NanimeLayout | null>(null)
 
   const { proxy, flushBuffer } = createBufferedProxy<NanimeLayout>(layout, {
@@ -97,7 +99,7 @@ export function useAnimeLayout(
   let generation = 0
 
   const attach = (base: AutoLayout, trackTargetsOnly: boolean) => {
-    layout.value = createNanimeLayout(base, trackTargetsOnly, () => layout.value)
+    layout.value = createNanimeLayout(base, isReduced, trackTargetsOnly, () => layout.value)
     flushBuffer()
   }
 
