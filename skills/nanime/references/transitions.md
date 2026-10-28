@@ -189,6 +189,7 @@ export default defineAppConfig({
 ```
 
 `provideAnimeDefaults({ ... })` takes the same shape and applies to the
-calling component's subtree. A prop passed to the component always wins, and
-an `undefined` default leaves the outer one in place. In app config,
+calling component's subtree. A prop passed to the component always wins. A
+provider's entry for a component replaces an outer call's entry for it
+whole, and is merged per prop over the one in app config. In app config,
 `layoutGroup.elements` takes selectors only.

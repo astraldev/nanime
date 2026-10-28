@@ -1,48 +1,76 @@
-import { computed, inject, toValue, type InjectionKey, type MaybeRefOrGetter } from 'vue'
+import { inject, type ComputedRef, type InjectionKey } from 'vue'
+import type { AnimationParams } from 'animejs'
 import { useAppConfig } from '#imports'
-import type { NanimeComponentDefaults } from '../public/types'
+import type { AnimeMoveParams, NanimeComponentDefaults } from '../public/types'
 
 type ComponentName = keyof NanimeComponentDefaults
 type Defaults<Name extends ComponentName> = NonNullable<NanimeComponentDefaults[Name]>
 
-export interface DefaultsLayer {
-  parent: DefaultsLayer | null
-  defaults: MaybeRefOrGetter<NanimeComponentDefaults>
+interface AnimationOptions {
+  animation?: string | ResolvedAnimation
+  enterAnimation?: string | AnimationParams
+  leaveAnimation?: string | AnimationParams
+  moveAnimation?: string | AnimeMoveParams | false
 }
 
-export const COMPONENT_DEFAULTS: InjectionKey<DefaultsLayer> = Symbol('nanime-component-defaults')
+interface ResolvedAnimation {
+  enter?: string | AnimationParams
+  leave?: string | AnimationParams
+  move?: string | AnimeMoveParams | false
+}
 
-export function assignDefined<T extends object>(target: Partial<T>, ...sources: (Partial<T> | undefined)[]): Partial<T> {
-  for (const source of sources) {
-    if (!source) continue
-    for (const key in source) {
-      const value = source[key]
-      if (value !== undefined) target[key] = value
+export const PROVIDED_DEFAULTS: InjectionKey<ComputedRef<NanimeComponentDefaults>> = Symbol('nanime-provided-defaults')
+
+function splitAnimation(options: AnimationOptions | undefined): ResolvedAnimation {
+  const animation = options?.animation
+  if (typeof animation === 'string') {
+    return {
+      enter: options?.enterAnimation ?? animation,
+      leave: options?.leaveAnimation ?? animation,
+      move: options?.moveAnimation ?? animation,
     }
   }
-  return target
+  return {
+    enter: options?.enterAnimation ?? animation?.enter,
+    leave: options?.leaveAnimation ?? animation?.leave,
+    move: options?.moveAnimation ?? animation?.move,
+  }
+}
+
+function animationDefaultsOf(defaults: NanimeComponentDefaults | undefined, name: ComponentName): AnimationOptions | undefined {
+  if (name === 'transition') return defaults?.transition
+  if (name === 'transitionGroup') return defaults?.transitionGroup
+  return undefined
 }
 
 export function useComponentDefaults<Name extends ComponentName>(name: Name) {
   const appConfig = useAppConfig()
-  const layer = inject(COMPONENT_DEFAULTS, null)
+  const provided = inject(PROVIDED_DEFAULTS, null)
 
-  const layers = computed(() => {
-    const list: Defaults<Name>[] = []
-    for (let current = layer; current; current = current.parent) {
-      const provided = toValue(current.defaults)[name]
-      if (provided) list.unshift(provided)
-    }
-    const configured = appConfig.nanime?.components?.[name]
-    if (configured) list.unshift(configured)
-    return list
-  })
-
-  const merged = computed(() => assignDefined<Defaults<Name>>({}, ...layers.value))
-
-  function option<Props, Key extends keyof Defaults<Name> & keyof Props>(props: Props, key: Key) {
-    return props[key] ?? merged.value[key]
+  function parseOption<Props, Key extends keyof Defaults<Name> & keyof Props>(props: Props, key: Key) {
+    // the component's props
+    const fromProps = props[key]
+    // provideAnimeDefaults(): the closest call that sets this component
+    const providerEntry: Partial<Defaults<Name>> | undefined = provided?.value[name]
+    // nanime.components in app.config.ts
+    const configEntry: Partial<Defaults<Name>> | undefined = appConfig.nanime?.components?.[name]
+    return fromProps ?? providerEntry?.[key] ?? configEntry?.[key]
   }
 
-  return { layers, merged, option }
+  function parseAnimation(props: AnimationOptions): ResolvedAnimation {
+    // Each source is split into enter, leave and move first, so a higher source wins per part.
+    // the component's props
+    const fromProps = splitAnimation(props)
+    // provideAnimeDefaults(): the closest call that sets this component
+    const fromProvider = splitAnimation(animationDefaultsOf(provided?.value, name))
+    // nanime.components in app.config.ts
+    const fromConfig = splitAnimation(animationDefaultsOf(appConfig.nanime?.components, name))
+    return {
+      enter: fromProps.enter ?? fromProvider.enter ?? fromConfig.enter,
+      leave: fromProps.leave ?? fromProvider.leave ?? fromConfig.leave,
+      move: fromProps.move ?? fromProvider.move ?? fromConfig.move,
+    }
+  }
+
+  return { parseOption, parseAnimation }
 }

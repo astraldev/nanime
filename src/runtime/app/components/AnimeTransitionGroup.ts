@@ -58,12 +58,12 @@ const pinnedStyles = (el: HTMLElement): Styles => ({
 export default defineComponent(
   (props: AnimeTransitionGroupProps, { slots }) => {
     const instance = getCurrentInstance()
-    const { option } = useComponentDefaults('transitionGroup')
+    const { parseAnimation, parseOption } = useComponentDefaults('transitionGroup')
     const styles = useTransitionStyles(transitionGroupStyle)
-    const enterParams = () => styles.enter(option(props, 'enterAnimation'))
-    const leaveParams = () => styles.leave(option(props, 'leaveAnimation'))
-    const moveParams = () => isMotionReduced() ? false : styles.move(option(props, 'moveAnimation'))
-    const absoluteLeave = () => option(props, 'absoluteLeave') ?? true
+    const enterParams = () => styles.enter(parseAnimation(props).enter)
+    const leaveParams = () => styles.leave(parseAnimation(props).leave)
+    const moveParams = () => isMotionReduced() ? false : styles.move(parseAnimation(props).move)
+    const absoluteLeave = () => parseOption(props, 'absoluteLeave') ?? true
     const transitionStyles = () => animatedStyles([enterParams(), leaveParams()])
 
     let layout: AutoLayout | null = null
@@ -143,7 +143,7 @@ export default defineComponent(
       endedDuringMove.clear()
     }
 
-    watchDeps(() => props.deps, option(props, 'shallow') ?? false, () => {
+    watchDeps(() => props.deps, parseOption(props, 'shallow') ?? false, () => {
       if (recorded) return
       recordMoves()
       nextTick(animateMoves)
@@ -155,7 +155,7 @@ export default defineComponent(
     })
 
     onTabHidden(() => {
-      if (!option(props, 'completeOnTabHidden')) return
+      if (!parseOption(props, 'completeOnTabHidden')) return
       runner.complete()
       layout?.timeline?.complete()
     })
@@ -201,10 +201,10 @@ export default defineComponent(
       return h(
         TransitionGroup,
         {
-          tag: option(props, 'tag') ?? 'div',
+          tag: parseOption(props, 'tag') ?? 'div',
           css: false,
           moveClass: MOVE_CLASS,
-          appear: option(props, 'appear'),
+          appear: parseOption(props, 'appear'),
           ...runner.hooks,
         },
         { default: () => children },
@@ -215,6 +215,7 @@ export default defineComponent(
     name: 'AnimeTransitionGroup',
     props: {
       tag: { type: String, default: undefined },
+      animation: null,
       enterAnimation: null,
       leaveAnimation: null,
       moveAnimation: null,

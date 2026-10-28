@@ -11,28 +11,29 @@ export type { AnimeTransitionMode, AnimeTransitionProps } from '../public/types'
 
 export default defineComponent(
   (props: AnimeTransitionProps, { slots }) => {
-    const { option } = useComponentDefaults('transition')
+    const { parseAnimation, parseOption } = useComponentDefaults('transition')
     const styles = useTransitionStyles(fade)
     const runner = createTransitionRunner({
-      enter: () => styles.enter(option(props, 'enterAnimation')),
-      leave: () => styles.leave(option(props, 'leaveAnimation')),
+      enter: () => styles.enter(parseAnimation(props).enter),
+      leave: () => styles.leave(parseAnimation(props).leave),
     })
 
     onTabHidden(() => {
-      if (option(props, 'completeOnTabHidden')) runner.complete()
+      if (parseOption(props, 'completeOnTabHidden')) runner.complete()
     })
 
     tryOnScopeDispose(runner.dispose)
 
     return () => h(
       BaseTransition,
-      { mode: option(props, 'mode'), appear: option(props, 'appear'), ...runner.hooks },
+      { mode: parseOption(props, 'mode'), appear: parseOption(props, 'appear'), ...runner.hooks },
       slots,
     )
   },
   {
     name: 'AnimeTransition',
     props: {
+      animation: null,
       enterAnimation: null,
       leaveAnimation: null,
       mode: null,
