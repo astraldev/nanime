@@ -21,19 +21,9 @@ Browse the API
 
 ::home-section{label="Get running" title="Your first animation" why="Call a composable from any component. No imports needed."}
 :::home-cards
-```vue [app.vue]
-<script setup lang="ts">
+```ts [app.vue]
 const box = useTemplateRef('box')
-useAnimate(box, {
-  x: 200,
-  alternate: true,
-  loop: true,
-})
-</script>
-
-<template>
-  <div ref="box" class="box" />
-</template>
+useAnimate(box, { x: 200, alternate: true, loop: true })
 ```
 
 ::::home-preview
