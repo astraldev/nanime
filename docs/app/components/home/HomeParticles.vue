@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 
-const PARTICLE_SPACING = 34
+const PARTICLE_SPACING = 24
 const PARTICLE_SIZE = 1.6
 const CURSOR_RADIUS = 170
 const PUSH_STRENGTH = 0.35
 const SPRING = 0.045
 const DAMPING = 0.84
 const CURSOR_SMOOTHING_MS = 260
-const MAX_ALPHA = 0.18
+const MAX_ALPHA = 0.24
 const MAX_OFFSET = 6
 
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas')

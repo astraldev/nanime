@@ -10,7 +10,7 @@ const props = defineProps<{
 
 <template>
   <section class="relative z-1 border-t border-default py-[clamp(96px,10vw,128px)]">
-    <div class="mx-auto max-w-6xl px-6">
+    <div class="mx-auto w-full max-w-(--ui-container) px-4 sm:px-6 lg:px-8">
       <header
         v-if="props.label || props.title || props.why"
         class="mb-14 max-w-176"
