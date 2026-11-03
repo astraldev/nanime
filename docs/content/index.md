@@ -122,7 +122,7 @@ What you get
   spotlight: true
   icon: i-ph-swatches
   spotlightColor: var(--color-primary)
-  to: /getting-started/presets
+  to: /guides/presets
   ---
   #title
   Motion [presets]{.text-primary} :badge[New]{variant="subtle"}
@@ -136,7 +136,7 @@ What you get
   spotlight: true
   icon: i-simple-icons-vuedotjs
   spotlightColor: var(--color-primary)
-  to: /getting-started/vue
+  to: /guides/vue
   ---
   #title
   Vue without [Nuxt]{.text-primary} :badge[New]{variant="subtle"}

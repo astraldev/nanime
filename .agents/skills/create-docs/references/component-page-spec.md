@@ -3,22 +3,25 @@
 Applies to every page in `docs/content/3.components/`.
 
 Components mirror the composable pages in order and tone, but stay leaner.
-Related components share one page: `<AnimeTransition>` and
-`<AnimeTransitionGroup>` live together on `1.transitions.md`, the way Vue
-documents its own transitions.
+One page per component: `<AnimeTransition>` on `1.transitions.md`,
+`<AnimeTransitionGroup>` on `2.transition-group.md`. Behaviour both share
+(the `animation` prop, `completeOnTabHidden`) is explained once on
+`1.transitions.md`; the others link there. How defaults resolve belongs to
+`/guides/configuration`, linked, never re-explained.
 
 ## Section order
 
 - Frontmatter, with an `seo:` title and description like every page
 - Intro: two sentences max
-- `## Usage`: a short static snippet of the drop-in usage, plus one line
-  on the default behaviour
+- Lead demo, then `## Usage`: a short static snippet of the drop-in usage,
+  plus one line on the default behaviour
 - Props table
-- One `##` section per real concept (for transitions: Lists), each with
-  at most one demo
-- Styles get their own page (`2.transition-styles.md`)
+- One `##` section per real concept, each with at most one demo. Extra
+  snippets go in `::collapsible`
+- Styles get their own page (`3.transition-styles.md`)
+- `## See also`: at most 3 links, always last
 
-No Events, Slots, Caveats, Type reference or See-also sections. Say in one
+No Events, Slots, Caveats or Type reference sections. Say in one
 sentence that the underlying Vue events pass through. Fold a rule like
 "one child only" into a sentence that links the right component.
 

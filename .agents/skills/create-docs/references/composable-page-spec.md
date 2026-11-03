@@ -12,12 +12,13 @@ No other top-level headings.
 - Badge row
 - Intro
 - `## Usage` (required)
-- `## Signature` (required)
-- `## Parameters` (required)
-- `## Returns` (required)
-- `## Caveats` (omit only if there are genuinely none)
-- `## Type reference` (appendix; omit if page owns no Nanime types)
-- `## See also` (required, always last)
+- `## API` (required): the signature code block, then the parameter
+  fields, then the Returns paragraph or members table, then one
+  `::collapsible{name="Types"}` if the page owns Nanime types. The
+  Signature, Parameters, Returns and Type reference rules below apply to
+  these parts, which are no longer separate H2s
+- `## Caveats` (page-specific only; omit when none remain)
+- `## See also` (required, always last, at most 3 links)
 
 ## Frontmatter
 
@@ -142,14 +143,15 @@ Proxy kinds, from the source:
 - Only gotchas `nanime` causes. A gotcha that happens with plain AnimeJS
   too (CSS transitions on a dragged `transform`, WAAPI not animating plain
   objects) is not a caveat. At most it is one sentence at the point of use.
-- A caveat shared across pages uses the same heading everywhere, so its
-  anchor is the same:
-  - `### Do not destructure the returned instance` on every `toReactive`
-    page
-  - `### Properties do not update templates` on every page whose returned
-    instance has `progress`
-  - `### Read properties after mount` on every
-    buffered page
+- A caveat that applies to two or more composables lives once on
+  `0.introduction.md` under "Caveats that apply across composables", with an
+  "Applies to" line. Pages link to it inline at the point it bites (usually
+  in the API section's Returns text), never repeat it. Current shared ones:
+  `#do-not-destructure-the-returned-instance`,
+  `#properties-do-not-update-templates`, `#read-properties-after-mount`,
+  `#plain-object-targets-must-be-reactive`
+- `## Caveats` holds only caveats specific to this composable; omit the
+  section when none remain
 - Each caveat is an `###` heading, imperative or symptom form
 - Code block first, then one paragraph: symptom, cause, fix
 - Wrong -> right, in that order, when showing both
@@ -163,7 +165,7 @@ Proxy kinds, from the source:
 
 Appendix rules.
 
-- Sits second-to-last, after `## Caveats`, before `## See also`
+- Sits last inside `## API`, after the Returns text
 - Always folded: exactly one `::collapsible{name="Types"}` per page, closed by default
 - Nothing on the page depends on opening it — Signature, Parameters and Returns
   already carry every type the reader needs inline
