@@ -19,17 +19,25 @@ Browse the API
 :::
 ::
 
-::home-section{label="Get running" title="Your first animation" why="Add the module, then call a composable from any component. No imports needed."}
+::home-section{label="Get running" title="Your first animation" why="Call a composable from any component. No imports needed."}
 :::home-cards
-```bash [Terminal]
-npx nuxi module add nanime
-npm run dev
+```vue [app.vue]
+<script setup lang="ts">
+const box = useTemplateRef('box')
+useAnimate(box, {
+  x: 200,
+  alternate: true,
+  loop: true,
+})
+</script>
+
+<template>
+  <div ref="box" class="box" />
+</template>
 ```
 
-```ts [app.vue]
-const box = useTemplateRef('box')
-useAnimate(box, { x: 200, loop: true })
-```
+::::home-preview
+::::
 :::
 ::
 
