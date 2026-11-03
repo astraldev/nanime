@@ -4,6 +4,7 @@ import type { TocLink } from '@nuxt/content'
 const props = defineProps<{
   title: string
   links: TocLink[]
+  latest?: string
 }>()
 
 const { activeHeadings, updateHeadings } = useScrollspy()
@@ -74,13 +75,22 @@ function go(id: string) {
           >
             <a
               :href="`#${link.id}`"
-              class="-ms-px flex border-s py-1.5 ps-3 pe-2 text-sm transition-colors"
+              class="-ms-px flex items-center gap-2 border-s py-1.5 ps-3 pe-2 text-sm transition-colors"
               :class="active === link.id
                 ? 'border-primary font-medium text-primary'
                 : 'border-transparent text-muted hover:border-accented hover:text-highlighted'"
               :aria-current="active === link.id ? 'location' : undefined"
               @click.prevent="go(link.id)"
-            >{{ link.text }}</a>
+            >
+              {{ link.text }}
+              <UBadge
+                v-if="props.latest && link.text === props.latest"
+                label="Latest"
+                color="primary"
+                variant="subtle"
+                size="sm"
+              />
+            </a>
           </li>
         </ul>
       </li>

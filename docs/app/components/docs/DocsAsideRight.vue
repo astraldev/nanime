@@ -12,6 +12,11 @@ const wideExample = computed(() => {
   return path.startsWith('/examples/') && path !== '/examples/introduction'
 })
 
+const latest = computed(() => {
+  const value = props.page?.meta?.latest
+  return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined
+})
+
 const sidebarItems = useSidebarNavigation()
 const tocOnLeft = computed(() => sidebarItems.value.length <= 1)
 
@@ -31,6 +36,7 @@ const contentTocVariants = useUIConfig('contentToc')
       v-if="tocOnLeft && links.some(link => link.children?.length)"
       :title="appConfig.toc?.title || t('docs.toc')"
       :links="links"
+      :latest="latest"
       class="hidden lg:flex"
     />
     <UContentToc
