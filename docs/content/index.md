@@ -120,6 +120,34 @@ What you get
   :::u-page-card
   ---
   spotlight: true
+  icon: i-ph-swatches
+  spotlightColor: var(--color-primary)
+  to: /getting-started/presets
+  ---
+  #title
+  Motion [presets]{.text-primary} :badge[New]{variant="subtle"}
+
+  #description
+  One motion personality for the whole app, or for part of it
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
+  icon: i-simple-icons-vuedotjs
+  spotlightColor: var(--color-primary)
+  to: /getting-started/vue
+  ---
+  #title
+  Vue without [Nuxt]{.text-primary} :badge[New]{variant="subtle"}
+
+  #description
+  The same composables and components in a Vue 3 app, with per-app config
+  :::
+
+  :::u-page-card
+  ---
+  spotlight: true
   icon: i-tabler-server-cog
   spotlightColor: var(--color-primary)
   to: /composables/introduction
