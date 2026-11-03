@@ -169,16 +169,16 @@ const isOpen = (label: string) => filtering.value || open.value.includes(label)
           </li>
         </ul>
       </li>
+      <li v-if="changelog && !filtering">
+        <NuxtLink
+          :to="changelog.path"
+          class="flex w-full items-center rounded-md px-2 py-1.5 text-[13px] font-semibold transition-colors"
+          :class="route.path === changelog.path ? 'text-primary' : 'text-muted hover:text-highlighted'"
+          :aria-current="route.path === changelog.path ? 'page' : undefined"
+        >
+          {{ changelog.title }}
+        </NuxtLink>
+      </li>
     </ul>
-
-    <NuxtLink
-      v-if="changelog && !filtering"
-      :to="changelog.path"
-      class="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] font-semibold transition-colors"
-      :class="route.path === changelog.path ? 'text-primary' : 'text-muted hover:text-highlighted'"
-      :aria-current="route.path === changelog.path ? 'page' : undefined"
-    >
-      {{ changelog.title }}
-    </NuxtLink>
   </nav>
 </template>
