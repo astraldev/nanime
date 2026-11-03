@@ -19,6 +19,13 @@ export default defineNuxtConfig({
           tagPosition: 'head',
           innerHTML: '(function(){var c=[\'red\',\'corail\',\'orange\',\'yellow\',\'citrus\',\'lime\',\'green\',\'turquoise\',\'cyan\',\'sky\',\'sega\',\'king\',\'indigo\',\'lavender\',\'purple\',\'magenta\',\'pink\'];document.documentElement.style.setProperty(\'--color-primary\',\'var(--hex-\'+c[Math.floor(Math.random()*c.length)]+\'-1)\')})()',
         },
+        {
+          tagPosition: 'head',
+          innerHTML: '(function(){var d=document.documentElement;if(!document.fonts)return;d.classList.add(\'fonts-wait\');var done=function(){d.classList.remove(\'fonts-wait\')};setTimeout(done,1500);document.addEventListener(\'DOMContentLoaded\',function(){Promise.all([400,500,600,700].map(function(w){return document.fonts.load(w+\' 1em Geom\')})).then(done,done)})})()',
+        },
+      ],
+      style: [
+        { innerHTML: '.fonts-wait body{visibility:hidden}' },
       ],
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },

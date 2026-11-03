@@ -56,7 +56,7 @@ if (entering) {
 
 <template>
   <section class="relative z-1 pt-[clamp(80px,12vw,160px)] pb-[clamp(96px,10vw,128px)]">
-    <div class="mx-auto max-w-6xl px-6">
+    <div class="mx-auto w-full max-w-(--ui-container) px-4 sm:px-6 lg:px-8">
       <p
         v-if="props.eyebrow"
         ref="eyebrowEl"

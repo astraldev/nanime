@@ -19,6 +19,18 @@ Browse the API
 :::
 ::
 
+::home-section{label="Foundations"}
+:::home-cards
+::::home-card{name="Works with Nuxt and Vue" to="/guides/vue" icons="i-simple-icons-nuxt i-simple-icons-vuedotjs"}
+Auto-imported in Nuxt, or install the same composables and components in a plain Vue 3 app. Nothing runs on the server.
+::::
+
+::::home-card{name="Built on AnimeJS v4" to="https://animejs.com" icons="i-simple-icons-animedotjs" external}
+Each composable returns the real AnimeJS instance, so the AnimeJS documentation applies line for line.
+::::
+:::
+::
+
 ::home-section{label="Get running" title="Your first animation" why="Call a composable from any component. No imports needed."}
 :::home-cards
 ```ts [app.vue]
@@ -27,18 +39,6 @@ useAnimate(box, { x: 200, alternate: true, loop: true })
 ```
 
 ::::home-preview
-::::
-:::
-::
-
-::home-section{label="Foundations"}
-:::home-cards
-::::home-card{name="Works with Nuxt and Vue" to="/guides/vue"}
-Auto-imported in Nuxt, or install the same composables and components in a plain Vue 3 app. Nothing runs on the server.
-::::
-
-::::home-card{name="Built on AnimeJS v4" to="https://animejs.com" external}
-Each composable returns the real AnimeJS instance, so the AnimeJS documentation applies line for line.
 ::::
 :::
 ::

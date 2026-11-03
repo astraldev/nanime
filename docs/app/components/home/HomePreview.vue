@@ -5,7 +5,7 @@ useAnimate(box, { x: 200, alternate: true, loop: true })
 
 <template>
   <div class="flex flex-col overflow-hidden rounded-md border border-muted">
-    <div class="flex items-center gap-1.5 border-b border-muted bg-default px-4 py-3 text-sm text-default">
+    <div class="flex items-center gap-1.5 border-b border-muted bg-default h-12 px-4 text-sm/6 text-default">
       <UIcon
         name="i-ph-play"
         class="size-4 shrink-0"
