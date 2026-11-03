@@ -21,7 +21,9 @@ const names = computed(() => props.of.split(/\s+/).filter(Boolean))
 
 <style scoped>
 .changelog-affects {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75em;
   margin-top: 0.125rem;
   font-family: var(--font-mono);
   font-size: 0.8125em;
