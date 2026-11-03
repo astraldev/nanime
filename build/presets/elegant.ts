@@ -11,7 +11,7 @@ import { presetStyles } from './lib/styles'
  * settle gently — no bounce, no snap. Prefer this for refined,
  * high-end products.
  *
- * @timing (0.3 - 0.55s)
+ * @timing (0.4 - 0.65s)
  * Slow and flowing, with a long soft tail. Longer than formal, calmer
  * than playful. Exits ease out slowly rather than cutting fast.
  *
@@ -39,9 +39,9 @@ export default defineAnimationPreset({
     enterEase: settle,
     leaveEase: glide,
     moveEase: glide,
-    enterDuration: 450,
-    leaveDuration: 300,
-    moveDuration: 520,
+    enterDuration: 550,
+    leaveDuration: 400,
+    moveDuration: 620,
     distance: 12,
     scale: 0.98,
   }),
@@ -49,11 +49,11 @@ export default defineAnimationPreset({
   components: {
     transition: {},
     transitionGroup: { animation: 'list' },
-    layoutGroup: { layoutOptions: { duration: 520, ease: glide } },
+    layoutGroup: { layoutOptions: { duration: 620, ease: glide } },
   },
 
   composables: {
-    animate: { duration: 450, ease: glide },
+    animate: { duration: 550, ease: glide },
     draggable: { releaseStiffness: 60, releaseDamping: 18 },
   },
 })

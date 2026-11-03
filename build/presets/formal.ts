@@ -10,7 +10,7 @@ import { presetStyles } from './lib/styles'
  * Calm, precise motion. Things fade and slide into place with no
  * overshoot. Prefer this for professional tools and official products.
  *
- * @timing (0.15 - 0.25s)
+ * @timing (0.09 - 0.14s)
  * Fast and even, start to finish. No overshoot. Exits take about two
  * thirds of an entrance.
  *
@@ -40,9 +40,9 @@ export default defineAnimationPreset({
     enterEase: entrance,
     leaveEase: exit,
     moveEase: standard,
-    enterDuration: 240,
-    leaveDuration: 150,
-    moveDuration: 240,
+    enterDuration: 140,
+    leaveDuration: 90,
+    moveDuration: 140,
     distance: 8,
     scale: 0.96,
   }),
@@ -50,11 +50,11 @@ export default defineAnimationPreset({
   components: {
     transition: {},
     transitionGroup: { animation: 'list' },
-    layoutGroup: { layoutOptions: { duration: 240, ease: standard } },
+    layoutGroup: { layoutOptions: { duration: 140, ease: standard } },
   },
 
   composables: {
-    animate: { duration: 240, ease: standard },
+    animate: { duration: 140, ease: standard },
     draggable: { releaseStiffness: 120, releaseDamping: 24 },
   },
 })
