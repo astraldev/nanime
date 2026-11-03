@@ -27,8 +27,14 @@ const contentTocVariants = useUIConfig('contentToc')
     :data-wide-example="wideExample || undefined"
     :data-toc-left="tocOnLeft || undefined"
   >
+    <DocsTocGroups
+      v-if="tocOnLeft && links.some(link => link.children?.length)"
+      :title="appConfig.toc?.title || t('docs.toc')"
+      :links="links"
+      class="hidden lg:flex"
+    />
     <UContentToc
-      v-if="links.length && !wideExample"
+      v-else-if="links.length && !wideExample"
       :highlight="contentTocVariants.highlight ?? true"
       :highlight-color="contentTocVariants.highlightColor"
       :highlight-variant="contentTocVariants.highlightVariant ?? 'circuit'"
