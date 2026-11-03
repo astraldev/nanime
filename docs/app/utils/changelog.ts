@@ -1,4 +1,8 @@
+import type { InjectionKey } from 'vue'
+
 export type ChangelogType = 'added' | 'fixed' | 'breaking' | 'performance' | 'packaging' | 'docs'
+
+export const changelogLatestKey: InjectionKey<{ claimed: boolean }> = Symbol('changelog-latest')
 
 interface ChangelogTypeMeta {
   label: string
