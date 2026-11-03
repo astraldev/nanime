@@ -109,3 +109,16 @@ td:has(> .comparison-good) {
 .code-preview pre code {
   white-space: pre;
 }
+
+/*
+ * UContentToc renders its entries as <span data-slot="linkText" class="truncate">
+ * inside the right aside (Docus 5 / Nuxt UI 4). The column is too narrow for
+ * this site's headings, so let the labels wrap instead of ellipsizing. The
+ * overflow-wrap keeps a long unbroken word inside the column.
+ */
+[data-slot="right"] [data-slot="linkText"] {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
