@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { changelogLatestKey } from '~/utils/changelog'
-
-provide(changelogLatestKey, { claimed: false })
-</script>
-
 <template>
   <div
     class="mt-12
