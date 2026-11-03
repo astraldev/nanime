@@ -4,6 +4,7 @@ import type { ContentNavigationItem } from '@nuxt/content'
 interface NavGroup {
   label: string
   paths: string[]
+  collapsed?: boolean
 }
 
 interface NavLink {
@@ -15,14 +16,15 @@ interface NavLink {
 
 const groups: NavGroup[] = [
   { label: 'Get Started', paths: ['/getting-started/introduction', '/getting-started/installation'] },
-  { label: 'Animate', paths: ['/composables/introduction', '/composables/use-animate', '/composables/use-waapi-animate', '/composables/use-animatable', '/composables/use-anime-timeline'] },
-  { label: 'Text', paths: ['/composables/use-split-text', '/composables/use-scramble-text'] },
-  { label: 'Interaction', paths: ['/composables/use-draggable', '/composables/use-anime-scroll'] },
-  { label: 'Transitions', paths: ['/components/transitions', '/components/transition-group', '/components/transition-styles'] },
-  { label: 'Layout', paths: ['/components/layout-group', '/composables/use-anime-layout'] },
   { label: 'Guides', paths: ['/guides/configuration', '/guides/presets', '/guides/performance', '/guides/accessibility', '/guides/vue'] },
-  { label: 'Reference', paths: ['/composables/utilities', '/comparisons/vs-nuxt-modules', '/comparisons/vs-vue-packages', '/examples/introduction', '/changes/changelog'] },
+  { label: 'Animate', paths: ['/composables/introduction', '/composables/use-animate', '/composables/use-waapi-animate', '/composables/use-animatable', '/composables/use-anime-timeline', '/composables/use-split-text', '/composables/use-scramble-text'] },
+  { label: 'Transitions', paths: ['/components/transitions', '/components/transition-group', '/components/transition-styles'] },
+  { label: 'Interaction', paths: ['/composables/use-draggable', '/composables/use-anime-scroll'] },
+  { label: 'Layout', paths: ['/components/layout-group', '/composables/use-anime-layout'] },
+  { label: 'Reference', paths: ['/composables/utilities', '/comparisons/vs-nuxt-modules', '/comparisons/vs-vue-packages', '/examples/introduction'], collapsed: true },
 ]
+
+const changelogPath = '/changes/changelog'
 
 const labelOverrides: Record<string, string> = {
   '/composables/introduction': 'Overview',
@@ -54,11 +56,11 @@ function toLink(path: string): NavLink[] {
 }
 
 const resolved = computed(() => {
-  const mapped = new Set(groups.flatMap(group => group.paths))
+  const mapped = new Set([...groups.flatMap(group => group.paths), changelogPath])
   const unmapped = [...byPath.value.values()]
     .filter(item => !item.children?.length && !mapped.has(item.path))
     .map(item => item.path)
-  const all = unmapped.length ? [...groups, { label: 'More', paths: unmapped }] : groups
+  const all = unmapped.length ? [...groups, { label: 'More', paths: unmapped, collapsed: true }] : groups
   return all.map(group => ({ label: group.label, links: group.paths.flatMap(toLink) }))
 })
 
@@ -74,7 +76,9 @@ const visible = computed(() => {
     .filter(group => group.links.length > 0)
 })
 
-const open = ref<string[]>([])
+const open = ref<string[]>(groups.filter(group => !group.collapsed).map(group => group.label))
+
+const changelog = computed(() => toLink(changelogPath)[0])
 
 function openCurrent() {
   const current = resolved.value.find(group => group.links.some(link => link.path === route.path))
@@ -166,5 +170,15 @@ const isOpen = (label: string) => filtering.value || open.value.includes(label)
         </ul>
       </li>
     </ul>
+
+    <NuxtLink
+      v-if="changelog && !filtering"
+      :to="changelog.path"
+      class="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] font-semibold transition-colors"
+      :class="route.path === changelog.path ? 'text-primary' : 'text-muted hover:text-highlighted'"
+      :aria-current="route.path === changelog.path ? 'page' : undefined"
+    >
+      {{ changelog.title }}
+    </NuxtLink>
   </nav>
 </template>
