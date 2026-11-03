@@ -15,12 +15,12 @@ export default defineAppConfig({
     prose: {
       h2: {
         slots: {
-          base: 'mt-16 mb-5 pt-10 border-t border-default text-2xl font-semibold tracking-tight',
+          base: 'mt-16 mb-6 pt-12 border-t border-default text-2xl font-semibold tracking-tight',
         },
       },
       h3: {
         slots: {
-          base: 'mt-10 mb-3 text-lg font-semibold',
+          base: 'mt-10 mb-4 text-lg font-semibold',
         },
       },
       h4: {
@@ -28,29 +28,29 @@ export default defineAppConfig({
           base: 'mt-8 mb-2 text-base font-semibold',
         },
       },
-      p: 'my-4 leading-7 text-pretty max-w-[70ch]',
-      ul: 'list-disc ps-6 my-4 max-w-[70ch] marker:text-(--ui-border-accented)',
-      ol: 'list-decimal ps-6 my-4 max-w-[70ch] marker:text-muted',
-      li: 'my-1 ps-1.5 leading-7 [&>ul]:my-0',
+      p: 'my-5 text-base/7 text-pretty max-w-[70ch]',
+      ul: 'list-disc ps-6 my-5 max-w-[70ch] marker:text-(--ui-border-accented)',
+      ol: 'list-decimal ps-6 my-5 max-w-[70ch] marker:text-muted',
+      li: 'my-2 ps-1.5 text-base/7 [&>ul]:my-0',
       table: {
         slots: {
-          root: 'relative my-6 overflow-x-auto rounded-md border border-muted outline-primary/25 focus-visible:outline-3',
+          root: 'relative my-8 overflow-x-auto rounded-md border border-muted outline-primary/25 focus-visible:outline-3',
         },
       },
-      th: 'py-2 px-3 font-medium text-xs uppercase tracking-wide text-muted border-b border-muted',
-      td: 'py-2 px-3 text-sm align-top border-b border-muted [&_code]:text-xs/5 [&_p]:my-0 [&_p]:leading-6 [&_ul]:my-0 [&_ol]:my-0 [&_ul]:ps-4.5 [&_ol]:ps-4.5 [&_li]:leading-6 [&_li]:my-0.5',
+      th: 'py-3 px-4 font-medium text-sm text-muted border-b border-muted',
+      td: 'py-3 px-4 text-sm align-top border-b border-muted [&_code]:text-xs/5 [&_p]:my-0 [&_p]:leading-6 [&_ul]:my-0 [&_ol]:my-0 [&_ul]:ps-4.5 [&_ol]:ps-4.5 [&_li]:leading-6 [&_li]:my-0.5',
       field: {
         slots: {
-          root: 'my-0 py-3',
+          root: 'my-0 py-4',
           container: 'flex items-center gap-2 font-mono text-sm',
           name: 'font-medium text-highlighted',
           description: 'mt-1.5 text-muted text-sm leading-6 [&_code]:text-xs/4 [&_p]:my-0',
         },
       },
-      fieldGroup: 'my-6 divide-y divide-muted rounded-md border border-muted px-4',
+      fieldGroup: 'my-8 divide-y divide-muted rounded-md border border-muted px-5',
       callout: {
         slots: {
-          base: 'px-3.5 py-2.5 my-5 text-sm/6 rounded-md',
+          base: 'px-4 py-3 my-6 text-sm/6 rounded-md',
         },
         variants: {
           color: {
@@ -66,30 +66,22 @@ export default defineAppConfig({
       collapsible: {
         slots: {
           root: 'my-4 rounded-md border border-dashed border-muted px-3 py-2',
-          trigger: 'text-xs font-medium text-dimmed hover:text-default',
+          trigger: 'font-mono text-sm text-muted hover:text-default',
           content: '*:first:mt-3 *:last:mb-0 *:my-3',
         },
       },
       codePreview: {
         slots: {
-          root: 'my-6',
+          root: 'my-8',
           preview: 'flex justify-center border border-default relative p-6 rounded-md bg-elevated/30',
         },
       },
-      hr: 'border-t border-default my-10',
-    },
-    contentNavigation: {
-      slots: {
-        list: 'isolate -mx-2.5 -mt-1.5',
-        link: 'px-2.5 py-1',
-        trigger: 'mt-4 mb-1 text-xs font-semibold uppercase tracking-wider text-highlighted',
-        itemWithChildren: 'flex flex-col data-[state=open]:mb-3',
-      },
+      hr: 'border-t border-default my-12',
     },
     contentToc: {
       slots: {
         link: 'text-[13px] py-0.5',
-        trigger: 'text-xs font-semibold uppercase tracking-wider text-highlighted',
+        trigger: 'text-[13px] font-semibold text-highlighted',
       },
     },
   },

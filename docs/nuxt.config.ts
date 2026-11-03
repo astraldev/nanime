@@ -14,6 +14,12 @@ export default defineNuxtConfig({
         },
         { name: 'theme-color', content: '#252423' },
       ],
+      script: [
+        {
+          tagPosition: 'head',
+          innerHTML: '(function(){var c=[\'red\',\'corail\',\'orange\',\'yellow\',\'citrus\',\'lime\',\'green\',\'turquoise\',\'cyan\',\'sky\',\'sega\',\'king\',\'indigo\',\'lavender\',\'purple\',\'magenta\',\'pink\'];document.documentElement.style.setProperty(\'--color-primary\',\'var(--hex-\'+c[Math.floor(Math.random()*c.length)]+\'-1)\')})()',
+        },
+      ],
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
         { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },

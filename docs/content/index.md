@@ -2,225 +2,68 @@
 title: nanime
 description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
 seo:
-  title: Anime.js Composables for Nuxt and Vue 3
-  description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
+title: Anime.js Composables for Nuxt and Vue 3
+description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
 ---
 
-::u-page-hero
----
-orientation: horizontal
----
-  :::render-code-block-preview{:code='false' src="examples/misc/HeroDemo.vue"}
-  :::
-
-#headline
-  :::u-button
-  ---
-  color: neutral
-  size: sm
-  to: https://github.com/astraldev/nanime#versioning
-  target: _blank
-  trailing-icon: i-ph-arrow-right
-  variant: subtle
-  ---
-  Minor releases can break until 1.0
-  :::
-
-#title
-Anime.js composables for [Nuxt]{.text-primary}
-
-#description
-Call AnimeJS from `setup()` with no `onMounted`, no cleanup and no imports. Animations wait for the element to mount and revert when the component unmounts.
-
-#links
-  :::u-button
-  ---
-  icon: i-ph-arrow-right
-  size: xl
-  to: /getting-started/installation
-  ---
-  Get started
-  :::
-
-  :::u-button
-  ---
-  color: neutral
-  icon: i-ph-shapes
-  size: xl
-  to: /examples/introduction
-  variant: subtle
-  ---
-  See examples
-  :::
-
-:copy-code-input{source="npx nuxt module add nanime"}
+::home-particles
 ::
 
-::u-page-section
-#title
-What you get
+::home-hero{eyebrow="AnimeJS v4 for Nuxt and Vue" title="Anime.js composables for Nuxt" pitch="Call AnimeJS from setup() with no onMounted, no cleanup and no imports. Animations wait for the element to mount and revert when the component unmounts." install="npx nuxi module add nanime"}
+:::u-button{to="/getting-started/installation" size="lg"}
+Get started
+:::
 
-#features
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-simple-icons-nuxt
-  spotlightColor: var(--color-primary)
-  to: /getting-started/installation
-  ---
-  #title
-  Made for [Nuxt]{.text-primary}
-
-  #description
-  Composables and components are auto-imported, and AnimeJS is pre-bundled by Vite
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-simple-icons-animedotjs
-  spotlightColor: var(--color-primary)
-  to: /composables/introduction
-  ---
-  #title
-  Nine [composables]{.text-primary}
-
-  #description
-  Animate, WAAPI, animatable, split and scramble text, draggable, timeline, scroll and layout
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-arrows-left-right
-  spotlightColor: var(--color-primary)
-  to: /components/transitions
-  ---
-  #title
-  Transition and layout [components]{.text-primary} :badge[New]{variant="subtle"}
-
-  #description
-  Animate v-if, v-for and layout changes, including list moves, with no CSS to write
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-palette
-  spotlightColor: var(--color-primary)
-  to: /components/transition-styles
-  ---
-  #title
-  Transition [styles]{.text-primary} :badge[New]{variant="subtle"}
-
-  #description
-  Seven built-in styles, plus your own with keyframes, filters and springs
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-swatches
-  spotlightColor: var(--color-primary)
-  to: /guides/presets
-  ---
-  #title
-  Motion [presets]{.text-primary} :badge[New]{variant="subtle"}
-
-  #description
-  One motion personality for the whole app, or for part of it
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-simple-icons-vuedotjs
-  spotlightColor: var(--color-primary)
-  to: /guides/vue
-  ---
-  #title
-  Vue without [Nuxt]{.text-primary} :badge[New]{variant="subtle"}
-
-  #description
-  The same composables and components in a Vue 3 app, with per-app config
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-tabler-server-cog
-  spotlightColor: var(--color-primary)
-  to: /composables/introduction
-  ---
-  #title
-  [SSR]{.text-primary} safe
-
-  #description
-  Nothing runs on the server, and every animation reverts when its component unmounts
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-arrows-clockwise
-  spotlightColor: var(--color-primary)
-  to: /composables/introduction
-  ---
-  #title
-  [Reactive]{.text-primary} parameters
-
-  #description
-  Pass a getter and the animation rebuilds whenever a ref inside it changes
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-code
-  spotlightColor: var(--color-primary)
-  to: /composables/use-animate
-  ---
-  #title
-  The real [instance]{.text-primary}
-
-  #description
-  Each composable returns the AnimeJS instance, so the AnimeJS docs apply line for line
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-robot
-  spotlightColor: var(--color-primary)
-  to: /getting-started/installation#use-with-ai-agents
-  ---
-  #title
-  Built for [AI agents]{.text-primary} :badge[New]{variant="subtle"}
-
-  #description
-  Install the agent skill or connect the MCP server, and coding agents write nanime code instead of raw AnimeJS
-  :::
-
-  :::u-page-card
-  ---
-  spotlight: true
-  icon: i-ph-feather
-  spotlightColor: var(--color-primary)
-  ---
-  #title
-  [Small]{.text-primary}
-
-  #description
-  The runtime depends on AnimeJS and defu, nothing else
-  :::
+:::u-button{to="/composables/introduction" size="lg" color="neutral" variant="outline"}
+Browse the API
+:::
 ::
 
-::u-page-section
-:spring-grid-demo
+::home-section{label="Get running" title="Your first animation" why="Add the module, then call a composable from any component. No imports needed."}
+:::home-cards
+```bash [Terminal]
+npx nuxi module add nanime
+npm run dev
+```
 
-#title
-See it in action
+```ts [app.vue]
+const box = useTemplateRef('box')
+useAnimate(box, { x: 200, loop: true })
+```
+:::
+::
 
-#description
-Dashboards that rearrange, feeds that grow, panels that open and close. When the data changes, each element animates to its new place.
+::home-section{label="Foundations"}
+:::home-cards
+::::home-card{name="Works with Nuxt and Vue" to="/guides/vue"}
+Auto-imported in Nuxt, or install the same composables and components in a plain Vue 3 app. Nothing runs on the server.
+::::
+
+::::home-card{name="Built on AnimeJS v4" to="https://animejs.com" external}
+Each composable returns the real AnimeJS instance, so the AnimeJS documentation applies line for line.
+::::
+:::
+::
+
+::home-section{label="Animate and transition" title="Animations that follow your component" why="No onMounted and no cleanup. Animations wait for the element and revert on unmount, and v-if, v-for and list moves animate with a built-in style." to="/composables/introduction" link-label="All composables"}
+:::home-cards
+::::home-card{name="useAnimate" to="/composables/use-animate"}
+One animation on a ref, rebuilt when its parameters change.
+::::
+
+::::home-card{name="useAnimeTimeline" to="/composables/use-anime-timeline"}
+Sequence several animations on a single timeline.
+::::
+
+::::home-card{name="<AnimeTransition />" to="/components/transitions"}
+Enter and leave for v-if and v-show.
+::::
+
+::::home-card{name="<AnimeTransitionGroup />" to="/components/transition-group"}
+Enter, leave and move for v-for lists.
+::::
+:::
+::
+
+::home-section{label="AI agents" title="Built for AI agents" why="Install the agent skill or connect the MCP server, and coding agents write nanime code instead of raw AnimeJS." to="/getting-started/installation#use-with-ai-agents" link-label="Use with AI agents"}
 ::
