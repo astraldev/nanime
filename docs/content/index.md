@@ -2,66 +2,144 @@
 title: nanime
 description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
 seo:
-title: Anime.js Composables for Nuxt and Vue 3
-description: 'Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text'
+  title: Anime.js Composables for Nuxt and Vue 3
 ---
 
 ::home-particles
 ::
 
-::home-hero{eyebrow="AnimeJS v4 for Nuxt and Vue" title="Anime.js composables for Nuxt" pitch="Call AnimeJS from setup() with no onMounted, no cleanup and no imports. Animations wait for the element to mount and revert when the component unmounts." install="npx nuxi module add nanime"}
-:::u-button{to="/getting-started/installation" size="lg"}
-Get started
-:::
+::home-hero
+---
+eyebrow: AnimeJS v4 for Nuxt and Vue
+install: pnpx nuxt module add nanime
+pitch: Use AnimeJS functions and utilities directly in component setup without using onMounted and other lifecylcle hooks.
+title: Anime.js composables for Nuxt
+---
+  :::u-button{size="lg" to="/getting-started/installation"}
+  Get started
+  :::
 
-:::u-button{to="/composables/introduction" size="lg" color="neutral" variant="outline"}
-Browse the API
-:::
+  :::u-button
+  ---
+  size: lg
+  to: /composables/introduction
+  color: neutral
+  variant: outline
+  ---
+  Browse the API
+  :::
 ::
 
-::home-section{label="Foundations"}
-:::home-cards
-::::home-card{name="Works with Nuxt and Vue" to="/guides/vue" icons="i-simple-icons-nuxt i-simple-icons-vuedotjs"}
-Auto-imported in Nuxt, or install the same composables and components in a plain Vue 3 app. Nothing runs on the server.
-::::
-
-::::home-card{name="Built on AnimeJS v4" to="https://animejs.com" icons="i-simple-icons-animedotjs" external}
-Each composable returns the real AnimeJS instance, so the AnimeJS documentation applies line for line.
-::::
-:::
+::home-section{label="Animate with ease" title="Simple, declarative animation definitions" why="Call a composable, with the template ref as your target, and bind your animation params"}
+  :::home-animate-demo
+  ```vue
+  <script setup lang="ts">
+  const box = useTemplateRef('box')
+  
+  useAnimate(box, { x: 160, alternate: true, loop: true })
+  </script>
+  
+  <template>
+    <div ref="box" class="size-8 bg-(--current-color)" />
+  </template>
+  ```
+  :::
 ::
 
-::home-section{label="Get running" title="Your first animation" why="Call a composable from any component. No imports needed."}
-:::home-cards
-```ts [app.vue]
-const box = useTemplateRef('box')
-useAnimate(box, { x: 200, alternate: true, loop: true })
-```
-
-::::home-preview
-::::
-:::
+::home-section{label="Drop in transitions" title="Drop in Transition and TransitionGroup components" why="Easily add flare and style to your transitions"}
+  :::home-transition-demo
+  ```vue
+  const hop = { enter: { ... }, leave: { ... } }
+  
+  <AnimeTransition :animation="hop">
+    <div v-if="open" />
+  </AnimeTransition>
+  ```
+  :::
 ::
 
-::home-section{label="Animate and transition" title="Animations that follow your component" why="No onMounted and no cleanup. Animations wait for the element and revert on unmount, and v-if, v-for and list moves animate with a built-in style." to="/composables/introduction" link-label="All composables"}
-:::home-cards
-::::home-card{name="useAnimate" to="/composables/use-animate"}
-One animation on a ref, rebuilt when its parameters change.
-::::
+::home-section
+---
+label: What's in the box?
+title: Nine composables, three components
+why: A composable for each AnimeJS API, plus components that animate v-if, v-for and layout changes
+link-label: All composables
+to: /composables/introduction
+---
+  :::home-cards
+    ::::home-card{name="useAnimate" to="/composables/use-animate"}
+    Animate elements using refs, CSS targets with dynamic properties and keyframes
+    ::::
 
-::::home-card{name="useAnimeTimeline" to="/composables/use-anime-timeline"}
-Sequence several animations on a single timeline.
-::::
+    ::::home-card{name="useWaapiAnimate" to="/composables/use-waapi-animate"}
+    Animate with the Web Animations API for simple animations off the main thread
+    ::::
 
-::::home-card{name="<AnimeTransition />" to="/components/transitions"}
-Enter and leave for v-if and v-show.
-::::
+    ::::home-card{name="useAnimatable" to="/composables/use-animatable"}
+    Smoothly follow a changing value, like a cursor or a meter
+    ::::
 
-::::home-card{name="<AnimeTransitionGroup />" to="/components/transition-group"}
-Enter, leave and move for v-for lists.
-::::
-:::
+    ::::home-card{name="useAnimeTimeline" to="/composables/use-anime-timeline"}
+    Sequence several animations on one timeline
+    ::::
+
+    ::::home-card{name="useSplitText" to="/composables/use-split-text"}
+    Split text into characters, words or lines, then animate each piece
+    ::::
+
+    ::::home-card{name="useScrambleText" to="/composables/use-scramble-text"}
+    Scramble text into a new string
+    ::::
+
+    ::::home-card{name="useDraggable" to="/composables/use-draggable"}
+    Make elements draggable, with snapping, release physics and bounds
+    ::::
+
+    ::::home-card{name="useAnimeScroll" to="/composables/use-anime-scroll"}
+    Drive an animation from scroll progress
+    ::::
+
+    ::::home-card{name="useAnimeLayout" to="/composables/use-anime-layout"}
+    Animate elements to their next layout when a property or dependency changes
+    ::::
+
+    ::::home-card{name="<AnimeTransition />" to="/components/transitions"}
+    Animate elements entering and leaving with `v-if` and `v-show`
+    ::::
+
+    ::::home-card{name="<AnimeTransitionGroup />" to="/components/transition-group"}
+    Animate list items entering, leaving and moving in a `v-for`
+    ::::
+
+    ::::home-card{name="<AnimeLayoutGroup />" to="/components/layout-group"}
+    A component form of `useAnimeLayout` that animates its children's layout changes
+    ::::
+  :::
 ::
 
-::home-section{label="AI agents" title="Built for AI agents" why="Install the agent skill or connect the MCP server, and coding agents write nanime code instead of raw AnimeJS." to="/getting-started/installation#use-with-ai-agents" link-label="Use with AI agents"}
+::home-section
+---
+label: AI agents
+title: Built for AI agents
+why: Install the agent skill or connect the MCP server to improve code writing and performance
+link-label: Use with AI agents
+to: /getting-started/installation#use-with-ai-agents
+---
+  :::home-cards
+    ::::home-card{name="Agent skill" to="/getting-started/installation#use-with-ai-agents"}
+    Teaches your coding agent the composables and transition components. Install:
+    
+    ```
+    npx skills add astraldev/nanime --skill nanime
+    ```
+    ::::
+  
+    ::::home-card{name="Docs MCP server" to="/getting-started/installation#use-with-ai-agents"}
+    Lets your agent search these docs on its own. Connect:
+    
+    ```
+    claude mcp add --transport http nanime https://nanimejs.netlify.app/mcp
+    ```
+    ::::
+  :::
 ::
