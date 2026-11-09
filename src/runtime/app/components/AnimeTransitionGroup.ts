@@ -1,6 +1,6 @@
 import { createLayout, type AutoLayout } from 'animejs/layout'
 import { TransitionGroup, cloneVNode, defineComponent, getCurrentInstance, getTransitionRawChildren, h, nextTick, onUpdated, type VNode } from 'vue'
-import type { AnimationParams, AnimeTransitionGroupProps } from '../public/types'
+import type { AnimeTransitionGroupProps } from '../public/types'
 import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { onTabHidden } from '../utils/tab-hidden'
 import { useComponentDefaults } from '../utils/component-defaults'
@@ -11,6 +11,7 @@ import { MOVE_CLASS } from '../utils/markers'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
 import { transitionGroupStyle } from '../transitions/styles/group'
+import type { TransitionParams } from '../transitions/engine'
 
 export type { AnimeTransitionGroupProps } from '../public/types'
 
@@ -21,9 +22,9 @@ const BASE_STYLES = ['transform']
 
 const toKebab = (prop: string) => prop.replace(/[A-Z]/g, char => `-${char.toLowerCase()}`)
 
-function animatedStyles(params: AnimationParams[]): string[] {
+function animatedStyles(animations: TransitionParams[]): string[] {
   const probe = typeof document === 'undefined' ? null : document.documentElement.style
-  const animated = params.flatMap(Object.keys).filter(key => probe && key in probe).map(toKebab)
+  const animated = animations.flatMap(({ params }) => Object.keys(params)).filter(key => probe && key in probe).map(toKebab)
   return [...new Set([...BASE_STYLES, ...animated])]
 }
 
@@ -77,7 +78,9 @@ export default defineComponent(
     const endedDuringMove = new Map<StyledElement, Styles>()
 
     const runner = createTransitionRunner({
+      component: 'AnimeTransitionGroup',
       withReducedMotion,
+      engine: () => parseOption(props, 'waapi') ? 'waapi' : 'js',
       enter: enterParams,
       leave: leaveParams,
       onLeaveStart(el) {
@@ -217,6 +220,7 @@ export default defineComponent(
     name: 'AnimeTransitionGroup',
     props: {
       tag: { type: String, default: undefined },
+      waapi: { type: Boolean, default: undefined },
       animation: null,
       enterAnimation: null,
       leaveAnimation: null,

@@ -16,7 +16,9 @@ export default defineComponent(
     const styles = useTransitionStyles(fade)
     const { withReducedMotion } = useReducedMotion()
     const runner = createTransitionRunner({
+      component: 'AnimeTransition',
       withReducedMotion,
+      engine: () => parseOption(props, 'waapi') ? 'waapi' : 'js',
       enter: () => styles.enter(parseAnimation(props).enter),
       leave: () => styles.leave(parseAnimation(props).leave),
     })
@@ -36,6 +38,7 @@ export default defineComponent(
   {
     name: 'AnimeTransition',
     props: {
+      waapi: { type: Boolean, default: undefined },
       animation: null,
       enterAnimation: null,
       leaveAnimation: null,
