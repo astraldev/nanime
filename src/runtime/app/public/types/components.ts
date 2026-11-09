@@ -1,42 +1,70 @@
 import type { ComponentPublicInstance } from 'vue'
-import type { AnimationParams } from 'animejs'
+import type { AnimationParams, Callback, ScrollObserver, WAAPIAnimation, WAAPIAnimationParams, WAAPIEasingParam, WAAPIKeyframeValue, WAAPITweenOptions } from 'animejs'
 import type { AutoLayoutParams } from 'animejs/layout'
 import type { AnimeMoveParams, AnimeTransitionStyleName, ConfigTransitionStyleName } from './transitions'
 
 /** Order of the leave and enter animations when one element replaces another. */
 export type AnimeTransitionMode = 'in-out' | 'out-in' | 'default'
 
-/** `enter` and `leave` of one transition, each a transition style name or Anime.js params. */
-export interface AnimeTransitionAnimation<StyleName extends string = AnimeTransitionStyleName> {
+/** A property as `{ from, to, duration, delay, ease }`. */
+type WaapiTween = WAAPITweenOptions & ({ to: WAAPIKeyframeValue } | { from: WAAPIKeyframeValue })
+
+/** Options `waapi.animate()` ignores. */
+type JsOnlyParam = 'id' | 'keyframes' | 'playbackEase' | 'frameRate' | 'loopDelay' | 'modifier' | 'onBegin' | 'onBeforeUpdate' | 'onUpdate' | 'onLoop' | 'onPause' | 'onRender'
+
+/** `waapi.animate()` params, without `keyframes`, `modifier` or callbacks other than `onComplete`. */
+type WaapiTransitionParams = WAAPIAnimationParams
+  & AnimationParams
+  & Record<string, WAAPIKeyframeValue | WaapiTween | WAAPIEasingParam | boolean | ScrollObserver | Callback<WAAPIAnimation>>
+  & { [Key in JsOnlyParam]?: never }
+
+/** `animate()` params, or `waapi.animate()` params when `Waapi` is `true`. A `Waapi` of `boolean` takes none. */
+type AnimeTransitionParams<Waapi extends boolean> = [Waapi] extends [true]
+  ? WaapiTransitionParams
+  : [Waapi] extends [false] ? AnimationParams : never
+
+/**
+ * `enter` and `leave` of one transition, each a transition style name or
+ * AnimeJS params (`waapi.animate()` params when `Waapi` is `true`).
+ */
+export interface AnimeTransitionAnimation<StyleName extends string = AnimeTransitionStyleName, Waapi extends boolean = false> {
   /** How the element appears. */
-  enter?: StyleName | AnimationParams
+  enter?: StyleName | AnimeTransitionParams<Waapi>
   /** How the element disappears. */
-  leave?: StyleName | AnimationParams
+  leave?: StyleName | AnimeTransitionParams<Waapi>
 }
 
 /** `enter`, `leave` and `move` of `<AnimeTransitionGroup>`. */
-export interface AnimeTransitionGroupAnimation<StyleName extends string = AnimeTransitionStyleName> extends AnimeTransitionAnimation<StyleName> {
+export interface AnimeTransitionGroupAnimation<StyleName extends string = AnimeTransitionStyleName, Waapi extends boolean = false> extends AnimeTransitionAnimation<StyleName, Waapi> {
   /** How items move to a new position: a style name, `{ duration, delay, ease }`, or `false` to skip moves. */
   move?: StyleName | AnimeMoveParams | false
 }
 
 /** Props of `<AnimeTransition>`. */
-export interface AnimeTransitionProps<StyleName extends string = AnimeTransitionStyleName> {
+interface TransitionProps<StyleName extends string, Waapi extends boolean> {
+  /**
+   * Run enter and leave with `waapi.animate()` instead of `animate()`.
+   * `animation`, `enterAnimation` and `leaveAnimation` then take
+   * `waapi.animate()` params, or style names only when `waapi` is a `boolean`
+   * variable. A style `waapi.animate()` can't run falls back to `animate()`.
+   * @default false
+   */
+  waapi?: Waapi
   /**
    * Enter and leave together: a transition style name that supplies both, or
    * `{ enter, leave }`. `enterAnimation` and `leaveAnimation` win for their part.
    */
-  animation?: StyleName | AnimeTransitionAnimation<StyleName>
+  animation?: StyleName | AnimeTransitionAnimation<StyleName, Waapi>
   /**
-   * How the element appears: a transition style name, or Anime.js params.
+   * How the element appears: a transition style name, or AnimeJS params.
    * @default 'fade'
    */
-  enterAnimation?: StyleName | AnimationParams
+  enterAnimation?: StyleName | AnimeTransitionParams<Waapi>
   /**
-   * How the element disappears: a transition style name, or Anime.js params.
+   * How the element disappears: a transition style name, or AnimeJS params.
    * @default 'fade'
    */
-  leaveAnimation?: StyleName | AnimationParams
+  leaveAnimation?: StyleName | AnimeTransitionParams<Waapi>
   /**
    * Order when one element replaces another. `out-in` waits for the old one to
    * leave before the new one enters.
@@ -57,29 +85,44 @@ export interface AnimeTransitionProps<StyleName extends string = AnimeTransition
   completeOnTabHidden?: boolean
 }
 
+/** Props of `<AnimeTransition>`. */
+export type AnimeTransitionProps<StyleName extends string = AnimeTransitionStyleName>
+  = | TransitionProps<StyleName, false>
+    | (TransitionProps<StyleName, true> & { waapi: true })
+    | TransitionProps<StyleName, boolean>
+
 /** Props of `<AnimeTransitionGroup>`. */
-export interface AnimeTransitionGroupProps<StyleName extends string = AnimeTransitionStyleName> {
+interface TransitionGroupProps<StyleName extends string, Waapi extends boolean> {
   /**
    * Element rendered around the items.
    * @default 'div'
    */
   tag?: string
   /**
+   * Run enter and leave with `waapi.animate()` instead of `animate()`. Moves
+   * still use AnimeJS layout animations. `animation`, `enterAnimation` and
+   * `leaveAnimation` then take `waapi.animate()` params, or style names only
+   * when `waapi` is a `boolean` variable. A style `waapi.animate()` can't run
+   * falls back to `animate()`.
+   * @default false
+   */
+  waapi?: Waapi
+  /**
    * Enter, leave and move together: a transition style name that supplies all
    * three, or `{ enter, leave, move }`. `enterAnimation`, `leaveAnimation` and
    * `moveAnimation` win for their part.
    */
-  animation?: StyleName | AnimeTransitionGroupAnimation<StyleName>
+  animation?: StyleName | AnimeTransitionGroupAnimation<StyleName, Waapi>
   /**
-   * How items appear: a transition style name, or Anime.js params.
+   * How items appear: a transition style name, or AnimeJS params.
    * @default a fade in over 250ms, `out(3)`
    */
-  enterAnimation?: StyleName | AnimationParams
+  enterAnimation?: StyleName | AnimeTransitionParams<Waapi>
   /**
-   * How items disappear: a transition style name, or Anime.js params.
+   * How items disappear: a transition style name, or AnimeJS params.
    * @default a fade out over 150ms, `in(3)`
    */
-  leaveAnimation?: StyleName | AnimationParams
+  leaveAnimation?: StyleName | AnimeTransitionParams<Waapi>
   /**
    * How items move to a new position: a transition style name,
    * `{ duration, delay, ease }`, or `false` to skip moves.
@@ -118,6 +161,15 @@ export interface AnimeTransitionGroupProps<StyleName extends string = AnimeTrans
    */
   completeOnTabHidden?: boolean
 }
+
+/** Props of `<AnimeTransitionGroup>`. */
+export type AnimeTransitionGroupProps<StyleName extends string = AnimeTransitionStyleName>
+  = | TransitionGroupProps<StyleName, false>
+    | (TransitionGroupProps<StyleName, true> & { waapi: true })
+    | TransitionGroupProps<StyleName, boolean>
+
+/** Group props without `deps`. */
+type WithoutDeps<Props> = Props extends unknown ? Omit<Props, 'deps'> : never
 
 type AnimeLayoutElement = string | HTMLElement | SVGElement | ComponentPublicInstance | null | undefined
 
@@ -177,7 +229,7 @@ export interface NanimeComponentDefaults {
   /** Default props for `<AnimeTransition>`. */
   transition?: AnimeTransitionProps<ConfigTransitionStyleName>
   /** Default props for `<AnimeTransitionGroup>`. */
-  transitionGroup?: Omit<AnimeTransitionGroupProps<ConfigTransitionStyleName>, 'deps'>
+  transitionGroup?: WithoutDeps<AnimeTransitionGroupProps<ConfigTransitionStyleName>>
   /** Default props for `<AnimeLayoutGroup>`. */
   layoutGroup?: Omit<AnimeLayoutGroupProps, 'deps' | 'elements'> & {
     /** Selectors for the elements that move on their own, matched inside each group. */

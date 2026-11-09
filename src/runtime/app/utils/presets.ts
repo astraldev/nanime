@@ -9,6 +9,8 @@ import type { ConfigTransitionStyleName } from '../public/types/transitions'
 
 type PresetStyleName<Shared extends string> = ConfigTransitionStyleName | Shared
 
+type WithoutDeps<Props> = Props extends unknown ? Omit<Props, 'deps'> : never
+
 /** A motion personality: the styles, component defaults and composable defaults it sets. */
 export interface AnimationPreset<Shared extends string = string> {
   /** Custom transition styles the preset adds, by name. */
@@ -18,7 +20,7 @@ export interface AnimationPreset<Shared extends string = string> {
     /** Default props for `<AnimeTransition>`. */
     transition: AnimeTransitionProps<PresetStyleName<Shared>>
     /** Default props for `<AnimeTransitionGroup>`. */
-    transitionGroup: Omit<AnimeTransitionGroupProps<PresetStyleName<Shared>>, 'deps'>
+    transitionGroup: WithoutDeps<AnimeTransitionGroupProps<PresetStyleName<Shared>>>
     /** Default props for `<AnimeLayoutGroup>`. */
     layoutGroup: NonNullable<NanimeComponentDefaults['layoutGroup']>
   }

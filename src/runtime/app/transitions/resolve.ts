@@ -1,10 +1,13 @@
 import { warn } from 'vue'
 import { builtinTransitionStyles } from './styles'
+import type { TransitionParams } from './engine'
 import { useNanimeConfig } from '../utils/config'
 import { useActivePreset } from '../utils/active-preset'
 import type { AnimationParams, AnimeMoveParams, AnimeTransitionStyle, AnimeTransitionStyleName } from '../public/types'
 
 type StylePart = keyof AnimeTransitionStyle
+
+export type TransitionPart = AnimeTransitionStyleName | TransitionParams
 
 const builtins = new Map<string, AnimeTransitionStyle>(Object.entries(builtinTransitionStyles))
 const warned = new Set<string>()
@@ -24,16 +27,21 @@ interface TransitionFallback {
   move?: AnimeMoveParams
 }
 
+const js = (params: AnimationParams): TransitionParams => ({ engine: 'js', params })
+
 export function useTransitionStyles(fallback: TransitionFallback) {
   const config = useNanimeConfig()
   const preset = useActivePreset()
   const named = <Part extends StylePart>(value: string, part: Part) => findStyle(config().transitions, preset()?.shared, value)?.[part]
 
+  function params(value: TransitionPart | undefined, part: 'enter' | 'leave'): TransitionParams {
+    if (typeof value !== 'string') return value ?? js(fallback[part])
+    return js(named(value, part) ?? fallback[part])
+  }
+
   return {
-    enter: (value?: AnimeTransitionStyleName | AnimationParams) =>
-      (typeof value === 'string' ? named(value, 'enter') : value) ?? fallback.enter,
-    leave: (value?: AnimeTransitionStyleName | AnimationParams) =>
-      (typeof value === 'string' ? named(value, 'leave') : value) ?? fallback.leave,
+    enter: (value?: TransitionPart) => params(value, 'enter'),
+    leave: (value?: TransitionPart) => params(value, 'leave'),
     move: (value?: AnimeTransitionStyleName | AnimeMoveParams | false) =>
       value === false ? false : (typeof value === 'string' ? named(value, 'move') : value) ?? fallback.move,
   }

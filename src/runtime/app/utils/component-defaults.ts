@@ -1,39 +1,56 @@
 import { hasInjectionContext, inject } from 'vue'
-import type { AnimationParams } from 'animejs'
+import type { AnimationParams, WAAPIAnimationParams } from 'animejs'
 import type { AnimeMoveParams, NanimeComponentDefaults, NanimeComposableDefaults } from '../public/types'
+import type { TransitionParams } from '../transitions/engine'
+import type { TransitionPart } from '../transitions/resolve'
 import { PROVIDED_DEFAULTS, useNanimeConfig } from './config'
 import { useActivePreset } from './active-preset'
 
 type ComponentName = keyof NanimeComponentDefaults
 type Defaults<Name extends ComponentName> = NonNullable<NanimeComponentDefaults[Name]>
 
-interface AnimationOptions {
-  animation?: string | ResolvedAnimation
-  enterAnimation?: string | AnimationParams
-  leaveAnimation?: string | AnimationParams
+interface AnimationLayer<Params extends object> {
+  animation?: string | {
+    enter?: string | Params
+    leave?: string | Params
+    move?: string | AnimeMoveParams | false
+  }
+  enterAnimation?: string | Params
+  leaveAnimation?: string | Params
   moveAnimation?: string | AnimeMoveParams | false
 }
 
+type AnimationOptions
+  = | (AnimationLayer<AnimationParams> & { waapi?: false })
+    | (AnimationLayer<AnimationParams & WAAPIAnimationParams> & { waapi: true })
+    | (AnimationLayer<never> & { waapi?: boolean })
+
 interface ResolvedAnimation {
-  enter?: string | AnimationParams
-  leave?: string | AnimationParams
+  enter?: TransitionPart
+  leave?: TransitionPart
   move?: string | AnimeMoveParams | false
 }
 
-function splitAnimation(options: AnimationOptions | undefined): ResolvedAnimation {
+function splitLayer<Params extends object>(options: AnimationLayer<Params> | undefined, tag: (params: Params) => TransitionParams): ResolvedAnimation {
+  const part = (value: string | Params | undefined) => typeof value === 'object' ? tag(value) : value
   const animation = options?.animation
   if (typeof animation === 'string') {
     return {
-      enter: options?.enterAnimation ?? animation,
-      leave: options?.leaveAnimation ?? animation,
+      enter: part(options?.enterAnimation) ?? animation,
+      leave: part(options?.leaveAnimation) ?? animation,
       move: options?.moveAnimation ?? animation,
     }
   }
   return {
-    enter: options?.enterAnimation ?? animation?.enter,
-    leave: options?.leaveAnimation ?? animation?.leave,
+    enter: part(options?.enterAnimation ?? animation?.enter),
+    leave: part(options?.leaveAnimation ?? animation?.leave),
     move: options?.moveAnimation ?? animation?.move,
   }
+}
+
+function splitAnimation(options: AnimationOptions | undefined): ResolvedAnimation {
+  if (options?.waapi === true) return splitLayer(options, params => ({ engine: 'waapi', params }))
+  return splitLayer(options, params => ({ engine: 'js', params }))
 }
 
 function animationDefaultsOf(defaults: NanimeComponentDefaults | undefined, name: ComponentName): AnimationOptions | undefined {

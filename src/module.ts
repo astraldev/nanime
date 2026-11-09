@@ -62,6 +62,7 @@ const ANIMEJS_ENTRIES = [
   'animejs/draggable',
   'animejs/timeline',
   'animejs/easings',
+  'animejs/engine',
   'animejs/timer',
 ]
 
