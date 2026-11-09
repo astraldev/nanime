@@ -19,7 +19,7 @@ const API_PAGES: Record<string, string> = {
   AnimeTransition: '/components/transitions',
   AnimeTransitionGroup: '/components/transition-group',
   AnimeLayoutGroup: '/components/layout-group',
-  provideAnimeDefaults: '/guides/configuration#scope-defaults-to-part-of-the-app',
+  provideAnimeDefaults: '/guides/defaults#scope-defaults-to-part-of-the-app',
 }
 
 export function apiPage(name: string) {
