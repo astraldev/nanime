@@ -8,7 +8,7 @@ enter, leave and move animations, so write no transition CSS and no
 For elements that stay mounted but change position or size, use
 [layout.md](layout.md) instead.
 
-Docs: https://nanimejs.netlify.app/components/transitions and
+Docs: https://nanimejs.netlify.app/components/transition and
 https://nanimejs.netlify.app/components/transition-styles
 
 ## One element: `v-if`, `v-show` or a changed `key`
