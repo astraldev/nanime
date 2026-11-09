@@ -9,7 +9,7 @@ const links = computed(() => props.page?.body?.toc?.links || [])
 
 const wideExample = computed(() => {
   const path = props.page?.path ?? ''
-  return path.startsWith('/examples/') && path !== '/examples/introduction'
+  return path.startsWith('/examples/')
 })
 
 const latest = computed(() => {
