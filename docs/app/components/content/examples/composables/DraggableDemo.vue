@@ -13,8 +13,6 @@ useDraggable(box, {
   y: false,
 })
 
-const ticks = computed(() => Array.from({ length: Math.floor(248 / step.value) + 1 }, (_, index) => index * step.value))
-
 const actions = computed<ExampleAction[]>(() => steps.map(value => ({
   label: `snap ${value}px`,
   run: () => (step.value = value),
@@ -29,14 +27,9 @@ const actions = computed<ExampleAction[]>(() => steps.map(value => ({
   >
     <div
       ref="track"
-      class="relative h-10 w-72"
+      class="relative h-10 w-72 bg-[linear-gradient(to_right,currentColor_1px,transparent_1px)] text-primary/40"
+      :style="{ backgroundSize: `${step}px 100%`, backgroundPosition: '20px 0' }"
     >
-      <span
-        v-for="tick in ticks"
-        :key="tick"
-        class="absolute inset-y-0 w-px bg-primary/40"
-        :style="{ left: `${tick}px` }"
-      />
       <div
         ref="box"
         class="relative size-10 cursor-grab rounded-lg bg-primary"

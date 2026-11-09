@@ -5,18 +5,20 @@ import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleW
 
 const animation: AnimeTransitionAnimation = {
   enter: {
-    scaleX: [0, 1.25, 0.9, 1],
-    scaleY: [0, 0.7, 1.1, 1],
-    duration: 450,
-    ease: 'out(2)',
+    x: () => [random(-40, 40), 0],
+    y: [60, -6, 0],
+    scale: [0.6, 1.04, 1],
+    opacity: [0, 1, 1],
+    duration: 480,
+    ease: 'outQuart',
   },
   leave: {
-    x: () => [0, random(-40, 40), random(-180, 180)],
-    y: () => [0, -30, random(40, 120)],
-    rotate: () => [0, random(-20, 20), random(-120, 120)],
+    x: () => [0, random(-60, 60)],
+    y: [0, -8, 70],
+    scale: [1, 1.06, 0.6],
     opacity: [1, 1, 0],
-    duration: 600,
-    ease: 'in(2)',
+    duration: 480,
+    ease: 'inOut(2)',
   },
 }
 

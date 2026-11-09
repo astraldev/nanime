@@ -1,60 +1,57 @@
 <script setup lang="ts">
-import type { AnimationParams } from '#nanime/types'
-import { random, shuffle } from '#nanime/utils'
+import type { AnimeTransitionGroupAnimation } from '#nanime/types'
+import { spring } from '#nanime/easings'
+import { random, stagger } from '#nanime/utils'
 import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleWrapper.vue'
 
-const enter: AnimationParams = {
-  scale: [0, 1.25, 1],
-  rotate: [-90, 15, 0],
-  duration: 600,
-  ease: 'out(3)',
+const animation: AnimeTransitionGroupAnimation = {
+  enter: {
+    scale: [0.2, 1.1, 1],
+    rotate: () => [random(-90, 90), 0],
+    opacity: [0, 1, 1],
+    delay: stagger(50),
+    duration: 500,
+  },
+  leave: { scale: 0.2, opacity: 0, delay: stagger(50), duration: 300 },
+  move: { ease: spring({ bounce: 0.3, duration: 600 }) },
 }
 
-const leave: AnimationParams = {
-  y: [0, -12, 40],
-  rotate: [0, 0, 45],
-  opacity: [1, 1, 0],
-  duration: 420,
-  ease: 'in(2)',
-}
-
-const items = ref([1, 2, 3, 4, 5])
-let nextId = 6
+const tiles = ref([0, 1, 2, 3, 4, 5, 6, 7])
+const columns = ref(4)
+let nextId = 8
 
 function add() {
-  items.value.splice(random(0, items.value.length), 0, nextId++)
+  tiles.value.splice(random(0, tiles.value.length), 0, nextId++, nextId++, nextId++)
 }
 
 function remove() {
-  items.value.splice(random(0, items.value.length - 1), 1)
+  tiles.value.splice(random(0, Math.max(0, tiles.value.length - 3)), 3)
 }
 
-function shuffleItems() {
-  shuffle(items.value)
+function toggleColumns() {
+  columns.value = columns.value === 4 ? 2 : 4
 }
 
 const actions: ExampleAction[] = [
-  { label: 'Add', run: add },
-  { label: 'Remove', run: remove },
-  { label: 'Shuffle', run: shuffleItems },
+  { label: 'Add 3', run: add },
+  { label: 'Remove 3', run: remove },
+  { label: 'Columns', run: toggleColumns },
 ]
 </script>
 
 <template>
   <ExampleWrapper :actions="actions">
     <AnimeTransitionGroup
-      tag="ul"
-      class="relative flex min-h-10 flex-wrap gap-2"
-      :enter-animation="enter"
-      :leave-animation="leave"
+      class="relative grid w-fit gap-2"
+      :class="columns === 4 ? 'grid-cols-4' : 'grid-cols-2'"
+      :animation="animation"
+      :deps="[columns]"
     >
-      <li
-        v-for="item in items"
-        :key="item"
-        class="flex size-10 items-center justify-center rounded-lg bg-primary font-semibold text-inverted"
-      >
-        {{ item }}
-      </li>
+      <div
+        v-for="tile in tiles"
+        :key="tile"
+        class="size-10 rounded-lg bg-primary"
+      />
     </AnimeTransitionGroup>
   </ExampleWrapper>
 </template>
