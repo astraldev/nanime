@@ -38,17 +38,17 @@ its methods, its properties) is linked, never copied. A reader who needs
 ## Badge row
 
 - `Instant play` -> composable supports instant mode, linked to
-  `/composables/introduction#instant-play`
+  `/composables/how-composables-run#instant-play`
 - `Buffered` -> composable returns a buffered proxy, linked to
-  `/composables/introduction#buffered`
+  `/composables/how-composables-run#buffered`
 - Both, in that order, when both apply. No badge row when neither does.
 - One markup for every badge:
 
   ```md
-  ::nuxt-link{to="/composables/introduction#instant-play"}
+  ::nuxt-link{to="/composables/how-composables-run#instant-play"}
   :badge{icon="mage:zap-fill" label="Instant play" size="md" variant="soft"}
   ::
-  ::nuxt-link{to="/composables/introduction#buffered"}
+  ::nuxt-link{to="/composables/how-composables-run#buffered"}
   :badge{icon="ph:stack" label="Buffered" size="md" variant="soft"}
   ::
   ```
