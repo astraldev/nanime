@@ -4,7 +4,7 @@ import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleW
 
 const animation = ref<string | AnimeTransitionAnimation>('slide-up')
 const enterAnimation = ref<AnimationParams>()
-const selected = ref('One name')
+const selected = ref('animation="slide-up"')
 const runs = ref(0)
 
 function select(label: string, next: string | AnimeTransitionAnimation, enter?: AnimationParams) {
@@ -15,15 +15,15 @@ function select(label: string, next: string | AnimeTransitionAnimation, enter?: 
 }
 
 function oneName() {
-  select('One name', 'slide-up')
+  select('animation="slide-up"', 'slide-up')
 }
 
 function enterLeaveApart() {
-  select('Enter and leave apart', { enter: 'slide-up', leave: 'fade' })
+  select('animation={enter, leave}', { enter: 'slide-up', leave: 'fade' })
 }
 
 function propWins() {
-  select('A prop wins', 'fade', { scale: [0.9, 1], duration: 400 })
+  select('animation + enterAnimation', 'fade', { scale: [0.9, 1], duration: 400 })
 }
 
 function choiceAction(label: string, run: () => void): ExampleAction {
@@ -31,9 +31,9 @@ function choiceAction(label: string, run: () => void): ExampleAction {
 }
 
 const actions = computed<ExampleAction[]>(() => [
-  choiceAction('One name', oneName),
-  choiceAction('Enter and leave apart', enterLeaveApart),
-  choiceAction('A prop wins', propWins),
+  choiceAction('animation="slide-up"', oneName),
+  choiceAction('animation={enter, leave}', enterLeaveApart),
+  choiceAction('animation + enterAnimation', propWins),
 ])
 </script>
 

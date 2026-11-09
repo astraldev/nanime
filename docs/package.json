@@ -33,6 +33,7 @@
     "@iconify-json/vscode-icons": "^1.2.95",
     "@types/node": "catalog:nuxt",
     "@types/three": "^0.187.0",
+    "nuxt-studio": "1.8.0",
     "typescript": "catalog:nuxt"
   }
 }

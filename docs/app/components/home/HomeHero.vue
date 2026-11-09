@@ -82,15 +82,15 @@ if (entering) {
 
       <div
         ref="actionsEl"
-        class="mt-12 flex flex-wrap items-center gap-3 max-sm:*:w-full"
+        class="mt-12 flex flex-wrap items-center gap-3 max-sm:[&>a]:flex-1 max-sm:[&>a]:justify-center"
         :class="{ 'opacity-0': entering }"
       >
         <div
           v-if="props.install"
-          class="flex h-9 items-center gap-2.5 rounded-(--ui-radius) border border-accented ps-3 pe-1 font-mono text-sm max-sm:justify-between"
+          class="flex h-9 items-center gap-2.5 rounded-(--ui-radius) border border-accented ps-3 pe-1 font-mono text-sm max-sm:w-full"
         >
           <span class="text-primary">$</span>
-          <code>{{ props.install }}</code>
+          <code class="max-sm:flex-1">{{ props.install }}</code>
           <button
             type="button"
             class="grid size-7 cursor-pointer place-items-center rounded-md text-muted transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
