@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const box = useTemplateRef('box')
-useAnimate(box, { x: 200, alternate: true, loop: true })
+useAnimate(box, { x: 160, alternate: true, loop: true })
 </script>
 
 <template>
