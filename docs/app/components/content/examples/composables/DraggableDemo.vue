@@ -1,72 +1,46 @@
 <script setup lang="ts">
-import { spring } from '#nanime/easings'
-import ExampleWrapper from '~/components/shared/ExampleWrapper.vue'
+import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleWrapper.vue'
 
-const container = useTemplateRef('container')
-const draggable = useTemplateRef('draggable')
+const steps = [24, 48, 96]
 
-useDraggable(draggable, {
-  container: container,
-  releaseEase: spring({
-    bounce: 0.65,
-    duration: 400,
-  }),
-  x: {
-    snap: (draggable) => {
-      const hw = (draggable?.dragArea || [0, 0, 0, 0])[2]
-      const results = [0, hw * 0.35, hw * 0.75]
-      return results
-    },
-  },
+const track = useTemplateRef('track')
+const box = useTemplateRef('box')
+const step = ref(48)
+
+useDraggable(box, {
+  container: track,
+  x: { snap: step },
+  y: false,
 })
+
+const ticks = computed(() => Array.from({ length: Math.floor(248 / step.value) + 1 }, (_, index) => index * step.value))
+
+const actions = computed<ExampleAction[]>(() => steps.map(value => ({
+  label: `snap ${value}px`,
+  run: () => (step.value = value),
+  active: step.value === value,
+})))
 </script>
 
 <template>
-  <ExampleWrapper :resizable="false">
+  <ExampleWrapper
+    :actions="actions"
+    :resizable="false"
+  >
     <div
-      ref="container"
-      class="relative rounded-md border-dashed h-10"
+      ref="track"
+      class="relative h-10 w-72"
     >
-      <div class="snap-positions">
-        <div
-          class="spot"
-          style="--snap-x: 0%"
-        >
-          0%
-        </div>
-        <div
-          class="spot"
-          style="--snap-x: 35%"
-        >
-          35%
-        </div>
-        <div
-          class="spot"
-          style="--snap-x: 75%"
-        >
-          75%
-        </div>
-      </div>
+      <span
+        v-for="tick in ticks"
+        :key="tick"
+        class="absolute inset-y-0 w-px bg-primary/40"
+        :style="{ left: `${tick}px` }"
+      />
       <div
-        ref="draggable"
-        class="simple-box w-12 h-10! draggable"
+        ref="box"
+        class="relative size-10 cursor-grab rounded-lg bg-primary"
       />
     </div>
   </ExampleWrapper>
 </template>
-
-<style scoped>
-@reference "~/assets/css/main.css";
-
-.snap-positions {
-  @apply absolute inset-0 pointer-events-none;
-}
-
-.snap-positions div {
-  @apply absolute top-0 inset-y-0 left-(--snap-x) w-12 h-10;
-}
-
-.draggable {
-  @apply z-10 text-black relative;
-}
-</style>
