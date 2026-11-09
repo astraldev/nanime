@@ -66,6 +66,7 @@ export default defineNuxtConfig({
     '/composables': { redirect: { to: '/composables/introduction', statusCode: 301 } },
     '/getting-started': { redirect: { to: '/getting-started/introduction', statusCode: 301 } },
     '/guides': { redirect: { to: '/guides/configuration', statusCode: 301 } },
+    '/guides/how-composables-run': { redirect: { to: '/composables/how-composables-run', statusCode: 301 } },
     '/getting-started/configuration': { redirect: { to: '/guides/configuration', statusCode: 301 } },
     '/getting-started/presets': { redirect: { to: '/guides/presets', statusCode: 301 } },
     '/getting-started/performance': { redirect: { to: '/guides/performance', statusCode: 301 } },
