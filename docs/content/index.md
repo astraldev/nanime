@@ -103,7 +103,7 @@ to: /composables/introduction
     Animate elements to their next layout when a property or dependency changes
     ::::
 
-    ::::home-card{name="<AnimeTransition />" to="/components/transitions"}
+    ::::home-card{name="<AnimeTransition />" to="/components/transition"}
     Animate elements entering and leaving with `v-if` and `v-show`
     ::::
 

@@ -16,7 +16,7 @@ export const CHANGELOG_TYPES: Record<ChangelogType, ChangelogTypeMeta> = {
 }
 
 const API_PAGES: Record<string, string> = {
-  AnimeTransition: '/components/transitions',
+  AnimeTransition: '/components/transition',
   AnimeTransitionGroup: '/components/transition-group',
   AnimeLayoutGroup: '/components/layout-group',
   provideAnimeDefaults: '/guides/defaults#scope-defaults-to-part-of-the-app',
