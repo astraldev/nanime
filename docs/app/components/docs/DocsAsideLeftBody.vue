@@ -17,11 +17,11 @@ interface NavLink {
 const groups: NavGroup[] = [
   { label: 'Get Started', paths: ['/getting-started/introduction', '/getting-started/installation'] },
   { label: 'Guides', paths: ['/guides/configuration', '/guides/defaults', '/guides/presets', '/guides/performance', '/guides/accessibility', '/guides/vue'] },
-  { label: 'Animate', paths: ['/composables/introduction', '/composables/how-composables-run', '/composables/use-animate', '/composables/use-waapi-animate', '/composables/use-animatable', '/composables/use-anime-timeline', '/composables/use-split-text', '/composables/use-scramble-text'] },
+  { label: 'Animate', paths: ['/composables/introduction', '/composables/how-composables-run', '/composables/use-animate', '/composables/use-waapi-animate', '/composables/use-animatable', '/composables/use-anime-timeline', '/composables/use-split-text', '/composables/use-scramble-text', '/composables/utilities'] },
   { label: 'Transitions', paths: ['/components/transitions', '/components/transition-group', '/components/transition-styles'] },
   { label: 'Interaction', paths: ['/composables/use-draggable', '/composables/use-anime-scroll'] },
   { label: 'Layout', paths: ['/components/layout-group', '/composables/use-anime-layout'] },
-  { label: 'Reference', paths: ['/composables/utilities', '/comparisons/vs-nuxt-modules', '/comparisons/vs-vue-packages', '/examples/introduction'], collapsed: true },
+  { label: 'Reference', paths: ['/comparisons/vs-nuxt-modules', '/comparisons/vs-vue-packages', '/examples/introduction'], collapsed: true },
 ]
 
 const changelogPath = '/changes/changelog'
