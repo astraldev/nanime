@@ -194,5 +194,9 @@ fresh object costs nothing.
 - To continue mid-flight, pass `{ rebuild: 'keepTime' }` as the last
   argument to `useAnimate`, `useAnimeTimeline` or `useScrambleText`.
 - To start the new animation from the current values, pass
-  `{ rebuild: 'keepValue' }` to `useAnimate`.
+  `{ rebuild: 'keepValue' }` to `useAnimate`. Add `composition: 'blend'` to
+  the parameters to keep the old motion running and blend the new one onto
+  it. Without `'keepValue'`, `'blend'` has nothing to blend with, because
+  the rebuild reverts the old animation. A looping animation is cancelled
+  instead.
 - For a value that retargets constantly, use `useAnimatable`.
