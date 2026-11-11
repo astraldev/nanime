@@ -1,7 +1,7 @@
 import type { AnimationParams, DraggableParams } from 'animejs'
 import type { AnimeTransitionStyle } from './transitions'
 import type { NanimeComponentDefaults } from './components'
-import type { NanimeReducedMotion } from './options'
+import type { NanimeRebuild, NanimeReducedMotion } from './options'
 import type { AnimationPreset } from '../../utils/presets'
 
 /** Default `useDraggable()` options. `trigger` and `container` belong to one element, so they are not defaults. */
@@ -21,14 +21,14 @@ export interface NanimeDefaults extends NanimeComponentDefaults {
   composables?: NanimeComposableDefaults
   /** Preset for everything inside, replacing the one set higher up. A preset sits below `app.config.ts` and the props. */
   preset?: AnimationPreset
-  /** Default `keepTime` for the composables inside. A composable's own `keepTime` option wins. */
-  keepTime?: boolean
+  /** Default `rebuild` for the composables inside. A composable's own option wins. */
+  rebuild?: NanimeRebuild
 }
 
 /** The `nanime` key in `app.config.ts`, which sits over the module options. */
 export interface NanimeConfig {
-  /** Overrides `keepTime` from `nuxt.config.ts`. A composable's own `keepTime` option and `provideAnimeDefaults()` win over it. */
-  keepTime?: boolean
+  /** Overrides `rebuild` from `nuxt.config.ts`. A composable's own option and `provideAnimeDefaults()` win. */
+  rebuild?: NanimeRebuild
   /** Overrides `reducedMotion` from `nuxt.config.ts`, and can change at runtime. */
   reducedMotion?: NanimeReducedMotion
   /** The preset for the whole app. Import one from `nanime/presets/*` or write your own. Props, `provideAnimeDefaults()` and the rest of this config win over it. */

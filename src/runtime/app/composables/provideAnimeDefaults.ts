@@ -19,8 +19,8 @@ import { PROVIDED_DEFAULTS } from '../utils/config'
  * replacing the outer one whole and falling back to `nanime.composables`.
  * Parameters passed to the composable call win.
  *
- * `keepTime` is the default for the composables inside, below a composable's
- * own `keepTime` option and above `app.config.ts`.
+ * `rebuild` is the default for the composables inside, below a composable's
+ * own `rebuild` option and above `app.config.ts`.
  *
  * `preset` swaps the preset for everything inside, replacing the one set higher
  * up or in `nanime.preset` in `app.config.ts`. A preset is the lowest layer,
@@ -38,7 +38,7 @@ export function provideAnimeDefaults(defaults: MaybeRefOrGetter<NanimeDefaults>)
       transitionGroup: own.transitionGroup ?? above?.transitionGroup,
       layoutGroup: own.layoutGroup ?? above?.layoutGroup,
       preset: own.preset ?? above?.preset,
-      keepTime: own.keepTime ?? above?.keepTime,
+      rebuild: own.rebuild ?? above?.rebuild,
       composables: {
         animate: own.composables?.animate ?? above?.composables?.animate,
         draggable: own.composables?.draggable ?? above?.composables?.draggable,

@@ -1,5 +1,5 @@
-import { defineNuxtModule, createResolver, addComponent, addImportsDir, addPlugin, addVitePlugin } from '@nuxt/kit'
-import type { NanimeConfig, NanimeReducedMotion } from './runtime/app/public/types'
+import { defineNuxtModule, createResolver, addComponent, addImportsDir, addPlugin, addVitePlugin, useLogger } from '@nuxt/kit'
+import type { NanimeConfig, NanimeRebuild, NanimeReducedMotion } from './runtime/app/public/types'
 
 export interface ModuleOptions {
   /**
@@ -15,12 +15,10 @@ export interface ModuleOptions {
    */
   components: boolean
   /**
-   * Default `keepTime` for every composable. With `true`, an animation that a
-   * reactive change rebuilds continues from its current playhead instead of
-   * restarting. A composable's own `keepTime` option overrides it.
-   * @default false
+   * Default `rebuild` for every composable that does not set its own.
+   * @default 'restart'
    */
-  keepTime: boolean
+  rebuild: NanimeRebuild
   /**
    * When animations jump to their end state. `'system'` follows `prefers-reduced-motion`.
    * @default 'never'
@@ -36,7 +34,7 @@ declare module 'nuxt/schema' {
     nanime: ModuleOptions
   }
   interface PublicRuntimeConfig {
-    nanime: { keepTime: boolean, reducedMotion: NanimeReducedMotion }
+    nanime: { rebuild: NanimeRebuild, reducedMotion: NanimeReducedMotion }
   }
   // CustomAppConfig types what useAppConfig() reads; AppConfigInput checks app.config.ts.
   interface CustomAppConfig {
@@ -77,11 +75,15 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     composables: true,
     components: true,
-    keepTime: false,
+    rebuild: 'restart',
     reducedMotion: 'never',
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
+
+    if (Reflect.has(_options, 'keepTime')) {
+      useLogger(__name).warn('`keepTime: true` is now `rebuild: \'keepTime\'`.')
+    }
 
     addVitePlugin(() => ({
       name: '__optimize-deps',
@@ -94,7 +96,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const existing = _nuxt.options.runtimeConfig.public.nanime
     _nuxt.options.runtimeConfig.public.nanime = {
-      keepTime: existing?.keepTime ?? _options.keepTime,
+      rebuild: existing?.rebuild ?? _options.rebuild,
       reducedMotion: existing?.reducedMotion ?? _options.reducedMotion,
     }
 

@@ -1,3 +1,3 @@
 <template>
-  <div>keep-time</div>
+  <div>rebuild</div>
 </template>

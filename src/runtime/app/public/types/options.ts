@@ -17,14 +17,30 @@ export type NanimeReducedMotion = 'system' | 'always' | 'never'
 /** Params of `useAnimeLayout` and `<AnimeLayoutGroup>`: Anime.js `createLayout()` params. */
 export type AnimeLayoutParams = AutoLayoutParams
 
-/** Options for `useAnimate`, `useAnimeTimeline` and `useScrambleText`. */
+/**
+ * How a reactive change rebuilds an instance.
+ * - `'restart'`: reverts the old instance and starts over.
+ * - `'keepTime'`: reverts it and continues from its playhead.
+ * - `'keepValue'`: stops it and starts from the current values (`useAnimate` only).
+ */
+export type NanimeRebuild = 'restart' | 'keepTime' | 'keepValue'
+
+/** Options for `useAnimeTimeline` and `useScrambleText`. */
 export interface NanimeInstanceOptions {
   /**
-   * When a reactive change rebuilds the instance, continue from the current
-   * playhead instead of restarting at zero.
-   * @default `nanime.keepTime` in `nuxt.config`, which is `false` unless set
+   * How a reactive change rebuilds the instance.
+   * @default `nanime.rebuild` in `nuxt.config`, which is `'restart'`
    */
-  keepTime?: boolean
+  rebuild?: Exclude<NanimeRebuild, 'keepValue'>
+}
+
+/** Options for `useAnimate`. */
+export interface NanimeAnimateOptions {
+  /**
+   * How a reactive change rebuilds the animation.
+   * @default `nanime.rebuild` in `nuxt.config`, which is `'restart'`
+   */
+  rebuild?: NanimeRebuild
 }
 
 /**

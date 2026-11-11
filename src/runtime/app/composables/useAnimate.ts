@@ -5,11 +5,11 @@ import { snapshotParameters } from '../utils/snapshot-parameters'
 import type { AnimationParams, TargetsParam } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { keepTime } from 'animejs/utils'
-import type { NanimeInstanceOptions } from '../public/types'
+import type { NanimeAnimateOptions } from '../public/types'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
-import { resolveKeepTime } from '../utils/global-options'
+import { resolveRebuild } from '../utils/global-options'
 import { useComposableDefaults } from '../utils/component-defaults'
 import { useReducedMotion } from '../utils/reduced-motion'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
@@ -20,20 +20,21 @@ const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
  * Runs an Anime.js `animate()` on `target` when the component mounts and
  * reverts it when the scope is disposed.
  *
- * When `target` or `parameters` change, the animation is rebuilt. Pass
- * `keepTime: true` to continue from the current playhead instead of
- * restarting.
+ * When `target` or `parameters` change, the animation is rebuilt. Set
+ * `rebuild` to change how.
  */
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
   parameters?: MaybeRefOrGetter<AnimationParams>,
-  options?: NanimeInstanceOptions,
+  options?: NanimeAnimateOptions,
 ): JSAnimation {
   const flag = getAnimationComponentFlag()
   const mounted = useMounted()
   const animation = shallowRef(animate({}, {}))
 
-  const keepsTime = resolveKeepTime(options?.keepTime)
+  const rebuild = resolveRebuild(options?.rebuild, true)
+  const keepsTime = rebuild === 'keepTime'
+  const keepsValue = rebuild === 'keepValue'
 
   const { withReducedMotion } = useReducedMotion()
   const create = (targets: TargetsParam, params: AnimationParams) => animate(targets, withReducedMotion(params))
@@ -44,14 +45,26 @@ export function useAnimate(
   const resolveParameters = (): AnimationParams => ({ ...resolveDefaults(), ...toValue(parameters) })
   const resolveBoundParameters = () => unwrapNanimeProxies(resolveParameters())
 
-  const rebuildAnimation = (targets: TargetsParam, params: AnimationParams) => {
-    if (hasNanimeProxy(resolveParameters())) {
-      animation.value?.cancel()
-      animation.value = create(targets, params)
-      return
-    }
+  let first: JSAnimation | null = null
+  let lastTargets: TargetsParam | null = null
 
-    if (!keepsTime) animation.value?.revert()
+  const revertAll = () => {
+    animation.value.revert()
+    first?.revert()
+    first = null
+  }
+
+  const rebuildKeepingValue = (targets: TargetsParam, params: AnimationParams) => {
+    if (lastTargets && !sameTargets(lastTargets, targets)) revertAll()
+    else animation.value.cancel()
+    lastTargets = targets
+    animation.value = create(targets, params)
+    first ??= animation.value
+  }
+
+  const rebuildAnimation = (targets: TargetsParam, params: AnimationParams) => {
+    if (keepsValue || hasNanimeProxy(resolveParameters())) return rebuildKeepingValue(targets, params)
+    if (!keepsTime) animation.value.revert()
     animation.value = createKeepingTime(targets, params)
   }
 
@@ -75,9 +88,7 @@ export function useAnimate(
     watch([resolveTargets, () => snapshotParameters(resolveParameters())], sync)
     onMounted(sync)
 
-    tryOnScopeDispose(() => {
-      animation.value?.revert()
-    })
+    tryOnScopeDispose(revertAll)
   }
   else {
     nextTick(() => {

@@ -9,7 +9,7 @@ import type { NanimeInstanceOptions, ScrambleAnimationParams } from '../public/t
 import { scrambleText } from 'animejs/text'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
-import { resolveKeepTime } from '../utils/global-options'
+import { resolveRebuild } from '../utils/global-options'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 import { useReducedMotion } from '../utils/reduced-motion'
@@ -21,7 +21,7 @@ const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
  * component mounts and reverts it when the scope is disposed.
  *
  * When `target`, `animationOptions` or `scrambleOptions` change, the
- * animation is rebuilt. Pass `keepTime: true` to continue from the current
+ * animation is rebuilt. Pass `rebuild: 'keepTime'` to continue from the current
  * playhead instead of restarting.
  */
 export function useScrambleText(
@@ -31,7 +31,7 @@ export function useScrambleText(
   options?: NanimeInstanceOptions,
 ): JSAnimation {
   const flag = getAnimationComponentFlag()
-  const keepsTime = resolveKeepTime(options?.keepTime)
+  const keepsTime = resolveRebuild(options?.rebuild) === 'keepTime'
   const { isReduced } = useReducedMotion()
 
   const buildAnimation = (
