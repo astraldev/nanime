@@ -2,19 +2,9 @@ export default defineNuxtConfig({
   extends: ['docus'],
   modules: ['nanime'],
   $development: {
-    modules: ['nuxt-studio'],
     hooks: {
       'build:manifest': (manifest) => {
         for (const chunk of Object.values(manifest)) chunk.prefetch = false
-      },
-    },
-    studio: {
-      dev: true,
-      repository: {
-        provider: 'github',
-        owner: 'astraldev',
-        repo: 'nanime',
-        branch: 'main',
       },
     },
   },
