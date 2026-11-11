@@ -22,7 +22,6 @@ const groups: NavGroup[] = [
   { label: 'Interaction', paths: ['/composables/use-draggable', '/composables/use-anime-scroll'] },
   { label: 'Layout', paths: ['/components/layout-group', '/composables/use-anime-layout'] },
   { label: 'Reference', paths: ['/comparisons/vs-nuxt-modules', '/comparisons/vs-vue-packages'], collapsed: true },
-  { label: 'Examples', paths: ['/examples/drive', '/examples/road-trip', '/examples/player'] },
 ]
 
 const changelogPath = '/changes/changelog'
