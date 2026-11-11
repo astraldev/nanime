@@ -8,24 +8,25 @@ import { presetStyles } from './lib/styles'
  *
  * @description
  * Smooth, graceful motion. Things glide into place with soft easing and
- * settle gently — no bounce, no snap. Prefer this for refined,
+ * settle gently, with no bounce and no snap. Prefer this for refined,
  * high-end products.
  *
- * @timing (0.4 - 0.65s)
- * Slow and flowing, with a long soft tail. Longer than formal, calmer
- * than playful. Exits ease out slowly rather than cutting fast.
+ * @timing (0.24 - 0.5s)
+ * Unhurried, with a long soft tail. Fades take 240 to 300ms, entrances
+ * 400ms, exits 280ms and moves 500ms. Exits ease out slowly rather
+ * than cutting fast.
  *
  * @vocabulary
  * Expressive easing from the IBM Carbon motion system: a gentle
  * entrance with a long settle and a soft standard curve for exits and
- * moves. Small travel (12px) and a near-still scale (0.98).
+ * moves. Small travel (12px) and a near-still scale (0.97).
  *
  * @bestFor
  * Luxury brands, portfolios, editorial sites, fashion, hospitality,
  * premium apps, product showcases.
  *
  * @avoidFor
- * Fast tools, dashboards, data entry — anything where slow motion
+ * Fast tools, dashboards, data entry and anything where slow motion
  * would feel sluggish or get in the way.
  */
 
@@ -39,21 +40,23 @@ export default defineAnimationPreset({
     enterEase: settle,
     leaveEase: glide,
     moveEase: glide,
-    enterDuration: 550,
-    leaveDuration: 400,
-    moveDuration: 620,
+    fadeEnterDuration: 300,
+    fadeLeaveDuration: 240,
+    enterDuration: 400,
+    leaveDuration: 280,
+    moveDuration: 500,
     distance: 12,
-    scale: 0.98,
+    scale: 0.97,
   }),
 
   components: {
-    transition: {},
+    transition: { animation: 'fade' },
     transitionGroup: { animation: 'list' },
-    layoutGroup: { layoutOptions: { duration: 620, ease: glide } },
+    layoutGroup: { layoutOptions: { duration: 500, ease: glide } },
   },
 
   composables: {
-    animate: { duration: 550, ease: glide },
-    draggable: { releaseStiffness: 60, releaseDamping: 18 },
+    animate: { duration: 400, ease: settle },
+    draggable: { releaseMass: 1, releaseStiffness: 100, releaseDamping: 20, releaseEase: 'outQuint' },
   },
 })
