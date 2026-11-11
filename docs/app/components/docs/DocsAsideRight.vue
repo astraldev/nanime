@@ -7,11 +7,6 @@ const props = defineProps<{
 
 const links = computed(() => props.page?.body?.toc?.links || [])
 
-const wideExample = computed(() => {
-  const path = props.page?.path ?? ''
-  return path.startsWith('/examples/')
-})
-
 const latest = computed(() => {
   const value = props.page?.meta?.latest
   return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined
@@ -29,7 +24,6 @@ const contentTocVariants = useUIConfig('contentToc')
 
 <template>
   <div
-    :data-wide-example="wideExample || undefined"
     :data-toc-left="tocOnLeft || undefined"
   >
     <DocsTocGroups
@@ -40,7 +34,7 @@ const contentTocVariants = useUIConfig('contentToc')
       class="hidden lg:flex"
     />
     <UContentToc
-      v-else-if="links.length && !wideExample"
+      v-else-if="links.length"
       :highlight="contentTocVariants.highlight ?? true"
       :highlight-color="contentTocVariants.highlightColor"
       :highlight-variant="contentTocVariants.highlightVariant ?? 'circuit'"
@@ -63,14 +57,6 @@ const contentTocVariants = useUIConfig('contentToc')
 
 <style>
 @media (min-width: 1024px) {
-  [data-slot="root"]:has(> [data-wide-example]) > [data-slot="center"] {
-    grid-column: span 10 / span 10;
-  }
-
-  [data-slot="root"] > [data-wide-example] {
-    display: none;
-  }
-
   [data-slot="root"] > [data-toc-left] {
     order: -1;
   }
