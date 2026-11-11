@@ -38,7 +38,7 @@ export default defineConfig({
           environment: 'nuxt',
           environmentOptions: {
             nuxt: {
-              rootDir: fileURLToPath(new URL('./test/fixtures/keep-time', import.meta.url)),
+              rootDir: fileURLToPath(new URL('./test/fixtures/rebuild', import.meta.url)),
               domEnvironment: 'jsdom',
             },
           },

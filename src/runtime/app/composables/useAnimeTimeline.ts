@@ -7,7 +7,7 @@ import type { NanimeInstanceOptions } from '../public/types'
 import { normalizeAnimeTarget } from '../utils/targets'
 import { createBufferedProxy, hasNanimeProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/proxy'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
-import { resolveKeepTime } from '../utils/global-options'
+import { resolveRebuild } from '../utils/global-options'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
@@ -39,7 +39,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
  *
  * `add()`, `set()` and `remove()` take template refs, component refs and
  * getters as targets, as well as selectors. When `parameters` change, the
- * timeline is rebuilt; pass `keepTime: true` to keep its playhead. Methods
+ * timeline is rebuilt, and `rebuild: 'keepTime'` keeps its playhead. Methods
  * called before mount run once the timeline exists.
  */
 export function useAnimeTimeline(
@@ -47,7 +47,7 @@ export function useAnimeTimeline(
   options?: NanimeInstanceOptions,
 ): BufferedProxyReturns<Timeline> {
   const flag = getAnimationComponentFlag()
-  const keepsTime = resolveKeepTime(options?.keepTime)
+  const keepsTime = resolveRebuild(options?.rebuild) === 'keepTime'
   const mounted = useMounted()
   const timeline = shallowRef<Timeline | null>(null)
 

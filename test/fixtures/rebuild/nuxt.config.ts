@@ -5,6 +5,6 @@ export default defineNuxtConfig({
     MyModule,
   ],
   nanime: {
-    keepTime: false,
+    rebuild: 'restart',
   },
 })

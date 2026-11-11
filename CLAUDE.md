@@ -149,7 +149,7 @@ Run docs dev: `cd docs && pnpm dev` (port 3001).
 
 Vitest projects in `vitest.config.ts`:
 - **full-nuxt-apps** — `test/fixtures/`
-- **config** — `test/config/` (runs against the `keep-time` fixture)
+- **config** — `test/config/` (runs against the `rebuild` fixture)
 - **suites** — `test/suites/` (component tests via `mountSuspended`, real components, no mocks)
 
 `unit` and `e2e` projects are configured but their folders are empty. Tests are moving to a private repo.

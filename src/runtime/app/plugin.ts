@@ -6,7 +6,7 @@ const plugin: Plugin = defineNuxtPlugin((nuxtApp) => {
   const runtime = useRuntimeConfig().public.nanime
 
   nuxtApp.vueApp.provide(Symbol.for('nanime-config'), () => ({
-    keepTime: appConfig.nanime?.keepTime ?? runtime.keepTime,
+    rebuild: appConfig.nanime?.rebuild ?? runtime.rebuild,
     reducedMotion: appConfig.nanime?.reducedMotion ?? runtime.reducedMotion,
     preset: appConfig.nanime?.preset,
     transitions: appConfig.nanime?.transitions,
