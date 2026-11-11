@@ -5,17 +5,30 @@ export interface PresetMotion {
   enterEase: EasingParam
   leaveEase: EasingParam
   moveEase: EasingParam
-  enterDuration: number
-  leaveDuration: number
-  moveDuration: number
+  fadeEnterEase?: EasingParam
+  fadeLeaveEase?: EasingParam
+  enterDuration?: number
+  leaveDuration?: number
+  moveDuration?: number
+  fadeEnterDuration: number
+  fadeLeaveDuration: number
   distance: number
   scale: number
 }
 
+interface Timing {
+  ease: EasingParam
+  duration?: number
+}
+
 export function presetStyles(motion: PresetMotion) {
-  const enter = { duration: motion.enterDuration, ease: motion.enterEase }
-  const leave = { duration: motion.leaveDuration, ease: motion.leaveEase }
-  const move = { duration: motion.moveDuration, ease: motion.moveEase }
+  const timing = (ease: EasingParam, duration?: number): Timing => duration === undefined ? { ease } : { duration, ease }
+
+  const enter = timing(motion.enterEase, motion.enterDuration)
+  const leave = timing(motion.leaveEase, motion.leaveDuration)
+  const move = timing(motion.moveEase, motion.moveDuration)
+  const fadeEnter = timing(motion.fadeEnterEase ?? motion.enterEase, motion.fadeEnterDuration)
+  const fadeLeave = timing(motion.fadeLeaveEase ?? motion.leaveEase, motion.fadeLeaveDuration)
 
   const slide = (axis: 'x' | 'y', distance: number) => ({
     enter: { opacity: [0, 1], [axis]: [distance, 0], ...enter },
@@ -25,8 +38,8 @@ export function presetStyles(motion: PresetMotion) {
 
   return {
     'fade': {
-      enter: { opacity: [0, 1], ...enter },
-      leave: { opacity: 0, ...leave },
+      enter: { opacity: [0, 1], ...fadeEnter },
+      leave: { opacity: 0, ...fadeLeave },
       move,
     },
     'slide-up': slide('y', motion.distance),
