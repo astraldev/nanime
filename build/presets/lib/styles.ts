@@ -15,16 +15,19 @@ export interface PresetMotion {
 export function presetStyles(motion: PresetMotion) {
   const enter = { duration: motion.enterDuration, ease: motion.enterEase }
   const leave = { duration: motion.leaveDuration, ease: motion.leaveEase }
+  const move = { duration: motion.moveDuration, ease: motion.moveEase }
 
   const slide = (axis: 'x' | 'y', distance: number) => ({
     enter: { opacity: [0, 1], [axis]: [distance, 0], ...enter },
     leave: { opacity: 0, [axis]: -distance, ...leave },
+    move,
   }) satisfies AnimeTransitionStyle
 
   return {
     'fade': {
       enter: { opacity: [0, 1], ...enter },
       leave: { opacity: 0, ...leave },
+      move,
     },
     'slide-up': slide('y', motion.distance),
     'slide-down': slide('y', -motion.distance),
@@ -33,15 +36,17 @@ export function presetStyles(motion: PresetMotion) {
     'scale': {
       enter: { opacity: [0, 1], scale: [motion.scale, 1], ...enter },
       leave: { opacity: 0, scale: motion.scale, ...leave },
+      move,
     },
     'swap': {
       enter: { opacity: [0, 1], y: [motion.distance / 2, 0], ...enter },
       leave: { opacity: 0, y: -motion.distance / 2, ...leave },
+      move,
     },
     'list': {
       enter: { opacity: [0, 1], y: [motion.distance / 2, 0], ...enter },
       leave: { opacity: 0, ...leave },
-      move: { duration: motion.moveDuration, ease: motion.moveEase },
+      move,
     },
   } satisfies Record<string, AnimeTransitionStyle>
 }
