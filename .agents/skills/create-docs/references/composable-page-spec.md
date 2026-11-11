@@ -10,15 +10,15 @@ No other top-level headings.
 
 - Frontmatter
 - Badge row
-- Intro
-- `## Usage` (required)
-- `## API` (required): the signature code block, then the parameter
-  fields, then the Returns paragraph or members table, then one
-  `::collapsible{name="Types"}` if the page owns Nanime types. The
-  Signature, Parameters, Returns and Type reference rules below apply to
-  these parts, which are no longer separate H2s
-- `## Caveats` (page-specific only; omit when none remain)
-- `## See also` (required, always last, at most 3 links)
+- Opener
+- One to three task sections (`##`, verb heading), each with a live demo
+- `## API` (required): the signature code block, then one `::field` per
+  argument, then the Returns text, then one `::collapsible{name="Types"}`
+  only when the page documents an exported type. The Signature, Parameters,
+  Returns and Type reference rules below apply to these parts, which are not
+  separate H2s
+- `## Avoid common mistakes` (optional, only mistakes `nanime` causes)
+- `## See also` (required, always last, at most 3 links, none to AnimeJS)
 
 ## Frontmatter
 
@@ -57,21 +57,25 @@ its methods, its properties) is linked, never copied. A reader who needs
   `docs/content/2.composables/0.introduction.md` instead.
 - Omission is meaningful. Never drop a badge by oversight.
 
-## Intro
+## Opener
 
-- Two paragraphs max
-- P1: "`useX` wraps [animeFn](url){target="_blank"} from AnimeJS" + one
-  sentence on what the composable does in Vue terms. Not a list of AnimeJS
-  features.
-- P2 (optional): lifecycle — when it rebuilds, when it reverts
+- Two sentences at most, no heading.
+- Sentence 1: "`useX` wraps [`animeFn()`](url){target="_blank"} from
+  AnimeJS." It is the page's only AnimeJS link.
+- Sentence 2: what triggers a rebuild and what reverts it, in Vue terms.
+  Not a list of AnimeJS features.
 - No example links here
 
-## `## Usage`
+## Task sections
 
-- Single `:render-code-block-preview{src="examples/composables/<Name>Demo.vue"}`,
-  written to [demo-spec.md](demo-spec.md)
-- At most one paragraph after, only for behaviour the demo cannot show
-- Everything else belongs in Caveats
+- One `##` per task the reader does with the composable, headed with a verb
+  ("Animate when a ref changes", "Keep the playhead across a rebuild"). One to
+  three sections.
+- Each holds one `:render-code-block-preview{src="examples/composables/<Name>Demo.vue"}`,
+  written to [demo-spec.md](demo-spec.md), and the demo proves a point about
+  what `nanime` adds, not an AnimeJS feature.
+- At most one sentence of text, only for behaviour the demo cannot show.
+- A mistake belongs in Avoid common mistakes, not here.
 
 ## `## Signature`
 
@@ -137,7 +141,7 @@ Proxy kinds, from the source:
   mount and look up the current instance on each call. Other members read
   `undefined` until the instance exists.
 
-## `## Caveats`
+## `## Avoid common mistakes`
 
 - Gotchas only — silent failures and expectation-breakers. Not tips, not feature tours.
 - Only gotchas `nanime` causes. A gotcha that happens with plain AnimeJS
@@ -150,11 +154,11 @@ Proxy kinds, from the source:
   `#do-not-destructure-the-returned-instance`,
   `#properties-do-not-update-templates`, `#read-properties-after-mount`,
   `#plain-object-targets-must-be-reactive`
-- `## Caveats` holds only caveats specific to this composable; omit the
-  section when none remain
+- `## Avoid common mistakes` holds only mistakes specific to this
+  composable. Omit the section when none remain.
 - Each caveat is an `###` heading, imperative or symptom form
-- Code block first, then one paragraph: symptom, cause, fix
-- Wrong -> right, in that order, when showing both
+- Wrong code, then right code, in one block, then one paragraph: symptom,
+  cause, fix
 - One idea per heading; split rather than stack
 - Silent-failure caveats before cosmetic ones
 - A caveat may open with a `::warning` or `::caution` one-liner stating the
@@ -169,6 +173,8 @@ Appendix rules.
 - Always folded: exactly one `::collapsible{name="Types"}` per page, closed by default
 - Nothing on the page depends on opening it — Signature, Parameters and Returns
   already carry every type the reader needs inline
+- Appears only when the page documents a type the package exports. A type
+  that is not exported is described in its `::field` instead
 - Contains only Nanime-owned aliases appearing in this page's signature
 - AnimeJS-owned types are linked, never re-declared
 - Shared aliases (`AnimeTargets`, `BufferedProxyReturns`, `NanimeInstanceOptions`)
@@ -177,10 +183,10 @@ Appendix rules.
 
 ## `## See also`
 
-- Flat list, this order: related composables, examples, upstream AnimeJS
-- Upstream links appear only in the intro sentence, the Parameters link to
-  AnimeJS options, the Returns link to AnimeJS methods, a caveat whose fix
-  rests on an AnimeJS method, and See also
+- Flat list, this order: related composables, examples
+- No AnimeJS link. Upstream links appear only in the opener sentence, the
+  Parameters link to AnimeJS options, the Returns link to AnimeJS methods and
+  a mistake whose fix rests on an AnimeJS method
 - Every upstream link carries `{target="_blank"}`
 
 ## Callouts — severity ladder
@@ -197,12 +203,12 @@ Pick the weakest one that is true.
 Decides callout vs Caveat. Applies to all four levels.
 
 - One or two sentences, no code block, no heading -> callout, inline at the point of use
-- Needs a code block, or a paragraph of symptom + cause + fix -> `## Caveats`
+- Needs a code block, or a paragraph of symptom + cause + fix -> Avoid common mistakes
 
 ## Callouts — placement
 
 - Sits immediately after the thing it qualifies: the `::field` it constrains, the
-  Returns row it contradicts, the Usage snippet it guards
+  Returns row it contradicts, the demo it guards
 - Never at the top of a page as a preamble
 - Max one callout per section — two means the content is a Caveat
 
@@ -210,7 +216,7 @@ Decides callout vs Caveat. Applies to all four levels.
 
 - `::warning` or `::caution` at the point of use, one sentence, linking to the
   caveat by anchor
-- The full symptom/cause/fix in `## Caveats`
+- The full symptom/cause/fix in Avoid common mistakes
 - Example: the Returns list item for `progress` says scrolling re-renders
   nothing and links to `#properties-do-not-update-templates`. No second
   `::warning` repeating it.
