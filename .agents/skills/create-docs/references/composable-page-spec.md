@@ -95,7 +95,7 @@ its methods, its properties) is linked, never copied. A reader who needs
   instance, options read only once) goes in a `::::note` inside the same
   `:::field`, after the sentence. Keep the sentence itself short.
 - A members table (Option | Type | Default) is for an argument `nanime`
-  owns outright, such as `NanimeInstanceOptions` (`keepTime`)
+  owns outright, such as `NanimeAnimateOptions` (`rebuild`)
 - `required` flag only on non-optional args — must match the `?` in the signature
 - Type strings copied verbatim from source, never paraphrased in prose
 - Defaults stated last in the description, as: Defaults to `true`.
