@@ -13,7 +13,7 @@ useAnimate(getter, () => ({
   delay: stagger(120),
   alternate: true,
   loop: true,
-}), { keepTime: true })
+}), { rebuild: 'keepTime' })
 
 function add() {
   count.value++

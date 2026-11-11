@@ -187,9 +187,12 @@ Don't add your own `prefers-reduced-motion` checks around nanime calls.
 ### Rebuilds restart the animation
 
 When a reactive target or parameter changes, the composable reverts the old
-instance and builds a new one, from the start. Unchanged params are skipped,
-so a getter returning an identical fresh object costs nothing.
+instance and builds a new one, from the start, unless `rebuild` says
+otherwise. Unchanged params are skipped, so a getter returning an identical
+fresh object costs nothing.
 
-- To continue mid-flight instead, pass `{ keepTime: true }` as the last
-  argument. Only `useAnimate`, `useAnimeTimeline` and `useScrambleText` take it.
+- To continue mid-flight, pass `{ rebuild: 'keepTime' }` as the last
+  argument to `useAnimate`, `useAnimeTimeline` or `useScrambleText`.
+- To start the new animation from the current values, pass
+  `{ rebuild: 'keepValue' }` to `useAnimate`.
 - For a value that retargets constantly, use `useAnimatable`.
