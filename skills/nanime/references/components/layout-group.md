@@ -66,5 +66,17 @@ then animates them to their new size and position.
   Text that fits on one line when the move ends stays on one line throughout,
   so a button whose label changes doesn't wrap mid-move. Text over several
   lines reflows.
+- Caveat: Anime.js breaks grid centring while the group animates. It sets
+  `display: block !important` on each element it animates that uses
+  `display: grid`, and on the parents of those elements inside the group.
+  Content centred with `grid place-items-center` sits in the top-left corner
+  until the animation ends. Centre it with `flex items-center justify-center`
+  instead.
+- While the group animates, every element inside it carries temporary
+  inline styles: `position: absolute` at `left: 0; top: 0`, a `translate`,
+  and a fixed `width` and `height`. Code that reads layout mid-animation sees
+  those, so `offsetLeft` and `offsetTop` read `0`. Read positions with
+  `getBoundingClientRect()`, which includes the `translate`, or derive them
+  from your own state. The styles are removed when the animation ends.
 
 Docs: https://nanimejs.netlify.app/components/layout-group
