@@ -2,6 +2,7 @@ import { createAnimatable } from 'animejs/animatable'
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
 import { hasTargets, normalizeAnimeTarget, sameTargets } from '../utils/targets'
+import { trackTargetList } from '../utils/target-list'
 import type { AnimatableObject, AnimatableParams, TargetsParam } from 'animejs'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
@@ -47,6 +48,7 @@ export function useAnimatable(
         : createAnimatable({}, {})
     }
 
+    trackTargetList(target)
     watch(resolveTargets, sync)
     onMounted(sync)
 

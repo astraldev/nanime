@@ -6,14 +6,15 @@ const plain = useTemplateRef('plain')
 const getter = useTemplateRef('getter')
 const count = ref(4)
 
-useAnimate(plain, { y: -16, delay: stagger(120), alternate: true, loop: true })
+const hop = () => ({
+  y: [{ to: -16 }, { to: 0 }],
+  duration: 600,
+  ease: 'out(3)',
+  delay: stagger(60),
+})
 
-useAnimate(getter, () => ({
-  y: -16,
-  delay: stagger(120),
-  alternate: true,
-  loop: true,
-}), { rebuild: 'keepTime' })
+useAnimate(plain, hop())
+useAnimate(getter, hop)
 
 function add() {
   count.value++
@@ -28,7 +29,7 @@ const actions: ExampleAction[] = [
   <ExampleWrapper :actions="actions">
     <div class="flex flex-col gap-3 font-mono text-xs">
       <div class="flex flex-col gap-1">
-        <span>plain object</span>
+        <span>hop()</span>
         <div class="flex gap-2 pt-4">
           <div
             v-for="n in count"
@@ -39,7 +40,7 @@ const actions: ExampleAction[] = [
         </div>
       </div>
       <div class="flex flex-col gap-1">
-        <span>getter</span>
+        <span>hop</span>
         <div class="flex gap-2 pt-4">
           <div
             v-for="n in count"

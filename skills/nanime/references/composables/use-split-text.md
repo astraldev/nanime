@@ -31,4 +31,4 @@ useAnimate(chars, { opacity: [0, 1], delay: stagger(40) })
 useAnimate(chars, () => ({ opacity: [0, 1], delay: stagger(40) }))
 ```
 
-Docs: https://nanimejs.netlify.app/composables/utilities#create-stagger-inside-a-getter-when-items-can-be-added
+Docs: https://nanimejs.netlify.app/composables/utilities#stagger-a-list-that-can-grow

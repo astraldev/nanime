@@ -1,6 +1,7 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
 import { hasTargets, normalizeAnimeTarget, sameTargets } from '../utils/targets'
+import { trackTargetList } from '../utils/target-list'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import type { AnimationParams, ScrambleTextParams } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
@@ -52,6 +53,7 @@ export function useScrambleText(
   const resolveScrambleOptions = () => toValue(scrambleOptions) || {}
 
   if (flag === AnimationComponentFlags.Watchable) {
+    trackTargetList(target)
     let previous: {
       targets: NonNullable<ReturnType<typeof normalizeAnimeTarget>>
       animOptions: Record<string, unknown>
