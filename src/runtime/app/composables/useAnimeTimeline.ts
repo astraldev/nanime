@@ -1,5 +1,5 @@
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
-import { shallowRef, toValue, watch, nextTick, type MaybeRefOrGetter } from 'vue'
+import { shallowReactive, shallowRef, toValue, watch, nextTick, type MaybeRefOrGetter } from 'vue'
 import type { TimelineParams } from 'animejs'
 import { createTimeline, type Timeline } from 'animejs/timeline'
 import { keepTime } from 'animejs/utils'
@@ -52,6 +52,7 @@ export function useAnimeTimeline(
   const timeline = shallowRef<Timeline | null>(null)
 
   const { isReduced, withReducedMotion } = useReducedMotion()
+  const synced = shallowReactive(new Set<unknown>())
 
   const { proxy, flushBuffer } = createBufferedProxy<Timeline>(timeline, {
     chainableMethods: CHAINABLE_METHODS,
@@ -67,6 +68,7 @@ export function useAnimeTimeline(
       }
       // sync(nanimeProxy, position?) — unwrap nanime proxy to raw instance
       if (method === 'sync' && args.length >= 1) {
+        synced.add(args[0])
         return [resolveNanimeInstance(args[0]), ...args.slice(1)]
       }
       return args
@@ -117,6 +119,14 @@ export function useAnimeTimeline(
         rebuildTimeline(resolveParameters())
       },
       { immediate: true },
+    )
+
+    watch(
+      () => [...synced].map(source => resolveNanimeInstance<unknown>(source)),
+      (instances, previousInstances) => {
+        if (!timeline.value || !previousInstances.some((instance, index) => instances[index] !== instance)) return
+        rebuildTimeline(resolveParameters())
+      },
     )
   }
   else {

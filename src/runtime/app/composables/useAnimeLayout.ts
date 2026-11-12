@@ -13,12 +13,13 @@ import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
-type NanimeLayout = AutoLayout & {
+/** What `useAnimeLayout()` returns: the AnimeJS layout, with `patch()` added. */
+export type NanimeLayout = AutoLayout & {
   /**
    * Records the current layout, runs `callback`, waits for Vue to update the
    * DOM, then animates to the new layout. Resolves when the animation
    * finishes or a later `record()` or `patch()` interrupts it. A call made while another is still waiting for the DOM
-   * update runs its callback and joins that animation.
+   * update runs its callback and joins that animation, and its `params` are merged over the first call's.
    */
   patch: (callback: () => unknown, params?: LayoutAnimationParams) => Promise<void>
 }
@@ -45,13 +46,16 @@ function createNanimeLayout(base: AutoLayout, isReduced: IsReducedMotion, curren
     return layout
   }
   let pending: Promise<void> | null = null
+  let pendingParams: LayoutAnimationParams | undefined
   return Object.assign(layout, {
     async patch(callback: () => unknown, animationParams?: LayoutAnimationParams) {
       if (pending) {
         const joined = pending
+        if (animationParams) pendingParams = { ...pendingParams, ...animationParams }
         await callback()
         return joined
       }
+      pendingParams = animationParams
       current()?.record()
       const updated = (async () => {
         await callback()
@@ -60,7 +64,7 @@ function createNanimeLayout(base: AutoLayout, isReduced: IsReducedMotion, curren
       pending = updated.then(
         async () => {
           pending = null
-          await animateUntilSettled(current(), animationParams)
+          await animateUntilSettled(current(), pendingParams)
         },
         (error: unknown) => {
           pending = null

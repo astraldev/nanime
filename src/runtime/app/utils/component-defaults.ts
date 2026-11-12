@@ -59,6 +59,14 @@ function animationDefaultsOf(defaults: NanimeComponentDefaults | undefined, name
   return undefined
 }
 
+export function omitUndefined<Value extends object>(value: Value): Value {
+  const copy: Value = { ...value }
+  for (const key of Object.keys(copy)) {
+    if (Reflect.get(copy, key) === undefined) Reflect.deleteProperty(copy, key)
+  }
+  return copy
+}
+
 export function useComposableDefaults<Name extends keyof NanimeComposableDefaults>(name: Name): () => NanimeComposableDefaults[Name] {
   const provided = hasInjectionContext() ? inject(PROVIDED_DEFAULTS, null) : null
   const config = useNanimeConfig()

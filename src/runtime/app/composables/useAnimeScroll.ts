@@ -7,7 +7,7 @@ import { snapshotParameters } from '../utils/snapshot-parameters'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { hasTargets, normalizeAnimeTarget } from '../utils/targets'
 import { normalizeReffable } from '../utils/instance/make-reffable'
-import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
+import { tryOnScopeDispose, useMounted, warnOutsideComponent } from '../utils/vue-helpers'
 
 const CHAINABLE_METHODS = new Set(['link', 'refresh', 'revert'])
 
@@ -38,6 +38,7 @@ const createLiveParamReader = <T>(
 export function useAnimeScroll(
   parameters: AnimeScrollParams = {},
 ): BufferedProxyReturns<ScrollObserver> {
+  warnOutsideComponent('useAnimeScroll')
   const mounted = useMounted()
   const observer = shallowRef<ScrollObserver | null>(null)
 

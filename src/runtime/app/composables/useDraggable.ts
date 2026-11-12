@@ -1,4 +1,4 @@
-import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
+import { tryOnScopeDispose, useMounted, warnOutsideComponent } from '../utils/vue-helpers'
 import { nextTick, shallowRef, watch, watchPostEffect } from 'vue'
 import { hasTargets, normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, sameTargets, type DraggableTypes } from '../utils/targets'
 import { trackTargetList } from '../utils/target-list'
@@ -7,7 +7,7 @@ import { createDraggable } from 'animejs/draggable'
 import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
 import { normalizeReffable, type MakeRefable } from '../utils/instance/make-reffable'
 import type { Prettify } from '../utils/instance/prettify'
-import { useComposableDefaults } from '../utils/component-defaults'
+import { omitUndefined, useComposableDefaults } from '../utils/component-defaults'
 
 const REFFABLE_PROPS = [
   'containerPadding',
@@ -31,7 +31,8 @@ const CHAINABLE_METHODS = new Set([
 const sameSources = (next: readonly unknown[], prev: readonly unknown[]) =>
   next.every((entry, index) => sameTargets(entry, prev[index]))
 
-type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container' | 'x' | 'y'> & {
+/** The options of `useDraggable()`: AnimeJS draggable params, where most values can also be refs. */
+export type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container' | 'x' | 'y'> & {
   trigger?: DraggableTypes['trigger']
   container?: DraggableTypes['container']
   x?: boolean | Prettify<MakeRefable<DraggableAxisParam, 'snap', Draggable>>
@@ -42,14 +43,16 @@ type DraggableOptions = MakeRefable<Omit<DraggableParams, 'trigger' | 'container
  * Makes `target` draggable with an Anime.js `createDraggable()` when the
  * component mounts and reverts it when the scope is disposed.
  *
- * When a ref in `options` changes, the draggable updates in place. When
- * `target`, `trigger` or `container` points to a new element, it is rebuilt.
+ * When a ref in `options` or `container` changes, the draggable updates in
+ * place and keeps its position. When `target` or `trigger` points to a new
+ * element, it is rebuilt.
  * Methods called before mount run once the draggable exists.
  */
 export function useDraggable(
   target: DraggableTypes['target'],
   options?: DraggableOptions,
 ): BufferedProxyReturns<Draggable> {
+  warnOutsideComponent('useDraggable')
   const mounted = useMounted()
   const resolveDefaults = useComposableDefaults('draggable')
   const dragController = shallowRef<Draggable | null>(null)
@@ -59,6 +62,11 @@ export function useDraggable(
   })
 
   let enabled = true
+  let latestContainer: ReturnType<typeof normalizeDraggableContainer> = null
+  const readContainer = (self: Draggable) => {
+    const current = latestContainer
+    return typeof current === 'function' ? current(self) : current ?? document.body
+  }
 
   trackTargetList(target)
   watch(
@@ -70,7 +78,11 @@ export function useDraggable(
     ],
     ([isMounted, targets, trigger, container], previous) => {
       if (!isMounted) return
-      if (dragController.value && previous && sameSources([targets, trigger, container], previous.slice(1))) return
+      latestContainer = container
+      if (dragController.value && previous && sameSources([targets, trigger], previous.slice(1)) && Boolean(container) === Boolean(previous[3])) {
+        if (!sameTargets(container, previous[3])) dragController.value.refresh()
+        return
+      }
       if (dragController.value) enabled = dragController.value.enabled
       dragController.value?.revert()
       dragController.value = null
@@ -85,9 +97,9 @@ export function useDraggable(
       const defaults = resolveDefaults()
       const dragEngine = createDraggable(targets, {
         ...defaults,
-        ...options,
+        ...omitUndefined(options ?? {}),
         trigger: trigger || undefined,
-        container: container || undefined,
+        container: container ? readContainer : undefined,
         ...(() => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const acc: any = {}
