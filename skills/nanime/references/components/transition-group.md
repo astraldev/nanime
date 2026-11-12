@@ -20,6 +20,7 @@ It takes the props in [transition.md](transition.md) except `mode`, with its own
 
 | Prop | Type | Default |
 |---|---|---|
+| `animation` | style name (sets all three) or `{ enter, leave, move }` | the `enterAnimation`, `leaveAnimation` and `moveAnimation` defaults |
 | `enterAnimation` | style name or `AnimationParams` | fade in, 250ms `out(3)` |
 | `leaveAnimation` | style name or `AnimationParams` | fade out, 150ms `in(3)` |
 | `tag` | `string` | `'div'` |
@@ -28,6 +29,10 @@ It takes the props in [transition.md](transition.md) except `mode`, with its own
 | `deps` | `unknown[]` (values or getters) | |
 | `shallow` | `boolean` | `false` |
 
+- `enterAnimation`, `leaveAnimation` and `moveAnimation` each win over their
+  part of `animation`. `{ move: false }` in `animation` turns moves off.
+- `waapi` works as in [transition.md](transition.md) for enter and leave.
+  Moves still run on AnimeJS layout.
 - Unlike Vue's `<TransitionGroup>`, it always renders a wrapper element
   (`tag`). Put the list's layout classes on the group itself.
 - Give the group `position: relative`. With `absoluteLeave`, a leaving item

@@ -34,13 +34,20 @@ or transition CSS. The effect almost always has a nanime path.
 | `v-if` / `v-show` / keyed enter and leave, crossfades | `<AnimeTransition>` | [transition.md](references/components/transition.md), [transition-styles.md](references/components/transition-styles.md) |
 | `v-for` add, remove, reorder, stagger | `<AnimeTransitionGroup>` | [transition-group.md](references/components/transition-group.md) |
 | Mounted elements changing position or size (FLIP) | `<AnimeLayoutGroup>`, or `useAnimeLayout` to `await` it | [layout-group.md](references/components/layout-group.md), [use-anime-layout.md](references/composables/use-anime-layout.md) |
-| App-wide defaults, `provideAnimeDefaults` | `app.config.ts` | [defaults.md](references/guides/defaults.md) |
+| App-wide defaults, presets, `provideAnimeDefaults` | `app.config.ts` | [defaults.md](references/guides/defaults.md) |
 | Reduced motion | `nanime.reducedMotion` | [accessibility.md](references/guides/accessibility.md) |
 | Testing an animation without a browser | | [verifying.md](references/guides/verifying.md) |
 
 `useWaapiAnimate` and `useAnimatable` have no page of their own here. Read
 their docs pages: https://nanimejs.netlify.app/composables/use-waapi-animate and
 https://nanimejs.netlify.app/composables/use-animatable.
+
+A `useAnimatable` setter retargets from the current value and restarts the
+tween from its first frame, so speed does not carry over between calls. For
+a value retargeted continuously (pointer follow, scroll, audio level), use
+an ease that starts fast (`'out(3)'`) and set the lag with the duration. An
+ease that starts slow, such as a `spring` or `'inOut'`, restarts slow on
+every call and stutters. Keep springs for one-off moves.
 
 For a layout scene with hundreds of elements, the walk itself becomes the
 cost. [patch-animejs-tracked-layout](../patch-animejs-tracked-layout/SKILL.md)
@@ -63,6 +70,7 @@ Not auto-imported. Import helpers from these, never from `animejs` directly.
 | `#nanime/proxies/svg` | `createMotionPath`, `createDrawable`, `morphTo` |
 | `#nanime/proxies/text` | `scrambleText`, for use inside animation parameters |
 | `#nanime/proxies` | Both of the above |
+| `#nanime/composables` | Every composable, for `composables: false` in `nuxt.config.ts` |
 
 ## Rules that apply everywhere
 

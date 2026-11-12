@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 
-const PARTICLE_SPACING = 24
+const PARTICLE_SPACING = 18
 const PARTICLE_SIZE = 1.6
 const CURSOR_RADIUS = 170
 const PUSH_STRENGTH = 0.35

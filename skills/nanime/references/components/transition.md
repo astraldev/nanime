@@ -26,10 +26,23 @@ Docs: https://nanimejs.netlify.app/components/transition
 
 | Prop | Type | Default |
 |---|---|---|
-| `enterAnimation` | style name or `AnimationParams` | `'fade'` |
-| `leaveAnimation` | style name or `AnimationParams` | `'fade'` |
+| `animation` | style name (sets both) or `{ enter, leave }` | `'fade'` |
+| `enterAnimation` | style name or `AnimationParams` | from `animation` |
+| `leaveAnimation` | style name or `AnimationParams` | from `animation` |
 | `mode` | `'default'`, `'in-out'`, `'out-in'` | `'default'` |
 | `appear` | `boolean` | `false` |
+| `waapi` | `boolean` | `false` |
+
+`enterAnimation` and `leaveAnimation` win over their part of `animation`:
+`animation="fade" enter-animation="scale"` enters with `scale` and leaves
+with `fade`.
+
+Add `waapi` for `transform` and `opacity` transitions that must stay smooth
+during hydration. Enter and leave then run on `waapi.animate()` off the main
+thread, and the animation props take `waapi.animate()` params. A style
+`waapi.animate()` can't run (keyframe objects, function values other than
+`ease`, `modifier`, most callbacks) falls back to `animate()` with a dev
+warning.
 
 Use `mode="out-in"` for keyed swaps. Otherwise both elements are in the DOM
 at once and the new one pushes the old one aside.
