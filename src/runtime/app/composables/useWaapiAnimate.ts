@@ -2,6 +2,7 @@ import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
 import type { DOMTargetsParam, WAAPIAnimationParams } from 'animejs'
 import { normalizeWaapiAnimeTarget, sameTargets } from '../utils/targets'
+import { trackTargetList } from '../utils/target-list'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import { waapi, type WAAPIAnimation } from 'animejs/waapi'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
@@ -54,6 +55,7 @@ export function useWaapiAnimate(
       rebuildAnimation(targets)
     }
 
+    trackTargetList(target)
     watch([resolveTargets, () => snapshotParameters(resolveParameters())], sync)
     onMounted(sync)
 

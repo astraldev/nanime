@@ -1,6 +1,7 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
 import { normalizeAnimeTarget, sameTargets } from '../utils/targets'
+import { trackTargetList } from '../utils/target-list'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import type { AnimationParams, TargetsParam } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
@@ -106,6 +107,7 @@ export function useAnimate(
       rebuildAnimation(targets, resolveBoundParameters())
     }
 
+    trackTargetList(target)
     watch([resolveTargets, () => snapshotParameters(resolveParameters())], sync)
     onMounted(sync)
 

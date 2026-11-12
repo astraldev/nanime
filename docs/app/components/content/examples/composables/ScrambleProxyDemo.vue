@@ -4,14 +4,13 @@ import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleW
 
 const title = useTemplateRef('title')
 
-const timeline = useAnimeTimeline()
-
-timeline
-  .add(title, { innerHTML: scrambleText({ text: 'nanime', duration: 1200 }) })
-  .add(title, { innerHTML: scrambleText({ text: 'nuxt', duration: 1200 }) })
+const animation = useAnimate(title, {
+  innerHTML: scrambleText({ text: 'nanime' }),
+  duration: 1200,
+})
 
 function replay() {
-  timeline.restart()
+  animation.restart()
 }
 
 const actions: ExampleAction[] = [

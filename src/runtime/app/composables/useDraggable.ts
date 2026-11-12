@@ -1,6 +1,7 @@
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
 import { nextTick, shallowRef, watch, watchPostEffect } from 'vue'
 import { hasTargets, normalizeAnimeTarget, normalizeDraggableContainer, normalizeLayoutTarget, sameTargets, type DraggableTypes } from '../utils/targets'
+import { trackTargetList } from '../utils/target-list'
 import type { Draggable, DraggableAxisParam, DraggableParams } from 'animejs'
 import { createDraggable } from 'animejs/draggable'
 import { createBufferedProxy, type BufferedProxyReturns } from '../utils/proxy'
@@ -59,6 +60,7 @@ export function useDraggable(
 
   let enabled = true
 
+  trackTargetList(target)
   watch(
     [
       mounted,
