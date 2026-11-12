@@ -38,17 +38,17 @@ its methods, its properties) is linked, never copied. A reader who needs
 ## Badge row
 
 - `Instant play` -> composable supports instant mode, linked to
-  `/composables/how-composables-run#instant-play`
+  `/composables/composable-lifecycle#instant-play`
 - `Buffered` -> composable returns a buffered proxy, linked to
-  `/composables/how-composables-run#buffered`
+  `/composables/composable-lifecycle#buffered`
 - Both, in that order, when both apply. No badge row when neither does.
 - One markup for every badge:
 
   ```md
-  ::nuxt-link{to="/composables/how-composables-run#instant-play"}
+  ::nuxt-link{to="/composables/composable-lifecycle#instant-play"}
   :badge{icon="mage:zap-fill" label="Instant play" size="md" variant="soft"}
   ::
-  ::nuxt-link{to="/composables/how-composables-run#buffered"}
+  ::nuxt-link{to="/composables/composable-lifecycle#buffered"}
   :badge{icon="ph:stack" label="Buffered" size="md" variant="soft"}
   ::
   ```
@@ -148,7 +148,7 @@ Proxy kinds, from the source:
   too (CSS transitions on a dragged `transform`, WAAPI not animating plain
   objects) is not a caveat. At most it is one sentence at the point of use.
 - A caveat that applies to two or more composables lives once on
-  `10.how-composables-run.md` under "Avoid common mistakes" or the
+  `10.composable-lifecycle.md` under "Avoid common mistakes" or the
   section it belongs to, with an "Applies to" line. Pages link to it inline at the point it bites (usually
   in the API section's Returns text), never repeat it. Current shared ones:
   `#do-not-destructure-the-returned-instance`,
