@@ -19,8 +19,8 @@ export default defineComponent(
       component: 'AnimeTransition',
       withReducedMotion,
       engine: () => parseOption(props, 'waapi') ? 'waapi' : 'js',
-      enter: () => styles.enter(parseAnimation(props).enter),
-      leave: () => styles.leave(parseAnimation(props).leave),
+      enter: () => styles.enter(parseAnimation(props).enter ?? 'fade'),
+      leave: () => styles.leave(parseAnimation(props).leave ?? 'fade'),
     })
 
     onTabHidden(() => {
