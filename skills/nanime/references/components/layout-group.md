@@ -1,11 +1,11 @@
-# Layout animation: `<AnimeLayoutGroup>` and `useAnimeLayout`
+# `<AnimeLayoutGroup>`
 
 For elements that stay mounted but change position or size: a class toggle,
 a grid column count, a card expanding. For `v-for` items entering, leaving or
-reordering, use `<AnimeTransitionGroup>` first ([transitions.md](transitions.md)).
+reordering, use `<AnimeTransitionGroup>` first ([transition-group.md](transition-group.md)).
 
 - `<AnimeLayoutGroup>` when the change comes from state you can list in `deps`.
-- `useAnimeLayout` when you need to `await` the animation or change timing per call.
+- [`useAnimeLayout`](../composables/use-anime-layout.md) when you need to `await` the animation or change timing per call.
 
 Both groups take `deps` and `shallow`, but they mean different things:
 
@@ -36,6 +36,7 @@ then animates them to their new size and position.
 - `deps` entries are watched deeply. A getter entry such as
   `[() => store.view]` is called and its result watched. Add `shallow` to
   react only when an entry is replaced.
+- `:deps="[]"` turns the animation off, because nothing is left to trigger it.
 - Always pass `deps`. Without it, every re-render of the group measures
   every element inside it and animates, even when nothing moved, such as a
   parent passing a new object or array prop on every render.
@@ -60,51 +61,10 @@ then animates them to their new size and position.
   group moves on `spring({ bounce: 0.15, duration: 300 })`. Setting `ease` or
   `duration` anywhere (prop or component defaults) replaces the spring, since
   a spring picks its own duration. `tag` defaults to `'div'`. App-wide
-  defaults: see Component defaults in [transitions.md](transitions.md).
+  defaults: see [defaults.md](../guides/defaults.md).
 - Layout animates `width` and `height`, so text reflows as a box resizes.
   Text that fits on one line when the move ends stays on one line throughout,
   so a button whose label changes doesn't wrap mid-move. Text over several
   lines reflows.
 
 Docs: https://nanimejs.netlify.app/components/layout-group
-
-## `useAnimeLayout`
-
-```ts
-const list = useTemplateRef('list')
-const layout = useAnimeLayout(list, { duration: 500, ease: 'inOutQuad' })
-
-async function reverse() {
-  await layout.patch(() => items.value.reverse())
-}
-
-async function toggleWide() {
-  await layout.patch(() => {
-    wide.value = !wide.value
-  }, { duration: 300 })
-}
-```
-
-- Pass the container, not the items. Its children are recorded and animated.
-- Put every state change that moves elements inside the `patch` callback.
-  `patch` snapshots positions, runs the callback (sync or async), waits for
-  Vue to update the DOM, then animates. It returns the Anime.js timeline, so
-  `await` resolves when the animation finishes.
-- The optional second argument overrides the timing for that call.
-- Call `patch` from handlers or watchers, after mount.
-- Don't use Anime.js `layout.update(callback)` for Vue state. It animates
-  before Vue has patched the DOM, so nothing moves.
-- The options are reactive. A change in value rebuilds the layout, so keep
-  them stable while an animation runs.
-- When the change can't go in one callback: `layout.record()`, change state,
-  `await nextTick()`, `layout.animate()`, in that order.
-
-Docs: https://nanimejs.netlify.app/composables/use-anime-layout
-
-## Very large scenes
-
-`createLayout()` walks every descendant of its root on each update. When a
-layout holds hundreds of elements and the cost shows up as jank, patch the
-installed Anime.js so it measures only the named targets, their ancestors and
-the siblings of both: see [patch-animejs-tracked-layout](../../patch-animejs-tracked-layout/SKILL.md).
-It is an install patch, not a nanime option, and it keeps the same public API.

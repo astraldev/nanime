@@ -76,8 +76,12 @@ built-in default changes.
 4. Verify with numbers, not screenshots. The in-app browser pane often
    reports `document.visibilityState === 'hidden'`. When hidden,
    `requestAnimationFrame` doesn't fire and Anime.js pauses, so nothing
-   animates on its own. Drive it by hand with `javascript_tool` after each
-   page load:
+   animates on its own. First call `show_pane` with `pane: "preview"` and
+   check `tabs_context` no longer says the pane is hidden. A `javascript_tool`
+   call that times out on a `requestAnimationFrame` loop, or styles that
+   never appear after a state change, mean the pane is hidden again, and any
+   numbers read in that state are wrong. If the pane cannot be shown, drive
+   the engine by hand with `javascript_tool` after each page load:
 
    ```js
    window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16)
@@ -102,6 +106,24 @@ built-in default changes.
    restores muted transitions in a `requestAnimationFrame`, so without it
    `transition: none !important` looks stuck. If you can't measure it, say
    the check wasn't done rather than guessing.
+
+5. Expose state to `javascript_tool` on `window` (refs, a `show` flag per
+   case, a `probe`). Count live animations with `engine._head` /
+   `_next` from `animejs/engine`, which the docs app can import, and report
+   the change from a baseline. Do not change state in a hidden pane: the
+   changes queue and the next read starts from polluted values, so reload
+   first.
+6. A getter that calls `onScroll()` builds a new observer on every read,
+   which the composable does several times per rebuild. Create observers
+   once, outside the getter, or the counts you read measure your page.
+7. After `pnpm dev:prepare`, restart the dev server and wait for
+   `curl` on the route to return 200 before navigating. The first request
+   after a restart can return 500 with "IPC connection closed". Deleting a
+   playground page while the pane is open leaves "Outdated Optimize Dep"
+   errors, so reload before reading anything.
+8. A fix to `src/` found this way needs a regression test in
+   `../nanime-tests`, run by copying it to the same path here and deleting
+   the copy. Check that it fails without the fix (`git stash push src`).
 
 # Verification
 
