@@ -12,7 +12,7 @@ seo:
 ---
 eyebrow: AnimeJS v4 for Nuxt and Vue
 install: pnpx nuxt module add nanime
-pitch: Use AnimeJS functions and utilities directly in component setup without using onMounted and other lifecylcle hooks.
+pitch: Use AnimeJS functions and utilities directly in component setup without using onMounted and other lifecycle hooks.
 title: Anime.js composables for Nuxt
 ---
   :::u-button{size="lg" to="/getting-started/installation"}
