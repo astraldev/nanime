@@ -1,4 +1,6 @@
-# Timelines, split text, SVG and scroll
+# `useAnimeTimeline`
+
+Docs: https://nanimejs.netlify.app/composables/use-anime-timeline
 
 ## Timeline methods can be called in `setup`
 
@@ -13,6 +15,7 @@ const tl = useAnimeTimeline({ autoplay: false })
 tl.add(chars, { opacity: [0, 1] }, 0)   // chars is still [] here, which is fine
 ```
 
+
 ## Scroll-driven timeline
 
 ```ts
@@ -22,6 +25,7 @@ const tl = useAnimeTimeline({ autoplay: scroll })
 
 Bind through `autoplay`, which nanime unwraps to the observer. Don't call
 `scroll.link(tl)`: it hands Anime.js the proxy itself.
+
 
 ## SVG helpers need a real element
 
@@ -50,6 +54,7 @@ onMounted(() => {
     .add(path.value, { d: morphTo(shape.value), duration: 800 }, 1000)
 })
 ```
+
 
 ## Timing that looks right but traces wrong
 

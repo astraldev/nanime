@@ -148,8 +148,8 @@ Proxy kinds, from the source:
   too (CSS transitions on a dragged `transform`, WAAPI not animating plain
   objects) is not a caveat. At most it is one sentence at the point of use.
 - A caveat that applies to two or more composables lives once on
-  `0.introduction.md` under "Caveats that apply across composables", with an
-  "Applies to" line. Pages link to it inline at the point it bites (usually
+  `10.how-composables-run.md` under "Avoid common mistakes" or the
+  section it belongs to, with an "Applies to" line. Pages link to it inline at the point it bites (usually
   in the API section's Returns text), never repeat it. Current shared ones:
   `#do-not-destructure-the-returned-instance`,
   `#properties-do-not-update-templates`, `#read-properties-after-mount`,

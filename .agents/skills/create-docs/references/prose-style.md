@@ -1,8 +1,7 @@
 # Prose Style
 
 How the prose in this project's docs is written. Applies to every page
-under `docs/content/`: getting-started guides, composable pages, showcase
-examples. Structural conventions (frontmatter, MDC components, page
+under `docs/content/`: getting-started guides, composable pages, guides. Structural conventions (frontmatter, MDC components, page
 shapes) live in `writing-guide.md`, `mdc-components.md` and each skill's
 own SKILL.md. This file is only about the sentences.
 
@@ -319,18 +318,6 @@ it, what is affected or what the sample shows, because the sample and the
 table carry those. A page's own intro under the title may be longer, since
 it also says what the page covers and where to go next.
 
-## Explanation vs. implementation
-
-On a showcase page, "What's happening" and "How it's built" explain the
-animation and the `nanime` API driving it, nothing else. Vue and DOM
-plumbing that a reader doesn't need to understand the effect (`ref`,
-`computed`, `setup()`, a `boolean` flag, a `ResizeObserver`, a ghost
-element's layout trick) belongs only in "Building it yourself" and the AI
-build prompt, which are recipes for someone actually implementing it.
-Before adding a detail to an explanation section, ask whether it explains
-the animation or the component wiring underneath it. Cut it if it's the
-latter.
-
 ## Naming
 
 Always "AnimeJS" in prose and in AI build prompts, never "Anime.js" or
@@ -361,14 +348,12 @@ reader-address ("you'll notice"), no asides.
 - **Only claims you have checked.** Before writing "we do X instead of Y
   because Y would break", go read the source and confirm Y breaks. An
   unverified *why* is worse than no *why*, because it reads as
-  authoritative and is wrong. A past version of the showcase skill's own
-  page asserted that splitting a card into two elements was required to
-  stop two animations overwriting each other's `transform`. That turned
-  out to be false once someone read AnimeJS's transform-caching code.
-  See `../../create-showcase-doc/references/verify-ai-prompt.md` for the
-  full history.
+  authoritative and is wrong. A past docs page asserted that splitting a
+  card into two elements was required to stop two animations overwriting
+  each other's `transform`. That turned out to be false once someone read
+  AnimeJS's transform-caching code.
 - **Links to the pages that own a topic.** Composable mentions link to
-  `/composables/<name>`, examples link to `/examples/<name>`, external
+  `/composables/<name>`, guides link to `/guides/<name>`, external
   links carry `{target="_blank"}`. Generic web-platform material (render
   pipeline, layout thrashing, `prefers-reduced-motion`) gets linked out
   rather than re-explained. This project's docs are about `nanime`.
@@ -382,7 +367,7 @@ their head while the grammar keeps shifting under it:
 
 > Installation adds `nanime` to a project. Performance covers which
 > composable to reach for. Each composable page carries a live demo, and
-> the examples put several composables together.
+> the guides cover options and defaults.
 
 Four destinations, four different sentence shapes, and the composables
 index buried mid-paragraph. As a list, each line answers the same question
@@ -390,7 +375,7 @@ in the same shape:
 
 > - [Installation](/getting-started/installation) to add the module.
 > - [Composables](/composables/introduction) for each API, with a live demo on every page.
-> - [Examples](/examples/introduction) for full sequences built from several composables.
+> - [Guides](/guides/configuration) for module options and defaults.
 
 Keep the entries parallel. Once one starts with a verb, they all do. The
 reverse case is also worth watching: a list whose items only make sense
@@ -487,12 +472,6 @@ offending sentence when a check fails. "Sounds fine" is not a pass.
       concrete before and after, no fact the reader cannot act on, no new
       concept without a sample, instruction before mechanism, no
       research-provenance line, setup steps as code blocks.
-
-**Explanation vs. implementation** (showcase pages only)
-- [ ] "What's happening" and "How it's built" contain no Vue or DOM
-      plumbing (`ref`, `computed`, `setup()`, a bare `boolean`,
-      `ResizeObserver`, a ghost-element layout trick). That detail exists
-      only in "Building it yourself" and the AI build prompt.
 
 **Naming**
 - [ ] "AnimeJS" is spelled the same way everywhere in prose and in AI

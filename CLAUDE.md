@@ -128,11 +128,12 @@ Runs sequentially before commit:
 ## Docs
 
 Docus-based site in `docs/`. Content lives in `docs/content/`:
-- `1.getting-started/` — intro, installation, configuration, performance, comparison (vs) pages
+- `1.getting-started/` — introduction and installation
 - `2.composables/` — one page per composable, plus `99.utilities.md` (easings, utils, proxies)
 - `3.components/` — transitions and transition styles
-- `5.examples/` — showcase examples
-- `6.changes/` — changelog
+- `4.guides/` — configuration, defaults, presets, performance, accessibility, Vue
+- `5.comparisons/` — comparison (vs) pages
+- `7.changes/` — changelog
 
 Prose rules live in `.agents/skills/create-docs/references/prose-style.md`: "AnimeJS" in prose, "Anime.js" only in SEO frontmatter and the homepage `<h1>`.
 
@@ -167,7 +168,6 @@ Skills in `.agents/skills/` — each has a `SKILL.md` defining its workflow:
 | `scaffold-composable-sample` | Scaffold composable doc page with standard structure |
 | `create-playground-page` | Create local, uncommitted test pages under `docs/app/pages/playground/` |
 | `create-utility-tests` | Write vitest utility tests (Nuxt test-utils) |
-| `create-showcase-doc` | Write/rewrite a showcase example page (`docs/content/5.examples/`), including verifying its AI build prompt against a real independent agent |
 | `skill-creator` | Meta-skill for authoring new skills |
 
 User-facing skills ship in `skills/` with the package. `skills/nanime/` documents the module; `skills/patch-animejs-tracked-layout/` documents a local Anime.js install patch for very large layout scenes.
