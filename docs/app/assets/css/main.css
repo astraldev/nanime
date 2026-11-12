@@ -68,7 +68,11 @@ li:has(> button[data-type="docs"]) + li:has(> button[data-type="docs"]) {
 }
 
 td:has(> .comparison-good) {
-  background-color: color-mix(in oklab, var(--hex-green-1) 14%, transparent);
+  background-color: rgb(0 0 0 / 4%);
+}
+
+.dark td:has(> .comparison-good) {
+  background-color: rgb(255 255 255 / 6%);
 }
 
 .code-preview pre,
