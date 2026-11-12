@@ -1,5 +1,6 @@
 import { defineNuxtModule, createResolver, addComponent, addImportsDir, addPlugin, addVitePlugin, useLogger } from '@nuxt/kit'
-import type { NuxtImportPresetSource } from '@nuxt/schema'
+import { isAbsolute, relative } from 'node:path'
+import type * as NanimeComposables from './runtime/app/public/composables'
 import type { NanimeConfig, NanimeRebuild, NanimeReducedMotion } from './runtime/app/public/types'
 
 export interface ModuleOptions {
@@ -26,54 +27,43 @@ export interface ModuleOptions {
    */
   reducedMotion: NanimeReducedMotion
   /**
-   * Auto-import names for nanime composables that VueUse also auto-imports
-   * (`useAnimate`, `useDraggable`), so VueUse keeps the plain names. `true`
-   * uses `useAnimeAnimate` and `useAnimeDraggable`; a map sets your own names.
-   * Applies only when VueUse auto-imports are installed.
+   * Renames `nanime` composables whose name another auto-import also uses,
+   * such as `useDraggable` from `@vueuse/nuxt`. `true` turns `useDraggable`
+   * into `useAnimeDraggable`. A string replaces `Anime`, so `'motion'` turns
+   * it into `useMotionDraggable`. `{ useDraggable: 'useDrag' }` sets the name
+   * directly. Composables without a clash keep their names. Has no effect
+   * with `composables: false`.
    * @default false
    */
-  vueuseAliases: boolean | Partial<Record<VueUseClash, string>>
+  aliases: boolean | string | Partial<Record<NanimeComposable, string>>
 }
 
-const VUEUSE_CLASHES = ['useAnimate', 'useDraggable'] as const
-type VueUseClash = typeof VUEUSE_CLASHES[number]
-const VUEUSE_ALIASES: Record<VueUseClash, string> = {
-  useAnimate: 'useAnimeAnimate',
-  useDraggable: 'useAnimeDraggable',
+type NanimeComposable = keyof typeof NanimeComposables
+
+interface AutoImport {
+  name: string
+  as?: string
+  from: string
+  priority?: number
+  type?: boolean
+  disabled?: boolean
 }
 
-const VUEUSE_CLASH_NAMES: ReadonlySet<string> = new Set(VUEUSE_CLASHES)
-
-function isVueUseClash(name: string): name is VueUseClash {
-  return VUEUSE_CLASH_NAMES.has(name)
+function withPrefix(name: string, prefix: string) {
+  const word = prefix.charAt(0).toUpperCase() + prefix.slice(1)
+  const verb = /^[a-z]+/.exec(name)?.[0] ?? ''
+  return `${verb}${word}${name.slice(verb.length)}`
 }
 
-function findVueUseClashes(presets: (NuxtImportPresetSource | string)[]) {
-  const found = new Map<VueUseClash, number>()
-  const add = (from: string, name: string, priority = 1) => {
-    if (!from.startsWith('@vueuse/') || !isVueUseClash(name)) return
-    found.set(name, Math.max(found.get(name) ?? priority, priority))
-  }
-  const visit = (preset: NuxtImportPresetSource | string) => {
-    if (typeof preset === 'string' || 'package' in preset) {
-      const from = typeof preset === 'string' ? preset : preset.package
-      for (const name of VUEUSE_CLASHES) add(from, name)
-      return
-    }
-    for (const entry of preset.imports) {
-      if (typeof entry === 'string') add(preset.from, entry, preset.priority)
-      else if (Array.isArray(entry)) add(entry[2] ?? preset.from, entry[1] ?? entry[0], preset.priority)
-      else if ('imports' in entry) visit(entry)
-      else add(preset.from, entry.as ?? entry.name, entry.priority ?? preset.priority)
-    }
-  }
-  presets.forEach(visit)
-  return found
+function aliasFor(name: string, aliases: ModuleOptions['aliases']) {
+  if (aliases === true) return withPrefix(name, 'Anime')
+  if (typeof aliases === 'string') return aliases ? withPrefix(name, aliases) : undefined
+  if (!aliases) return undefined
+  return Object.entries(aliases).find(([key]) => key === name)?.[1]
 }
 
-function listNames(names: string[]) {
-  const quoted = names.map(name => `\`${name}\``)
-  return quoted.length > 1 ? `${quoted.slice(0, -1).join(', ')} and ${quoted.at(-1)}` : quoted.join('')
+function isValueImport(entry: AutoImport) {
+  return !entry.type && !entry.disabled
 }
 
 declare module 'nuxt/schema' {
@@ -127,7 +117,7 @@ export default defineNuxtModule<ModuleOptions>({
     components: true,
     rebuild: 'restart',
     reducedMotion: 'never',
-    vueuseAliases: false,
+    aliases: false,
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -157,34 +147,38 @@ export default defineNuxtModule<ModuleOptions>({
       const composablesDir = resolver.resolve('./runtime/app/composables')
       addImportsDir(composablesDir)
 
-      const aliases = _options.vueuseAliases === true ? VUEUSE_ALIASES : _options.vueuseAliases || {}
-      let sources: (NuxtImportPresetSource | string)[] = []
+      const isNanime = (entry: AutoImport) => entry.from.startsWith(composablesDir)
+      const label = (from: string) => isAbsolute(from) ? relative(_nuxt.options.rootDir, from) : from
       let warned = false
-      _nuxt.hook('imports:sources', (presets: (NuxtImportPresetSource | string)[]) => {
-        sources = presets
-      })
-      _nuxt.hook('imports:extend', (imports) => {
-        const clashes = findVueUseClashes(sources)
-        if (!clashes.size) return
-        const kept: { name: VueUseClash, nanimeWins: boolean }[] = []
-        for (const entry of imports) {
-          if (!entry.from.startsWith(composablesDir) || !isVueUseClash(entry.name) || (entry.as ?? entry.name) !== entry.name) continue
-          const vueusePriority = clashes.get(entry.name)
-          if (vueusePriority === undefined) continue
-          const alias = aliases[entry.name]
-          if (alias) entry.as = alias
-          else kept.push({ name: entry.name, nanimeWins: (entry.priority ?? 1) >= vueusePriority })
-        }
-        if (warned || !kept.length) return
-        warned = true
-        const nanimeNames = kept.filter(clash => clash.nanimeWins).map(clash => clash.name)
-        const vueuseNames = kept.filter(clash => !clash.nanimeWins).map(clash => clash.name)
-        const gets = [
-          nanimeNames.length ? `nanime's ${listNames(nanimeNames)}` : '',
-          vueuseNames.length ? `VueUse's ${listNames(vueuseNames)}` : '',
-        ].filter(Boolean).join(' and ')
-        const renames = kept.map(clash => `\`${clash.name}\` → \`${VUEUSE_ALIASES[clash.name]}\``).join(', ')
-        useLogger(__name).warn(`VueUse also auto-imports ${listNames(kept.map(clash => clash.name))}. The app gets ${gets}. Set \`nanime.vueuseAliases: true\` to rename nanime's (${renames}) and give VueUse the plain names, or import the other one explicitly from \`@vueuse/core\` or \`#nanime/composables\`.`)
+
+      _nuxt.hook('imports:context', (unimport) => {
+        _nuxt.hook('imports:extend', async (imports) => {
+          await unimport.getImports()
+          const all: AutoImport[] = [...unimport.getInternalContext().staticImports, ...imports].filter(isValueImport)
+          const lines: string[] = []
+          for (const entry of imports) {
+            if (!isNanime(entry) || !isValueImport(entry) || (entry.as ?? entry.name) !== entry.name) continue
+            const sameName = all.filter(other => (other.as ?? other.name) === entry.name)
+            const others = sameName.filter(other => !isNanime(other))
+            if (!others.length) continue
+            const alias = aliasFor(entry.name, _options.aliases)
+            if (alias) {
+              entry.as = alias
+              continue
+            }
+            const winner = sameName.reduceRight((best, other) => (other.priority ?? 1) > (best.priority ?? 1) ? other : best)
+            const sources = [...new Set(others.map(other => `\`${label(other.from)}\``))].join(', ')
+            const gets = isNanime(winner) ? 'nanime\'s' : `\`${label(winner.from)}\`'s`
+            lines.push(`  - \`${entry.name}\` is also auto-imported from ${sources}. The app gets ${gets}. \`aliases: true\` renames nanime's to \`${aliasFor(entry.name, true)}\`.`)
+          }
+          if (warned || !lines.length) return
+          warned = true
+          useLogger(__name).warn([
+            'Other auto-imports use the same names as nanime composables:',
+            ...lines,
+            'Set `nanime.aliases` to rename them, or import the one you need explicitly.',
+          ].join('\n'))
+        })
       })
     }
 
