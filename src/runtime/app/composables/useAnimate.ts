@@ -67,10 +67,17 @@ export function useAnimate(
     return keepsValue && hasBlendComposition(params) && !old.paused && !old.completed && Number.isFinite(old.iterationCount)
   }
 
+  const cancelPreviousAnimation = (nextParams: AnimationParams) => {
+    const previous = animation.value
+    const scrollObserver = previous._autoplay
+    previous.cancel()
+    if (typeof scrollObserver === 'object' && scrollObserver.linked === previous && scrollObserver !== nextParams.autoplay) scrollObserver.revert()
+  }
+
   const rebuildFromCurrentValues = (targets: TargetsParam, params: AnimationParams) => {
     if (lastTargets && !sameTargets(lastTargets, targets)) revertAll()
     else if (lastTargets && keepsOldRunning(params)) keptAnimations = [...keptAnimations.filter(kept => !kept.completed), animation.value]
-    else animation.value.cancel()
+    else cancelPreviousAnimation(params)
     lastTargets = targets
     animation.value = create(targets, params)
     firstAnimation ??= animation.value
