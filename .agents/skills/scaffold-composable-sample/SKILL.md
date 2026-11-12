@@ -22,7 +22,7 @@ Standard Docus frontmatter with title, Description, and **navigation icon** (pic
 
 **Instant Play Badge**: If the composable supports being called outside a Vue instance (after mounting), include the following badge linked to the composables index:
 ```markdown
-::nuxt-link{to="/composables/how-composables-run#instant-play"}
+::nuxt-link{to="/composables/composable-lifecycle#instant-play"}
 :badge{icon="mage:zap-fill" label="Instant Play" size="md" variant="soft"}
 ::
 ```

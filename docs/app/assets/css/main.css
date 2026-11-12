@@ -88,3 +88,9 @@ td:has(> .comparison-good) {
   text-overflow: clip;
   overflow-wrap: anywhere;
 }
+
+main p.leading-7,
+main li.leading-7,
+main :is(ul.list-disc, ol.list-decimal) > li {
+  line-height: 2rem;
+}
