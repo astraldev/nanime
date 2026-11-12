@@ -1,5 +1,5 @@
 import { isReactive, toValue, type MaybeRef, type MaybeRefOrGetter } from 'vue'
-import type { MaybeElementRef, VueInstance } from './vue-helpers'
+import type { MaybeElement, MaybeElementRef, VueInstance } from './vue-helpers'
 import type { TargetsParam, DOMTargetsParam, DOMTargetSelector, DraggableParams } from 'animejs'
 
 function isVueInstance(value: unknown): value is VueInstance {
@@ -36,7 +36,7 @@ export const sameTargets = (next: unknown, prev: unknown) =>
     ? next.length === prev.length && next.every((entry, index) => entry === prev[index])
     : next === prev
 
-type AnimeTargets = TargetsParam | MaybeElementRef | MaybeElementRef[]
+type AnimeTargets = TargetsParam | MaybeElementRef | MaybeElementRef[] | (() => TargetsParam | MaybeElement | MaybeElement[])
 export function normalizeAnimeTarget(target: AnimeTargets): TargetsParam {
   const resolved = isReactive(target) ? target : toValue(target)
 

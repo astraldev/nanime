@@ -11,7 +11,7 @@ import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/ins
 import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { resolveRebuild } from '../utils/global-options'
-import { useComposableDefaults } from '../utils/component-defaults'
+import { omitUndefined, useComposableDefaults } from '../utils/component-defaults'
 import { useReducedMotion } from '../utils/reduced-motion'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
@@ -48,7 +48,7 @@ export function useAnimate(
 
   const resolveTargets = () => normalizeAnimeTarget(target)
   const resolveDefaults = useComposableDefaults('animate')
-  const resolveParameters = (): AnimationParams => ({ ...resolveDefaults(), ...toValue(parameters) })
+  const resolveParameters = (): AnimationParams => ({ ...resolveDefaults(), ...omitUndefined(toValue(parameters) ?? {}) })
   const resolveBoundParameters = () => unwrapNanimeProxies(resolveParameters())
 
   let firstAnimation: JSAnimation | null = null

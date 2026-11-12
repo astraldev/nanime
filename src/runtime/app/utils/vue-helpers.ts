@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getCurrentInstance, getCurrentScope, isRef, onMounted, onScopeDispose, reactive, readonly, ref, unref, type ComponentPublicInstance, type MaybeRef, type Ref, type UnwrapNestedRefs } from 'vue'
+import { getCurrentInstance, getCurrentScope, isRef, onMounted, onScopeDispose, reactive, readonly, ref, unref, warn, type ComponentPublicInstance, type MaybeRef, type Ref, type UnwrapNestedRefs } from 'vue'
 
 export type VueInstance = ComponentPublicInstance
 export type MaybeElement = HTMLElement | SVGElement | VueInstance | undefined | null
@@ -17,6 +17,11 @@ export function useMounted(): Readonly<Ref<boolean>> {
   }
 
   return readonly(isMounted)
+}
+
+/** Warns in development when a composable that needs a component runs outside one. */
+export function warnOutsideComponent(name: string) {
+  if (!getCurrentInstance()) warn(`[nanime] ${name}() does nothing outside a component. Call it in setup().`)
 }
 
 /** Registers a scope dispose hook when there is a scope to register it on. */
