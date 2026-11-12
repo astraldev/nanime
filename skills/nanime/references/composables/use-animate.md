@@ -21,6 +21,13 @@ fresh object costs nothing.
   finishes, so a burst of changes inside one `duration` stacks that many
   layers. A finite `loop: n` is layered too, until its loops complete.
 - For a value that retargets constantly, use `useAnimatable`.
+- `onComplete` runs only when an animation plays to its end, and a rebuild
+  replaces the old animation before then. Use it for an action that waits
+  for the full animation, such as hold-to-confirm: confirm in the fill's
+  `onComplete`, and change the params when the press ends early to cancel
+  the fill. With
+  `rebuild: 'keepValue'` and `composition: 'blend'`, a finite, playing old
+  animation plays on and its `onComplete` runs.
 
 ## Create `stagger()` inside a getter when items can be added
 
