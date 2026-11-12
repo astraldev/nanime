@@ -1,15 +1,8 @@
-<script setup lang="ts">
-const items = useSidebarNavigation()
-</script>
-
 <template>
   <UMain>
     <UContainer>
       <UPage>
-        <template
-          v-if="items.length > 1"
-          #left
-        >
+        <template #left>
           <UPageAside>
             <DocsAsideLeftTop />
             <DocsAsideLeftBody />

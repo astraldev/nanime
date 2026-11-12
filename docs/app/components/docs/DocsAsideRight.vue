@@ -7,14 +7,6 @@ const props = defineProps<{
 
 const links = computed(() => props.page?.body?.toc?.links || [])
 
-const latest = computed(() => {
-  const value = props.page?.meta?.latest
-  return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined
-})
-
-const sidebarItems = useSidebarNavigation()
-const tocOnLeft = computed(() => sidebarItems.value.length <= 1)
-
 const { subNavigationMode } = useSubNavigation()
 const appConfig = useAppConfig()
 const { t } = useDocusI18n()
@@ -23,18 +15,9 @@ const contentTocVariants = useUIConfig('contentToc')
 </script>
 
 <template>
-  <div
-    :data-toc-left="tocOnLeft || undefined"
-  >
-    <DocsTocGroups
-      v-if="tocOnLeft && links.some(link => link.children?.length)"
-      :title="appConfig.toc?.title || t('docs.toc')"
-      :links="links"
-      :latest="latest"
-      class="hidden lg:flex"
-    />
+  <div>
     <UContentToc
-      v-else-if="links.length"
+      v-if="links.length"
       :highlight="contentTocVariants.highlight ?? true"
       :highlight-color="contentTocVariants.highlightColor"
       :highlight-variant="contentTocVariants.highlightVariant ?? 'circuit'"
@@ -43,10 +26,7 @@ const contentTocVariants = useUIConfig('contentToc')
       :links="links"
       :class="{ 'hidden lg:block': subNavigationMode }"
     >
-      <template
-        v-if="!tocOnLeft"
-        #bottom
-      >
+      <template #bottom>
         <DocsAsideRightBottom />
       </template>
     </UContentToc>
@@ -54,21 +34,3 @@ const contentTocVariants = useUIConfig('contentToc')
     <DocsAsideMobileBar :links="links" />
   </div>
 </template>
-
-<style>
-@media (min-width: 1024px) {
-  [data-slot="root"] > [data-toc-left] {
-    order: -1;
-  }
-
-  [data-slot="root"]:has(> [data-toc-left]) > [data-slot="center"] {
-    max-width: calc(80% - 0.5rem);
-  }
-
-  [data-toc-left] > nav {
-    margin-inline-end: 0;
-    padding-inline-end: 0;
-    backdrop-filter: none;
-  }
-}
-</style>
