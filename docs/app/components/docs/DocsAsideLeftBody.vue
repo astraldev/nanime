@@ -11,6 +11,7 @@ interface NavLink {
   path: string
   title: string
   icon?: string
+  badge?: string
   mono: boolean
 }
 
@@ -52,7 +53,8 @@ function toLink(path: string): NavLink[] {
   if (!item) return []
   const title = labelOverrides[path] ?? item.title
   const icon = typeof item.icon === 'string' ? item.icon : undefined
-  return [{ path, title, icon, mono: /^use[A-Z]/.test(title) }]
+  const badge = typeof item.badge === 'string' ? item.badge : undefined
+  return [{ path, title, icon, badge, mono: /^use[A-Z]/.test(title) }]
 }
 
 const resolved = computed(() => {
@@ -165,6 +167,13 @@ const isOpen = (label: string) => filtering.value || open.value.includes(label)
                 class="size-4 shrink-0"
               />
               <span class="truncate">{{ link.title }}</span>
+              <UBadge
+                v-if="link.badge"
+                :label="link.badge"
+                size="sm"
+                variant="soft"
+                class="ms-auto shrink-0 font-sans"
+              />
             </NuxtLink>
           </li>
         </ul>
