@@ -61,8 +61,8 @@ title: Anime.js composables for Nuxt
 ::home-section
 ---
 label: What's in the box?
-title: Nine composables, three components
-why: A composable for each AnimeJS API, plus components that animate v-if, v-for and layout changes
+title: Ten composables, three components
+why: A composable for each AnimeJS API, an experimental native timeline, and components that animate v-if, v-for and layout changes
 link-label: All composables
 to: /composables/introduction
 ---
@@ -81,6 +81,10 @@ to: /composables/introduction
 
     ::::home-card{name="useAnimeTimeline" to="/composables/use-anime-timeline"}
     Sequence several animations on one timeline
+    ::::
+
+    ::::home-card{name="useWaapiTimeline" to="/composables/use-waapi-timeline"}
+    Sequence CSS tweens on the browser's own animation clock (experimental)
     ::::
 
     ::::home-card{name="useSplitText" to="/composables/use-split-text"}

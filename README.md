@@ -8,7 +8,7 @@
 
 `nanime` lets you use [Anime.js](https://animejs.com/) v4 in Nuxt through composables. You call them in `setup()` like any other composable, and they wait for the element to mount, skip the server render, and clean up when the component goes away.
 
-- Animate elements, text, SVG, drag and scroll with nine composables.
+- Animate elements, text, SVG, drag and scroll with ten composables, one of them experimental.
 - Pass a `ref` or a getter, and the animation rebuilds when it changes.
 - Animate `v-if` and `v-for` with `<AnimeTransition>` and `<AnimeTransitionGroup>`.
 - Use all of it without imports, since the module auto-imports everything.
