@@ -37,6 +37,10 @@ destructuring them works.
 - a shift from the previous tween's start, `<+150`, `<-20%`, `<+0.2s`
 - a shift from a point, `open+150`, `open-20%`
 
+This differs from AnimeJS. Its `<` is the previous tween's end, `<<` is its
+start, and an omitted position appends. Here `<` is the start, `<<` is not
+supported, and an omitted `at` is `0`.
+
 A callback uses the same positions. A callback time counts toward
 `duration`, but a callback is not the previous tween for later `<` shifts.
 
@@ -70,6 +74,11 @@ jump to the element's base value between the two tweens without it.
 springs, plus CSS easings (`ease-out`, `cubic-bezier(...)`, `steps(...)`).
 AnimeJS forms go through `waapi.convertEase`. A spring also sets the tween
 duration to its settling duration unless you pass `duration` yourself.
+
+For a different reverse feel, pass `ease: { forward, reverse }`. No curve is
+derived for you; the `reverse` curve is used while playing backward. Since
+reverse walks a curve backwards, `{ forward: 'outQuad', reverse: 'inQuad' }`
+starts fast in both directions.
 
 
 ## Callbacks

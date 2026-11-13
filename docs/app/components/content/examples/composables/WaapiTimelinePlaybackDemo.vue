@@ -1,64 +1,53 @@
 <script setup lang="ts">
 import { useWaapiTimeline } from '#nanime/experimental'
-import ExampleWrapper, { type ExampleAction, type ExampleSlider } from '~/components/shared/ExampleWrapper.vue'
+import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleWrapper.vue'
 
 const box = useTemplateRef('box')
-const progress = ref(0)
 const state = ref('idle')
-let frame = 0
 
 const timeline = useWaapiTimeline({
-  defaults: { duration: 600, ease: 'outQuad' },
+  defaults: { duration: 1000, ease: 'inOutQuad' },
 })
 
 timeline
-  .tween(box, { translate: ['0px', '160px'] })
-  .tween(box, { rotate: ['0deg', '180deg'], at: '<+50%' })
-  .tween(box, { scale: ['1', '0.5'], at: '<+100%', duration: 400 })
-  .tween(box, { translate: ['160px', '0px'], at: '<' })
+  .tween(box, { translate: ['0px', '64px'] })
+  .tween(box, { translate: ['64px', '128px'], at: '< + 100%' })
+  .tween(box, { translate: ['128px', '192px'], at: '< + 100%' })
 
 function readState() {
-  progress.value = timeline.progress
   if (timeline.isRunning.value) state.value = 'running'
   else if (timeline.paused) state.value = 'paused'
   else if (timeline.completed) state.value = 'completed'
-  else state.value = 'idle'
-
-  cancelAnimationFrame(frame)
-  if (timeline.isRunning.value) frame = requestAnimationFrame(readState)
 }
 
 watch(timeline.isRunning, readState)
-onScopeDispose(() => cancelAnimationFrame(frame))
 
-function seek(value: number) {
-  timeline.seek(value * timeline.duration)
-  readState()
-}
-
-const actions = computed<ExampleAction[]>(() => [
+const actions: ExampleAction[] = [
   { label: 'Play', run: timeline.play },
   { label: 'Pause', run: timeline.pause },
   { label: 'Resume', run: timeline.resume },
   { label: 'Reverse', run: timeline.reverse },
   { label: 'Restart', run: timeline.restart },
   { label: 'Alternate', run: timeline.alternate },
-])
-
-const slider = computed<ExampleSlider>(() => ({ value: progress.value, onInput: seek }))
+]
 </script>
 
 <template>
   <ExampleWrapper
     :actions="actions"
-    :slider="slider"
     :status="state"
   >
-    <div class="flex h-20 w-56 items-center">
+    <div class="flex w-54 flex-col gap-2">
       <div
         ref="box"
-        class="size-10 rounded-lg bg-primary"
+        class="size-6 rounded-lg bg-primary"
       />
+      <div class="flex justify-between font-mono text-xs text-primary">
+        <span class="w-6 text-center">0</span>
+        <span class="w-6 text-center">1s</span>
+        <span class="w-6 text-center">2s</span>
+        <span class="w-6 text-center">3s</span>
+      </div>
     </div>
   </ExampleWrapper>
 </template>

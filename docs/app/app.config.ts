@@ -12,6 +12,28 @@ export default defineAppConfig({
         center: 'absolute left-1/2 -translate-x-1/2',
       },
     },
+    page: {
+      compoundVariants: [
+        {
+          left: true,
+          right: false,
+          class: {
+            root: 'lg:grid-cols-[11fr_39fr]',
+            left: 'lg:col-span-1',
+            center: 'lg:col-span-1',
+          },
+        },
+        {
+          left: false,
+          right: true,
+          class: {
+            root: 'lg:grid-cols-[77fr_23fr]',
+            center: 'lg:col-span-1',
+            right: 'lg:col-span-1',
+          },
+        },
+      ],
+    },
     prose: {
       h2: {
         slots: {
