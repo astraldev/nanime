@@ -18,7 +18,7 @@ export default defineAppConfig({
           left: true,
           right: false,
           class: {
-            root: 'lg:grid-cols-[11fr_39fr]',
+            root: 'lg:grid-cols-[minmax(0,11fr)_minmax(0,39fr)]',
             left: 'lg:col-span-1',
             center: 'lg:col-span-1',
           },
@@ -27,7 +27,7 @@ export default defineAppConfig({
           left: false,
           right: true,
           class: {
-            root: 'lg:grid-cols-[77fr_23fr]',
+            root: 'lg:grid-cols-[minmax(0,77fr)_minmax(0,23fr)]',
             center: 'lg:col-span-1',
             right: 'lg:col-span-1',
           },
