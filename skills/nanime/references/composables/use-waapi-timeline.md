@@ -34,6 +34,7 @@ destructuring them works.
 
 - a number in milliseconds, `0` by default
 - a point name, defined with `point('open', 0)`
+- `<`, the previous tween's start
 - a shift from the previous tween's start, `<+150`, `<-20%`, `<+0.2s`
 - a shift from a point, `open+150`, `open-20%`
 
@@ -53,8 +54,8 @@ throws: `'120'` and `'20%'` both throw. Write a time as a number.
 
 The first `play()`, `reverse()`, `restart()`, `alternate()` or `seek()`
 builds the timeline. After it, `tween()`, `point()` and `callback()` throw.
-In `setup()` these calls queue until mount, so tweens added after a queued
-`play()` still count. Each registration call validates its arguments, so a
+Playback calls in `setup()` queue until mount, so tweens added after a
+queued `play()` still count. Each registration call validates its arguments, so a
 bad position or value throws at that call, not at the first play.
 
 Targets resolve once, at the build. A `null` target is skipped with no
@@ -77,7 +78,7 @@ previous tween's `to` as its `from`, or the element jumps.
 
 `play()` from a pause continues, while running backward it turns around in
 place, and after the timeline finishes it replays from `0`. `reverse()`
-mirrors it. `alternate()` on a timeline that has not played yet plays
+mirrors it, so before the first play it starts from the end. `alternate()` on a timeline that has not played yet plays
 forward. `seek()` keeps a running timeline running unless it lands on an
 end.
 

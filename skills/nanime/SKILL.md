@@ -6,8 +6,8 @@ description: |
   useAnimatable, useAnimeTimeline, useDraggable, useSplitText, useScrambleText,
   useAnimeScroll, useAnimeLayout, <AnimeTransition>, <AnimeTransitionGroup>,
   <AnimeLayoutGroup>, transition styles, component defaults, provideAnimeDefaults,
-  the #nanime/* aliases, and the experimental useWaapiTimeline from
-  #nanime/experimental, and nanime/vue in a Vue app without Nuxt. Also use when an effect seems to need raw animejs, GSAP or CSS
+  the #nanime/* aliases, the experimental useWaapiTimeline from
+  #nanime/experimental, and nanime/vue for a Vue app without Nuxt. Also use when an effect seems to need raw animejs, GSAP or CSS
   transition classes. Most mistakes here do not throw; they animate the wrong thing.
 ---
 
@@ -76,8 +76,8 @@ Not auto-imported. Import helpers from these, never from `animejs` directly.
 | `#nanime/experimental` | `useWaapiTimeline`, `createWaapiTimeline` and their types. Not auto-imported. |
 
 When another auto-import also uses a nanime composable name, such as
-VueUse's `useDraggable`, the build warns and the app gets nanime's. Set
-`nanime: { aliases: true }` in `nuxt.config.ts` to rename nanime's instead
+VueUse's `useDraggable`, the build warns and names which one the app gets.
+Set `nanime: { aliases: true }` in `nuxt.config.ts` to rename nanime's
 (`useAnimeDraggable`). Docs:
 https://nanimejs.netlify.app/guides/configuration#fix-auto-import-name-clashes
 
