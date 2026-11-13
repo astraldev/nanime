@@ -60,3 +60,8 @@ Temporary Items
 
 # Social copy, kept local
 announcements/
+
+# Local release video projects (untracked)
+videos/
+
+.pnpm-store/
