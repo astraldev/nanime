@@ -57,6 +57,15 @@ export type WaapiTimelineTarget = WaapiTimelineDomTarget | (() => WaapiTimelineD
  * property with a `[from, to]` pair, a `{ from, to }` object, or a single
  * value, passed to WAAPI as-is. Intermediate keyframes are not supported.
  */
+export interface WaapiTimelineEasePair {
+  /** The easing used while the timeline plays forward. */
+  forward: EasingParam
+  /** The easing used while it plays backward. Defaults to `forward`. */
+  reverse?: EasingParam
+}
+
+export type WaapiTimelineEase = EasingParam | WaapiTimelineEasePair
+
 export type WaapiTweenParams = {
   /**
    * When the tween starts: absolute milliseconds, a point name, or a
@@ -69,9 +78,14 @@ export type WaapiTweenParams = {
   duration?: number
   /** @default 0 */
   delay?: number
-  /** @default 'linear' */
-  ease?: EasingParam
-} & Record<string, WaapiTimelineFrame | WaapiTimelinePosition | undefined>
+  /**
+   * A single easing for both directions, or `{ forward, reverse }` to pick
+   * the easing applied while the timeline plays backward. `reverse` defaults
+   * to `forward`; it is not derived.
+   * @default 'linear'
+   */
+  ease?: WaapiTimelineEase
+} & Record<string, WaapiTimelineFrame | WaapiTimelinePosition | WaapiTimelineEase | undefined>
 
 /**
  * A function to run when the playhead crosses `at`.
@@ -95,7 +109,7 @@ export interface WaapiTimelineDefaults {
   /** @default 300 */
   duration?: number
   /** @default 'linear' */
-  ease?: EasingParam
+  ease?: WaapiTimelineEase
 }
 
 /**

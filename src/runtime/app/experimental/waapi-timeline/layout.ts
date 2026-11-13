@@ -6,6 +6,8 @@ import type {
   WaapiTimelinePair,
   WaapiTimelinePosition,
   WaapiTimelineRange,
+  WaapiTimelineEase,
+  WaapiTimelineEasePair,
   WaapiTimelineTarget,
   WaapiTweenParams,
 } from './types'
@@ -41,6 +43,7 @@ export interface ResolvedTween {
   start: number
   duration: number
   ease: string
+  reverseEase: string
 }
 
 export interface ResolvedCallback {
@@ -82,11 +85,26 @@ function normalizeDelay(value: number): number {
   return Number.isFinite(value) ? value : 0
 }
 
+function isEasePair(value: WaapiTimelineEase): value is WaapiTimelineEasePair {
+  return typeof value === 'object' && value !== null && 'forward' in value
+}
+
 function readTween(params: WaapiTweenParams, defaults: WaapiTimelineDefaults) {
   const at = params.at
-  const resolvedEase = resolveEase(params.ease ?? defaults.ease ?? 'linear')
-  const duration = normalizeDuration(params.duration ?? resolvedEase.duration ?? defaults.duration ?? 300)
+  const requested = params.ease ?? defaults.ease ?? 'linear'
+  const resolvedEase = resolveEase(isEasePair(requested) ? requested.forward : requested)
+  const resolvedReverse = isEasePair(requested)
+    ? resolveEase(requested.reverse ?? requested.forward)
+    : resolveEase(requested)
+  const duration = normalizeDuration(
+    params.duration
+    ?? resolvedEase.duration
+    ?? resolvedReverse.duration
+    ?? defaults.duration
+    ?? 300,
+  )
   const ease = resolvedEase.easing
+  const reverseEase = resolvedReverse.easing
   const delay = normalizeDelay(params.delay ?? 0)
   const tracks: TrackInput[] = []
 
@@ -100,7 +118,7 @@ function readTween(params: WaapiTweenParams, defaults: WaapiTimelineDefaults) {
     throw new Error(`createWaapiTimeline: "${property}" must be a value, a [from, to] pair, or a { from, to } object. Intermediate keyframes are not supported.`)
   }
 
-  return { at, duration, ease, delay, tracks }
+  return { at, duration, ease, reverseEase, delay, tracks }
 }
 
 export function layoutTimeline(entries: RegisteredEntry[], defaults: WaapiTimelineDefaults): TimelineLayout {
@@ -120,6 +138,7 @@ export function layoutTimeline(entries: RegisteredEntry[], defaults: WaapiTimeli
 
     if (entry.kind === 'callback') {
       const time = resolveAt(entry.at, context)
+      if (time < 0) throw new Error(`createWaapiTimeline: callback at ${time} is before the timeline start.`)
       callbacks.push({ fn: entry.fn, time })
       length = Math.max(length, time)
       continue
@@ -135,6 +154,7 @@ export function layoutTimeline(entries: RegisteredEntry[], defaults: WaapiTimeli
       start,
       duration: values.duration,
       ease: values.ease,
+      reverseEase: values.reverseEase,
     })
     previous = { start, end, duration: values.duration }
     length = Math.max(length, end)

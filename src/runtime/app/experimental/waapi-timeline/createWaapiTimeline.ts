@@ -1,4 +1,4 @@
-import { buildTimeline } from './build'
+import { buildTimeline, type TimelineAnimationEase } from './build'
 import { layoutTimeline, type RegisteredEntry, type ResolvedCallback, type TimelineLayout } from './layout'
 import type { WaapiTimeline, WaapiTimelineOptions, WaapiTimelineTarget } from './types'
 
@@ -39,6 +39,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
   let layoutCache: TimelineLayout | null = null
 
   let animations: Animation[] = []
+  let eases: TimelineAnimationEase[] = []
   let clock: Animation | null = null
   let length = 0
   let callbacks: ResolvedCallback[] = []
@@ -53,6 +54,21 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
   function layout(): TimelineLayout {
     if (!layoutCache) layoutCache = layoutTimeline(entries, defaults)
     return layoutCache
+  }
+
+  function record(entry: RegisteredEntry): void {
+    entries.push(entry)
+    layoutCache = null
+
+    // validate at the call site, not later inside the mount hook
+    try {
+      layout()
+    }
+    catch (error) {
+      entries.pop()
+      layoutCache = null
+      throw error
+    }
   }
 
   function assertMutable(method: string): void {
@@ -80,11 +96,13 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
         start: tween.start,
         duration: tween.duration,
         ease: tween.ease,
+        reverseEase: tween.reverseEase,
       })),
     }, fill)
 
     length = result.length
     animations = result.animations
+    eases = result.eases
     clock = result.clock
     callbacks = current.callbacks
 
@@ -92,8 +110,11 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     clock.onfinish = () => {
       if (status !== 'running') return
 
-      // flush callbacks before the final status, in case rAF stopped early
+      // a finish queued before a direction flip belongs to the old end
       const end = direction === 1 ? length : 0
+      if (Math.abs(playhead() - end) > 1) return
+
+      // flush callbacks before the final status, in case rAF stopped early
       fireBetween(cursor, end, direction)
       cursor = end
       stopLoop()
@@ -178,6 +199,12 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     setStatus('paused')
   }
 
+  function applyEasing(next: Direction): void {
+    for (const entry of eases) {
+      entry.animation.effect?.updateTiming({ easing: next === 1 ? entry.forward : entry.reverse })
+    }
+  }
+
   function start(): void {
     if (!clock) {
       setStatus('finished')
@@ -204,6 +231,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     // reduced motion: move to the destination without playing
     stopLoop()
     direction = next
+    applyEasing(next)
     seekAll(next === 1 ? length : 0)
     pauseAll()
     cursor = next === 1 ? length : 0
@@ -223,6 +251,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     // a running timeline flips in place; no seek, so the playhead does not jump
     if (status === 'running') {
       if (direction !== next) {
+        applyEasing(next)
         direction = next
         applyRate()
       }
@@ -232,8 +261,12 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     // idle or finished: start from the end the new direction begins at
     if (status === 'idle' || status === 'finished') {
       seekAll(next === 1 ? 0 : length)
-      // -1 lets a callback at 0 run on the first forward frame
-      cursor = next === 1 ? -1 : length
+      // mirror the forward boundary: 0 runs on play, length runs on reverse
+      cursor = next === 1 ? -1 : length + 1
+      applyEasing(next)
+    }
+    else if (direction !== next) {
+      applyEasing(next)
     }
 
     direction = next
@@ -251,6 +284,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     stopLoop()
     pauseAll()
     seekAll(0)
+    applyEasing(1)
     direction = 1
     cursor = -1
 
@@ -287,6 +321,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     cursor = 0
     clock = null
     animations = []
+    eases = []
     length = 0
     built = false
     direction = 1
@@ -321,14 +356,12 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
       assertMutable('point')
       if (!name) throw new Error('createWaapiTimeline: point() needs a name.')
 
-      entries.push({ kind: 'point', name, at })
-      layoutCache = null
+      record({ kind: 'point', name, at })
       return timeline
     },
     tween(target, params) {
       assertMutable('tween')
-      entries.push({ kind: 'tween', target, params })
-      layoutCache = null
+      record({ kind: 'tween', target, params })
       return timeline
     },
     callback(input, at) {
@@ -337,8 +370,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
       const position = typeof input === 'function' ? at : input.at
       if (typeof fn !== 'function') throw new Error('createWaapiTimeline: callback() needs a function.')
 
-      entries.push({ kind: 'callback', fn, at: position })
-      layoutCache = null
+      record({ kind: 'callback', fn, at: position })
       return timeline
     },
 
@@ -365,6 +397,16 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
       return timeline
     },
     alternate() {
+      // a fresh timeline opens, it does not close
+      if (status === 'idle') {
+        startIn(1)
+        return timeline
+      }
+
+      // the finish event can still be queued; settle the boundary first
+      const time = playhead()
+      if (status === 'running' && (time >= length || time <= 0)) setStatus('finished')
+
       if (direction === 1) startIn(-1)
       else startIn(1)
       return timeline

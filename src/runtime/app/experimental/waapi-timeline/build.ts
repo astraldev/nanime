@@ -8,6 +8,7 @@ interface BuiltTrack {
   start: number
   duration: number
   ease: string
+  reverseEase: string
   order: number
 }
 
@@ -17,6 +18,7 @@ export interface TimelineElementTween {
   start: number
   duration: number
   ease: string
+  reverseEase: string
 }
 
 export interface TimelineElementLayout {
@@ -24,10 +26,17 @@ export interface TimelineElementLayout {
   tweens: TimelineElementTween[]
 }
 
+export interface TimelineAnimationEase {
+  animation: Animation
+  forward: string
+  reverse: string
+}
+
 export interface BuiltTimeline {
   length: number
   animations: Animation[]
   clock: Animation
+  eases: TimelineAnimationEase[]
 }
 
 function persist(animation: Animation): void {
@@ -66,6 +75,7 @@ function collectTracks(layout: TimelineElementLayout): BuiltTrack[] {
           start: tween.start,
           duration: tween.duration,
           ease: tween.ease,
+          reverseEase: tween.reverseEase,
           order,
         })
         order++
@@ -95,6 +105,7 @@ function groupTracks(tracks: BuiltTrack[]): Map<Element, Map<string, BuiltTrack[
 
 export function buildTimeline(layout: TimelineElementLayout, fill: WaapiTimelineFill): BuiltTimeline {
   const animations: Animation[] = []
+  const eases: TimelineAnimationEase[] = []
 
   const groups = groupTracks(collectTracks(layout))
 
@@ -122,6 +133,7 @@ export function buildTimeline(layout: TimelineElementLayout, fill: WaapiTimeline
         const animation = new Animation(effect)
         persist(animation)
         animations.push(animation)
+        eases.push({ animation, forward: track.ease, reverse: track.reverseEase })
       })
     }
   }
@@ -130,5 +142,5 @@ export function buildTimeline(layout: TimelineElementLayout, fill: WaapiTimeline
   const clock = new Animation(new KeyframeEffect(null, null, layout.length))
   persist(clock)
 
-  return { length: layout.length, animations, clock }
+  return { length: layout.length, animations, clock, eases }
 }

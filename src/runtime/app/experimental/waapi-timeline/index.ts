@@ -6,6 +6,8 @@ export type {
   WaapiTimelineCallbackInput,
   WaapiTimelineDefaults,
   WaapiTimelineDomTarget,
+  WaapiTimelineEase,
+  WaapiTimelineEasePair,
   WaapiTimelineFill,
   WaapiTimelineFrame,
   WaapiTimelineOptions,

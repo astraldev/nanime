@@ -76,12 +76,10 @@ export function useWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTimel
     mounted = true
     const actions = pending
     pending = []
-    if (actions.length) {
-      for (const action of actions) action()
-    }
-    else if (autoplay) {
-      core.play()
-    }
+
+    // match the factory: autoplay starts first, then queued calls apply
+    if (autoplay) core.play()
+    for (const action of actions) action()
   }
 
   const timeline: WaapiTimelineRef = {

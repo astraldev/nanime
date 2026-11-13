@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { eases, spring } from 'animejs/easings'
 import { resolveEase } from '../../src/runtime/app/experimental/waapi-timeline/easing'
 
@@ -24,8 +24,17 @@ describe('resolveEase', () => {
     expect(resolved.duration).toBeGreaterThan(0)
   })
 
-  it('falls back to linear for unknown names', () => {
+  it('converts the deprecated AnimeJS string forms', () => {
+    expect(resolveEase('cubicBezier(0.4, 0, 0.2, 1)').easing).toMatch(/^linear\(/)
+    expect(resolveEase('irregular(20, .8)').easing).toMatch(/^linear\(/)
+  })
+
+  it('warns and falls back for unknown names', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(resolveEase('unknown-ease-name').easing).toBe('linear')
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('unknown ease'))
+    warn.mockRestore()
+
     expect(resolveEase('none').easing).toBe('linear')
-    expect(resolveEase('not-an-ease').easing).toBe('linear')
   })
 })
