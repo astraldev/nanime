@@ -195,5 +195,6 @@ export default defineNuxtModule<ModuleOptions>({
     _nuxt.options.alias[`#${__configKey}/proxies/text`] = resolver.resolve('./runtime/app/public/proxies/text')
     _nuxt.options.alias[`#${__configKey}/proxies/svg`] = resolver.resolve('./runtime/app/public/proxies/svg')
     _nuxt.options.alias[`#${__configKey}/proxies`] = resolver.resolve('./runtime/app/public/proxies/index')
+    _nuxt.options.alias[`#${__configKey}/experimental`] = resolver.resolve('./runtime/app/experimental/index')
   },
 })

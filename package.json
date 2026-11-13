@@ -43,6 +43,10 @@
       "types": "./dist/vue/index.d.mts",
       "import": "./dist/vue/index.mjs"
     },
+    "./experimental": {
+      "types": "./dist/experimental/index.d.mts",
+      "import": "./dist/experimental/index.mjs"
+    },
     "./presets/*": {
       "types": "./dist/presets/*.d.mts",
       "import": "./dist/presets/*.mjs"
@@ -56,6 +60,9 @@
       ],
       "vue": [
         "./dist/vue/index.d.mts"
+      ],
+      "experimental": [
+        "./dist/experimental/index.d.mts"
       ],
       "presets/*": [
         "./dist/presets/*.d.mts"
