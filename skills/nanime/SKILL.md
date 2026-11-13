@@ -7,7 +7,7 @@ description: |
   useAnimeScroll, useAnimeLayout, <AnimeTransition>, <AnimeTransitionGroup>,
   <AnimeLayoutGroup>, transition styles, component defaults, provideAnimeDefaults,
   the #nanime/* aliases, and the experimental useWaapiTimeline from
-  #nanime/experimental. Also use when an effect seems to need raw animejs, GSAP or CSS
+  #nanime/experimental, and nanime/vue in a Vue app without Nuxt. Also use when an effect seems to need raw animejs, GSAP or CSS
   transition classes. Most mistakes here do not throw; they animate the wrong thing.
 ---
 
@@ -66,14 +66,29 @@ Not auto-imported. Import helpers from these, never from `animejs` directly.
 
 | Alias | Holds |
 |---|---|
-| `#nanime/types` | Anime.js types (`AnimationParams`, `JSAnimation`, …) and `AnimeTransitionStyle` |
-| `#nanime/utils` | Anime.js utils (`stagger`, `random`, `set`, …), plus `animate` and `createTimer` for handler code |
+| `#nanime/types` | Anime.js types (`AnimationParams`, `JSAnimation`, …), `AnimeTransitionStyle`, `AnimationPreset` and `NanimeConfig` |
+| `#nanime/utils` | Anime.js utils (`stagger`, `random`, `set`, …), `animate` and `createTimer` for handler code, and `defineAnimationPreset` |
 | `#nanime/easings` | `spring`, `cubicBezier`, `steps`, … |
 | `#nanime/proxies/svg` | `createMotionPath`, `createDrawable`, `morphTo` |
 | `#nanime/proxies/text` | `scrambleText`, for use inside animation parameters |
 | `#nanime/proxies` | Both of the above |
 | `#nanime/composables` | Every composable, for `composables: false` in `nuxt.config.ts` |
 | `#nanime/experimental` | `useWaapiTimeline`, `createWaapiTimeline` and their types. Not auto-imported. |
+
+When another auto-import also uses a nanime composable name, such as
+VueUse's `useDraggable`, the build warns and the app gets nanime's. Set
+`nanime: { aliases: true }` in `nuxt.config.ts` to rename nanime's instead
+(`useAnimeDraggable`). Docs:
+https://nanimejs.netlify.app/guides/configuration#fix-auto-import-name-clashes
+
+## Vue without Nuxt
+
+Import everything from `nanime/vue`: composables, components, types,
+easings, proxies and utilities. Nothing is auto-imported and the
+`#nanime/*` aliases do not exist, so register the components yourself. Call
+`configureNanime(app, config)` before the app mounts. `config` has the shape
+of the `nanime` key in `app.config.ts`. Docs:
+https://nanimejs.netlify.app/guides/vue
 
 ## Rules that apply everywhere
 
