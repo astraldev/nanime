@@ -59,6 +59,10 @@ before the earlier tween runs. Set `fill` to `'none'`, `'forwards'` or
 The first tween on a property applies its `from` value as soon as the
 timeline is built, even if that tween starts later.
 
+The timeline persists every animation. Chrome removes a finished fill
+animation when a later tween covers the same property, and reverse would
+jump to the element's base value between the two tweens without it.
+
 
 ## Easing
 

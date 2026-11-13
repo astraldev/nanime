@@ -30,6 +30,13 @@ export interface BuiltTimeline {
   clock: Animation
 }
 
+function persist(animation: Animation): void {
+  // Chrome drops a finished fill animation when a later one covers it.
+  // Keeping it alive is what makes reverse and replay retrace the same values.
+  const method: unknown = Reflect.get(animation, 'persist')
+  if (typeof method === 'function') Reflect.apply(method, animation, [])
+}
+
 function toFrames(property: string, value: WaapiTimelineFrame): Keyframe[] {
   if (isPair(value)) return [{ [property]: value[0] }, { [property]: value[1] }]
   if (isRange(value)) {
@@ -112,13 +119,16 @@ export function buildTimeline(layout: TimelineElementLayout, fill: WaapiTimeline
           easing: track.ease,
           fill: mode,
         })
-        animations.push(new Animation(effect))
+        const animation = new Animation(effect)
+        persist(animation)
+        animations.push(animation)
       })
     }
   }
 
   // a targetless clock: it has no visual effect and only reports the end
   const clock = new Animation(new KeyframeEffect(null, null, layout.length))
+  persist(clock)
 
   return { length: layout.length, animations, clock }
 }
