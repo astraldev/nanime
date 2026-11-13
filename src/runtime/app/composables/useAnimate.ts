@@ -72,7 +72,7 @@ export function useAnimate(
     const previous = animation.value
     const scrollObserver = previous._autoplay
     previous.cancel()
-    if (typeof scrollObserver === 'object' && scrollObserver.linked === previous && scrollObserver !== nextParams.autoplay) scrollObserver.revert()
+    if (scrollObserver !== null && typeof scrollObserver === 'object' && scrollObserver.linked === previous && scrollObserver !== nextParams.autoplay) scrollObserver.revert()
   }
 
   const rebuildFromCurrentValues = (targets: TargetsParam, params: AnimationParams) => {
