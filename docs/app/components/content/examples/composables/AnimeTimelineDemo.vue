@@ -23,11 +23,11 @@ tl
   <ExampleWrapper>
     <div
       ref="box"
-      class="simple-box !size-8"
+      class="size-8 rounded-lg bg-primary"
     />
     <p
       ref="label"
-      class="font-mono text-sm text-(--color-primary)"
+      class="font-mono text-sm text-primary"
     >
       ready
     </p>

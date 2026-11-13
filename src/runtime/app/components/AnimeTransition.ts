@@ -4,6 +4,7 @@ import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { onTabHidden } from '../utils/tab-hidden'
 import { useComponentDefaults } from '../utils/component-defaults'
 import { createTransitionRunner } from '../transitions/runner'
+import { useReducedMotion } from '../utils/reduced-motion'
 import { useTransitionStyles } from '../transitions/resolve'
 import { fade } from '../transitions/styles/fade'
 
@@ -11,28 +12,34 @@ export type { AnimeTransitionMode, AnimeTransitionProps } from '../public/types'
 
 export default defineComponent(
   (props: AnimeTransitionProps, { slots }) => {
-    const { option } = useComponentDefaults('transition')
+    const { parseAnimation, parseOption } = useComponentDefaults('transition')
     const styles = useTransitionStyles(fade)
+    const { withReducedMotion } = useReducedMotion()
     const runner = createTransitionRunner({
-      enter: () => styles.enter(option(props, 'enterAnimation')),
-      leave: () => styles.leave(option(props, 'leaveAnimation')),
+      component: 'AnimeTransition',
+      withReducedMotion,
+      engine: () => parseOption(props, 'waapi') ? 'waapi' : 'js',
+      enter: () => styles.enter(parseAnimation(props).enter ?? 'fade'),
+      leave: () => styles.leave(parseAnimation(props).leave ?? 'fade'),
     })
 
     onTabHidden(() => {
-      if (option(props, 'completeOnTabHidden')) runner.complete()
+      if (parseOption(props, 'completeOnTabHidden')) runner.complete()
     })
 
     tryOnScopeDispose(runner.dispose)
 
     return () => h(
       BaseTransition,
-      { mode: option(props, 'mode'), appear: option(props, 'appear'), ...runner.hooks },
+      { mode: parseOption(props, 'mode'), appear: parseOption(props, 'appear'), ...runner.hooks },
       slots,
     )
   },
   {
     name: 'AnimeTransition',
     props: {
+      waapi: { type: Boolean, default: undefined },
+      animation: null,
       enterAnimation: null,
       leaveAnimation: null,
       mode: null,

@@ -1,10 +1,9 @@
 import { defineComponent, h, onBeforeUpdate, onUpdated, shallowRef, useId, warn } from 'vue'
-import type { AutoLayoutParams } from 'animejs/layout'
 import { spring } from 'animejs/easings'
 import type { DOMTargetSelector } from 'animejs'
-import type { AnimeLayoutElements, AnimeLayoutGroupProps } from '../public/types'
+import type { AnimeLayoutElements, AnimeLayoutGroupProps, AnimeLayoutParams } from '../public/types'
 import { useAnimeLayout } from '../composables/useAnimeLayout'
-import { assignDefined, useComponentDefaults } from '../utils/component-defaults'
+import { useComponentDefaults } from '../utils/component-defaults'
 import { watchDeps } from '../utils/deps'
 import { onTabHidden } from '../utils/tab-hidden'
 import { LAYOUT_GROUP_ATTRIBUTE } from '../utils/markers'
@@ -37,7 +36,7 @@ function checkSelector(selector: string) {
 
 export default defineComponent(
   (props: AnimeLayoutGroupProps, { slots }) => {
-    const { layers, option } = useComponentDefaults('layoutGroup')
+    const { parseOption } = useComponentDefaults('layoutGroup')
     const root = shallowRef<HTMLElement | null>(null)
     const id = useId()
     const scope = `[${LAYOUT_GROUP_ATTRIBUTE}="${id}"]`
@@ -54,18 +53,18 @@ export default defineComponent(
       })
     }
 
-    function layoutParams(): AutoLayoutParams {
-      const options = assignDefined<AutoLayoutParams>({}, ...layers.value.map(layer => layer.layoutOptions), props.layoutOptions)
+    function layoutParams(): AnimeLayoutParams {
+      const options: AnimeLayoutParams = { ...parseOption(props, 'layoutOptions') }
       if (options.ease === undefined && options.duration === undefined) options.ease = builtInEase
-      const elements = option(props, 'elements')
+      const elements = parseOption(props, 'elements')
       return elements === undefined ? options : { ...options, children: resolveElements(elements) }
     }
 
     const layout = useAnimeLayout(root, layoutParams)
-    watchDeps(() => props.deps, option(props, 'shallow') ?? false, () => layout.patch?.(noop))
+    watchDeps(() => props.deps, parseOption(props, 'shallow') ?? false, () => layout.patch?.(noop))
 
     onTabHidden(() => {
-      if (option(props, 'completeOnTabHidden')) layout.timeline?.complete()
+      if (parseOption(props, 'completeOnTabHidden')) layout.timeline?.complete()
     })
 
     onBeforeUpdate(() => {
@@ -76,7 +75,7 @@ export default defineComponent(
       if (!props.deps) layout.animate?.()
     })
 
-    return () => h(option(props, 'tag') ?? 'div', { ref: root, [LAYOUT_GROUP_ATTRIBUTE]: id }, slots.default?.())
+    return () => h(parseOption(props, 'tag') ?? 'div', { ref: root, [LAYOUT_GROUP_ATTRIBUTE]: id }, slots.default?.())
   },
   {
     name: 'AnimeLayoutGroup',

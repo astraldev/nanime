@@ -89,7 +89,7 @@ Key conventions:
 
 Existing composables: `useAnimate`, `useAnimatable`, `useAnimeLayout`, `useAnimeScroll`, `useAnimeTimeline`, `useDraggable`, `useScrambleText`, `useSplitText`, `useWaapiAnimate`, plus `provideAnimeDefaults`
 
-A new configurable component gets a key in `NanimeComponentDefaults` (`public/types/components.ts`); nothing else to register. Read its props through `useComponentDefaults(name).option(props, key) ?? builtIn`. Boolean and defaulted props use `default: undefined` so "not passed" stays detectable. DOM markers (attributes, classes) live in `src/runtime/app/utils/markers.ts`, and the CSS that targets them in `markers.css`, which `markers.ts` imports so it ships only with the code that sets the markers.
+A new configurable component gets a key in `NanimeComponentDefaults` (`public/types/components.ts`); add one line for it in `provideAnimeDefaults()` (a type check fails until you do). Read its props through `useComponentDefaults(name).parseOption(props, key) ?? builtIn`; a provider entry replaces an outer one for the same component whole, and is laid over the `app.config.ts` entry per prop. Boolean and defaulted props use `default: undefined` so "not passed" stays detectable. DOM markers (attributes, classes) live in `src/runtime/app/utils/markers.ts`, and the CSS that targets them in `markers.css`, which `markers.ts` imports so it ships only with the code that sets the markers.
 
 Code comments: none in internal code. Every public type, prop and module option gets a JSDoc line (with `@default` where there is one), because users see it on hover.
 
@@ -128,11 +128,12 @@ Runs sequentially before commit:
 ## Docs
 
 Docus-based site in `docs/`. Content lives in `docs/content/`:
-- `1.getting-started/` — intro, installation, configuration, performance, comparison (vs) pages
+- `1.getting-started/` — introduction and installation
 - `2.composables/` — one page per composable, plus `99.utilities.md` (easings, utils, proxies)
 - `3.components/` — transitions and transition styles
-- `5.examples/` — showcase examples
-- `6.changes/` — changelog
+- `4.guides/` — configuration, defaults, presets, performance, accessibility, Vue
+- `5.comparisons/` — comparison (vs) pages
+- `7.changes/` — changelog
 
 Prose rules live in `.agents/skills/create-docs/references/prose-style.md`: "AnimeJS" in prose, "Anime.js" only in SEO frontmatter and the homepage `<h1>`.
 
@@ -149,7 +150,7 @@ Run docs dev: `cd docs && pnpm dev` (port 3001).
 
 Vitest projects in `vitest.config.ts`:
 - **full-nuxt-apps** — `test/fixtures/`
-- **config** — `test/config/` (runs against the `keep-time` fixture)
+- **config** — `test/config/` (runs against the `rebuild` fixture)
 - **suites** — `test/suites/` (component tests via `mountSuspended`, real components, no mocks)
 
 `unit` and `e2e` projects are configured but their folders are empty. Tests are moving to a private repo.
@@ -167,5 +168,6 @@ Skills in `.agents/skills/` — each has a `SKILL.md` defining its workflow:
 | `scaffold-composable-sample` | Scaffold composable doc page with standard structure |
 | `create-playground-page` | Create local, uncommitted test pages under `docs/app/pages/playground/` |
 | `create-utility-tests` | Write vitest utility tests (Nuxt test-utils) |
-| `create-showcase-doc` | Write/rewrite a showcase example page (`docs/content/5.examples/`), including verifying its AI build prompt against a real independent agent |
 | `skill-creator` | Meta-skill for authoring new skills |
+
+User-facing skills ship in `skills/` with the package. `skills/nanime/` documents the module; `skills/patch-animejs-tracked-layout/` documents a local Anime.js install patch for very large layout scenes.

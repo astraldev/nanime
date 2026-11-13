@@ -1,16 +1,17 @@
 import { createLayout, type AutoLayout } from 'animejs/layout'
 import { TransitionGroup, cloneVNode, defineComponent, getCurrentInstance, getTransitionRawChildren, h, nextTick, onUpdated, type VNode } from 'vue'
-import type { AnimationParams, AnimeTransitionGroupProps } from '../public/types'
+import type { AnimeTransitionGroupProps } from '../public/types'
 import { tryOnScopeDispose } from '../utils/vue-helpers'
 import { onTabHidden } from '../utils/tab-hidden'
 import { useComponentDefaults } from '../utils/component-defaults'
 import { watchDeps } from '../utils/deps'
 import { markLayoutAnimations } from '../utils/layout-animations'
-import { isMotionReduced } from '../utils/reduced-motion'
+import { useReducedMotion } from '../utils/reduced-motion'
 import { MOVE_CLASS } from '../utils/markers'
 import { createTransitionRunner } from '../transitions/runner'
 import { useTransitionStyles } from '../transitions/resolve'
 import { transitionGroupStyle } from '../transitions/styles/group'
+import type { TransitionParams } from '../transitions/engine'
 
 export type { AnimeTransitionGroupProps } from '../public/types'
 
@@ -21,9 +22,9 @@ const BASE_STYLES = ['transform']
 
 const toKebab = (prop: string) => prop.replace(/[A-Z]/g, char => `-${char.toLowerCase()}`)
 
-function animatedStyles(params: AnimationParams[]): string[] {
+function animatedStyles(animations: TransitionParams[]): string[] {
   const probe = typeof document === 'undefined' ? null : document.documentElement.style
-  const animated = params.flatMap(Object.keys).filter(key => probe && key in probe).map(toKebab)
+  const animated = animations.flatMap(({ params }) => Object.keys(params)).filter(key => probe && key in probe).map(toKebab)
   return [...new Set([...BASE_STYLES, ...animated])]
 }
 
@@ -58,12 +59,13 @@ const pinnedStyles = (el: HTMLElement): Styles => ({
 export default defineComponent(
   (props: AnimeTransitionGroupProps, { slots }) => {
     const instance = getCurrentInstance()
-    const { option } = useComponentDefaults('transitionGroup')
+    const { parseAnimation, parseOption } = useComponentDefaults('transitionGroup')
     const styles = useTransitionStyles(transitionGroupStyle)
-    const enterParams = () => styles.enter(option(props, 'enterAnimation'))
-    const leaveParams = () => styles.leave(option(props, 'leaveAnimation'))
-    const moveParams = () => isMotionReduced() ? false : styles.move(option(props, 'moveAnimation'))
-    const absoluteLeave = () => option(props, 'absoluteLeave') ?? true
+    const { isReduced, withReducedMotion } = useReducedMotion()
+    const enterParams = () => styles.enter(parseAnimation(props).enter)
+    const leaveParams = () => styles.leave(parseAnimation(props).leave)
+    const moveParams = () => isReduced() ? false : styles.move(parseAnimation(props).move)
+    const absoluteLeave = () => parseOption(props, 'absoluteLeave') ?? true
     const transitionStyles = () => animatedStyles([enterParams(), leaveParams()])
 
     let layout: AutoLayout | null = null
@@ -76,6 +78,9 @@ export default defineComponent(
     const endedDuringMove = new Map<StyledElement, Styles>()
 
     const runner = createTransitionRunner({
+      component: 'AnimeTransitionGroup',
+      withReducedMotion,
+      engine: () => parseOption(props, 'waapi') ? 'waapi' : 'js',
       enter: enterParams,
       leave: leaveParams,
       onLeaveStart(el) {
@@ -122,7 +127,7 @@ export default defineComponent(
       if (!moveParams() || !(root instanceof HTMLElement)) return dropLayout()
       if (layout?.root !== root) dropLayout()
       runLayout(root, () => {
-        layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }))
+        layout ??= markLayoutAnimations(createLayout(root, { enterFrom: {}, leaveTo: {} }), { isReduced })
         layout.record()
       })
       recorded = true
@@ -143,7 +148,7 @@ export default defineComponent(
       endedDuringMove.clear()
     }
 
-    watchDeps(() => props.deps, option(props, 'shallow') ?? false, () => {
+    watchDeps(() => props.deps, parseOption(props, 'shallow') ?? false, () => {
       if (recorded) return
       recordMoves()
       nextTick(animateMoves)
@@ -155,7 +160,7 @@ export default defineComponent(
     })
 
     onTabHidden(() => {
-      if (!option(props, 'completeOnTabHidden')) return
+      if (!parseOption(props, 'completeOnTabHidden')) return
       runner.complete()
       layout?.timeline?.complete()
     })
@@ -201,10 +206,10 @@ export default defineComponent(
       return h(
         TransitionGroup,
         {
-          tag: option(props, 'tag') ?? 'div',
+          tag: parseOption(props, 'tag') ?? 'div',
           css: false,
           moveClass: MOVE_CLASS,
-          appear: option(props, 'appear'),
+          appear: parseOption(props, 'appear'),
           ...runner.hooks,
         },
         { default: () => children },
@@ -215,6 +220,8 @@ export default defineComponent(
     name: 'AnimeTransitionGroup',
     props: {
       tag: { type: String, default: undefined },
+      waapi: { type: Boolean, default: undefined },
+      animation: null,
       enterAnimation: null,
       leaveAnimation: null,
       moveAnimation: null,

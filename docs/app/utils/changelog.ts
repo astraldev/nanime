@@ -16,10 +16,10 @@ export const CHANGELOG_TYPES: Record<ChangelogType, ChangelogTypeMeta> = {
 }
 
 const API_PAGES: Record<string, string> = {
-  AnimeTransition: '/components/transitions',
-  AnimeTransitionGroup: '/components/transitions#lists',
+  AnimeTransition: '/components/transition',
+  AnimeTransitionGroup: '/components/transition-group',
   AnimeLayoutGroup: '/components/layout-group',
-  provideAnimeDefaults: '/getting-started/configuration#set-component-defaults',
+  provideAnimeDefaults: '/guides/defaults#scope-defaults-to-part-of-the-app',
 }
 
 export function apiPage(name: string) {

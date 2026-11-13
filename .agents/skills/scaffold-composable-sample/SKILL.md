@@ -22,7 +22,7 @@ Standard Docus frontmatter with title, Description, and **navigation icon** (pic
 
 **Instant Play Badge**: If the composable supports being called outside a Vue instance (after mounting), include the following badge linked to the composables index:
 ```markdown
-::nuxt-link{to="/composables/introduction#instant-play"}
+::nuxt-link{to="/composables/composable-lifecycle#instant-play"}
 :badge{icon="mage:zap-fill" label="Instant Play" size="md" variant="soft"}
 ::
 ```
@@ -95,42 +95,33 @@ navigation:
   icon: i-ph-star
 ---
 
-# useMyAnimation
+`useMyAnimation` wraps [`myAnimation()`](https://animejs.com/documentation/){target="_blank"}
+from AnimeJS. It rebuilds the animation when `target` or a parameter changes,
+and reverts it when the component unmounts.
 
-Brief description.
+## Animate when a ref changes
 
-## Type Definition
-
-\`\`\`ts
-function useMyAnimation(target: MyAnimationTargets, options: Options): ReturnType
-\`\`\`
-
-### Arguments
-
-::field-group
-  ::field{name="target" type="MyAnimationTargets" required}
-  Description.
-  ::
-  ::field{name="options" type="Options"}
-  Description.
-  ::
-::
-
-## Usage
-
-::render-code-block-preview{src="examples/composables/MyAnimationDemo.vue"}
-::
-
-## Return Value
-
-Returns a `ReturnType` object.
+:render-code-block-preview{src="examples/composables/MyAnimationDemo.vue"}
 
 ## API
 
-### Types
-
 \`\`\`ts
-type MyAnimationTargets = ... // from utils/targets.ts
-type Options = ...
+function useMyAnimation(target: MyAnimationTargets, options?: Options): ReturnType
 \`\`\`
+
+::field-group
+  :::field{name="target" type="MyAnimationTargets" required}
+  Description.
+  :::
+
+  :::field{name="options" type="Options"}
+  Description.
+  :::
+::
+
+Returns the AnimeJS `ReturnType`{lang="ts-type"}.
+
+## See also
+
+- [`useAnimate`](/composables/use-animate): related composable
 ```

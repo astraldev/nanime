@@ -1,5 +1,5 @@
 import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
-import { shallowRef, toValue, watch, nextTick, type MaybeRefOrGetter } from 'vue'
+import { shallowReactive, shallowRef, toValue, watch, nextTick, type MaybeRefOrGetter } from 'vue'
 import type { TimelineParams } from 'animejs'
 import { createTimeline, type Timeline } from 'animejs/timeline'
 import { keepTime } from 'animejs/utils'
@@ -7,11 +7,11 @@ import type { NanimeInstanceOptions } from '../public/types'
 import { normalizeAnimeTarget } from '../utils/targets'
 import { createBufferedProxy, hasNanimeProxy, resolveNanimeInstance, unwrapNanimeProxies, type BufferedProxyReturns } from '../utils/proxy'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
-import { resolveKeepTime } from '../utils/global-options'
+import { resolveRebuild } from '../utils/global-options'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
-import { isMotionReduced, withReducedMotion } from '../utils/reduced-motion'
+import { useReducedMotion } from '../utils/reduced-motion'
 
 const CONTENT_METHODS = new Set([
   'add', 'set', 'remove', 'call', 'label', 'sync', 'stretch',
@@ -29,11 +29,6 @@ const TARGET_METHODS = new Set(['set', 'remove'])
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
-function withReducedTimelineMotion(params: TimelineParams): TimelineParams {
-  if (!isMotionReduced()) return params
-  return { ...params, delay: 0, loopDelay: 0, loop: 0, defaults: withReducedMotion(params.defaults ?? {}) }
-}
-
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
@@ -44,7 +39,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
  *
  * `add()`, `set()` and `remove()` take template refs, component refs and
  * getters as targets, as well as selectors. When `parameters` change, the
- * timeline is rebuilt; pass `keepTime: true` to keep its playhead. Methods
+ * timeline is rebuilt, and `rebuild: 'keepTime'` keeps its playhead. Methods
  * called before mount run once the timeline exists.
  */
 export function useAnimeTimeline(
@@ -52,9 +47,12 @@ export function useAnimeTimeline(
   options?: NanimeInstanceOptions,
 ): BufferedProxyReturns<Timeline> {
   const flag = getAnimationComponentFlag()
-  const keepsTime = resolveKeepTime(options?.keepTime)
+  const keepsTime = resolveRebuild(options?.rebuild) === 'keepTime'
   const mounted = useMounted()
   const timeline = shallowRef<Timeline | null>(null)
+
+  const { isReduced, withReducedMotion } = useReducedMotion()
+  const synced = shallowReactive(new Set<unknown>())
 
   const { proxy, flushBuffer } = createBufferedProxy<Timeline>(timeline, {
     chainableMethods: CHAINABLE_METHODS,
@@ -70,6 +68,7 @@ export function useAnimeTimeline(
       }
       // sync(nanimeProxy, position?) — unwrap nanime proxy to raw instance
       if (method === 'sync' && args.length >= 1) {
+        synced.add(args[0])
         return [resolveNanimeInstance(args[0]), ...args.slice(1)]
       }
       return args
@@ -77,6 +76,11 @@ export function useAnimeTimeline(
   })
 
   const resolveParameters = () => unwrapNanimeProxies(toValue(parameters) || {})
+
+  const withReducedTimelineMotion = (params: TimelineParams): TimelineParams => {
+    if (!isReduced()) return params
+    return { ...params, delay: 0, loopDelay: 0, loop: 0, defaults: withReducedMotion(params.defaults ?? {}) }
+  }
 
   const buildTimeline = (params: TimelineParams) => {
     const next = createTimeline(withReducedTimelineMotion(params))
@@ -115,6 +119,14 @@ export function useAnimeTimeline(
         rebuildTimeline(resolveParameters())
       },
       { immediate: true },
+    )
+
+    watch(
+      () => [...synced].map(source => resolveNanimeInstance<unknown>(source)),
+      (instances, previousInstances) => {
+        if (!timeline.value || !previousInstances.some((instance, index) => instances[index] !== instance)) return
+        rebuildTimeline(resolveParameters())
+      },
     )
   }
   else {

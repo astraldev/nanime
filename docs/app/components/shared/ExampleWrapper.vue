@@ -39,7 +39,7 @@ function onSliderInput(event: Event, slider: ExampleSlider) {
 
 <template>
   <div
-    class="example-wrapper p-4 rounded-lg flex flex-col gap-4 border border-primary/20 bg-primary/5"
+    class="example-wrapper p-4 rounded-lg flex flex-col gap-4 border border-primary/20 bg-primary/5 backdrop-blur"
     :class="{ 'is-resizable': resizable }"
   >
     <slot />

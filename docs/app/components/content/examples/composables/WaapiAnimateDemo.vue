@@ -5,7 +5,7 @@ import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleW
 const eases = ['outBack(3)', 'inOutExpo', 'outElastic(1, .5)', 'steps(6)']
 
 const boxes = useTemplateRef('boxes')
-const ease = ref<string>(eases[0])
+const ease = ref('outBack(3)')
 
 useWaapiAnimate(boxes, () => ({
   transform: ['translateY(-24px)', 'translateY(0px)'],

@@ -28,8 +28,7 @@ const actions = computed<ExampleAction[]>(() => [
     <div class="size-12">
       <AnimeTransition
         mode="out-in"
-        :enter-animation="style"
-        :leave-animation="style"
+        :animation="style"
       >
         <div
           :key="runs"

@@ -3,10 +3,8 @@ import { createDrawable } from '#nanime/proxies/svg'
 import type { DrawableSVGGeometry } from '#nanime/types'
 import ExampleWrapper from '~/components/shared/ExampleWrapper.vue'
 
-const THREAD = 'M 0 100 C 300 20 560 180 860 100 S 1420 18 1720 104 S 2150 192 2300 120'
-
-const panel = useTemplateRef<HTMLElement>('panel')
-const track = useTemplateRef<HTMLElement>('track')
+const panel = useTemplateRef('panel')
+const track = useTemplateRef('track')
 const thread = useTemplateRef<SVGPathElement>('thread')
 
 const scroll = useAnimeScroll({
@@ -18,8 +16,8 @@ const scroll = useAnimeScroll({
   sync: true,
 })
 
-const drawable = computed<DrawableSVGGeometry | null>(() =>
-  thread.value ? createDrawable(thread.value)[0] ?? null : null,
+const drawable = computed<DrawableSVGGeometry | null>(
+  () => thread.value ? createDrawable(thread.value)[0] ?? null : null,
 )
 
 useAnimate([drawable], {
@@ -33,37 +31,32 @@ useAnimate([drawable], {
   <ExampleWrapper>
     <div
       ref="panel"
-      class="w-full h-56 overflow-x-auto overscroll-x-contain rounded-lg border border-primary/20 bg-primary/5"
+      class="h-56 w-full overflow-x-auto overscroll-x-contain rounded-lg border border-primary/20"
     >
       <div
         ref="track"
-        class="relative w-[2400px] h-full flex items-center"
+        class="relative flex h-full w-[2400px] items-center text-primary"
       >
         <svg
           viewBox="0 0 2400 200"
-          class="w-[2400px] h-[200px] text-primary"
+          class="h-[200px] w-full"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
         >
           <path
-            :d="THREAD"
-            class="stroke-current/15"
-            fill="none"
-            stroke-width="3"
-            stroke-linecap="round"
+            class="opacity-15"
+            d="M 0 100 C 300 20 560 180 860 100 S 1420 18 1720 104 S 2150 192 2300 120"
           />
           <path
             ref="thread"
-            :d="THREAD"
-            class="stroke-current"
-            fill="none"
-            stroke-width="3"
-            stroke-linecap="round"
+            d="M 0 100 C 300 20 560 180 860 100 S 1420 18 1720 104 S 2150 192 2300 120"
           />
         </svg>
-
         <Icon
           name="lucide:lightbulb"
-          class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 size-10 text-primary"
-          style="left: 2300px"
+          class="absolute left-[2300px] top-1/2 size-10 -translate-x-1/2 -translate-y-1/2"
         />
       </div>
     </div>

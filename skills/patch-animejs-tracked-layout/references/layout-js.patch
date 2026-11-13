@@ -1,0 +1,105 @@
+diff --git a/dist/modules/layout/layout.js b/dist/modules/layout/layout.js
+index 832a637..5485da1 100644
+--- a/dist/modules/layout/layout.js
++++ b/dist/modules/layout/layout.js
+@@ -577,12 +577,39 @@ class LayoutSnapshot {
+     this.scrollX = 0;
+     /** @type {Number} */
+     this.scrollY = 0;
++    /** @type {Set<DOMTarget>} */
++    this.branch = new Set();
++  }
++
++  /**
++   * With trackTargetsOnly only the children of elements that have a target
++   * descendant are walked: the targets, their ancestors and the siblings of both.
++   * @param {DOMTarget} $el
++   * @return {Boolean}
++   */
++  shouldWalkChildren($el) {
++    return !this.layout.trackTargetsOnly || this.branch.has($el);
++  }
++
++  /**
++   * @param {DOMTarget} $el
++   * @param {Boolean} [toTop]
++   */
++  addBranch($el, toTop) {
++    const root = this.layout.root;
++    let $ancestor = $el.parentElement;
++    while ($ancestor && !this.branch.has($ancestor)) {
++      this.branch.add($ancestor);
++      if ($ancestor === root && !toTop) break;
++      $ancestor = $ancestor.parentElement;
++    }
+   }
+ 
+   /**
+    * @return {this}
+    */
+   revert() {
++    this.branch.clear();
+     this.forEachNode(node => {
+       this.layout.pendingRemoval.delete(node.$el);
+       node.$el.removeAttribute('data-layout-id');
+@@ -697,7 +724,7 @@ class LayoutSnapshot {
+         // for hidden element with in-root sibling, keep the hidden node but borrow measurements from its visible in-root twin element
+         } else if (shouldReuseMeasurements) {
+           recordNodeState(node, $current, computedStyle, skipMeasurements);
+-          let $child = $current.lastElementChild;
++          let $child = this.shouldWalkChildren($current) ? $current.lastElementChild : null;
+           while ($child) {
+             stack.push(/** @type {DOMTarget} */($child), node);
+             $child = $child.previousElementSibling;
+@@ -706,7 +733,7 @@ class LayoutSnapshot {
+           continue;
+         // No reassignment needed so keep walking descendants under the current parent
+         } else {
+-          let $child = $current.lastElementChild;
++          let $child = this.shouldWalkChildren($current) ? $current.lastElementChild : null;
+           while ($child) {
+             stack.push(/** @type {DOMTarget} */($child), $parent);
+             $child = $child.previousElementSibling;
+@@ -750,7 +777,7 @@ class LayoutSnapshot {
+ 
+       recordNodeState(node, node.$el, computedStyle, skipMeasurements);
+ 
+-      let $child = $current.lastElementChild;
++      let $child = this.shouldWalkChildren($current) ? $current.lastElementChild : null;
+       while ($child) {
+         stack.push(/** @type {DOMTarget} */($child), node);
+         $child = $child.previousElementSibling;
+@@ -820,6 +847,14 @@ class LayoutSnapshot {
+ 
+     this.nodes.clear();
+     this.rootNodes.clear();
++    this.branch.clear();
++
++    if (layout.trackTargetsOnly) {
++      for (let i = 0, l = parsedChildren.length; i < l; i++) {
++        const $el = parsedChildren[i];
++        if ($el && $el.nodeType === 1 && $el !== root && isElementInRoot(root, $el)) this.addBranch($el);
++      }
++    }
+ 
+     const rootNode = this.registerElement(root, null);
+     // Root node are always targets
+@@ -950,6 +985,8 @@ class AutoLayout {
+     /** @type {LayoutChildrenParam} */
+     this.children = params.children || '*';
+     /** @type {Boolean} */
++    this.trackTargetsOnly = !!params.trackTargetsOnly;
++    /** @type {Boolean} */
+     this.absoluteCoords = false;
+     /** @type {LayoutStateParams} */
+     this.swapAtParams = mergeObjects(params.swapAt || { opacity: 0 }, { ease: 'inOut(1.75)' });
+@@ -1389,7 +1426,8 @@ class AutoLayout {
+         // Don't animate positions of inlined elements (to avoid text reflow)
+         if (!newNode.isInlined) {
+           // Display grid can mess with the absolute positioning, so set it to block during transition
+-          if (oldNode.measuredDisplay === 'grid' || newNode.measuredDisplay === 'grid') $el.style.setProperty('display', 'block', 'important');
++          // With trackTargetsOnly a grid without recorded children keeps its layout
++          if ((oldNode.measuredDisplay === 'grid' || newNode.measuredDisplay === 'grid') && (!this.trackTargetsOnly || newNode._head)) $el.style.setProperty('display', 'block', 'important');
+           // All children must be in position absolute or fixed
+           if ($el !== $root || this.absoluteCoords) {
+             $el.style.position = this.absoluteCoords ? 'fixed' : 'absolute';

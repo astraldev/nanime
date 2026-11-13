@@ -1,7 +1,7 @@
-// Sections linked from the header instead of the sidebar.
 export const headerLinks = [
-  { label: 'Examples', section: '/examples', to: '/examples/introduction' },
-  { label: 'Changelog', section: '/changes', to: '/changes/changelog' },
+  { label: 'Guide', sections: ['/getting-started', '/guides'], to: '/getting-started/introduction' },
+  { label: 'API', sections: ['/composables', '/components'], to: '/composables/introduction' },
+  { label: 'Updates', sections: ['/changes'], to: '/changes/changelog' },
 ]
 
-export const inSection = (path: string, section: string) => path === section || path.startsWith(`${section}/`)
+export const inSection = (path: string, sections: string[]) => sections.some(section => path === section || path.startsWith(`${section}/`))

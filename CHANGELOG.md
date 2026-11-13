@@ -1,41 +1,146 @@
 # Changelog
 
-## v0.3.4
+## v0.4.0
 
-[compare changes](https://github.com/astraldev/nanime/compare/v0.3.2...v0.3.4)
+[compare changes](https://github.com/astraldev/nanime/compare/v0.3.5...v0.4.0)
 
 ### 🚀 Enhancements
 
-- Add completeOnTabHidden prop to the transition and layout components ([932137c](https://github.com/astraldev/nanime/commit/932137c))
+- **experimental:** Patch AnimeJS layout with trackTargetsOnly ([bc51be5](https://github.com/astraldev/nanime/commit/bc51be5))
+- **AnimeLayoutGroup:** Add experimental trackTargetsOnly ([321d630](https://github.com/astraldev/nanime/commit/321d630))
+- **transitions:** Add the animation prop and make provider defaults replace per component ([8fb4829](https://github.com/astraldev/nanime/commit/8fb4829))
+- **vue:** Add the nanime/vue entry for plain Vue apps ([df158e7](https://github.com/astraldev/nanime/commit/df158e7))
+- **presets:** Add typed preset definitions and build them as nanime/presets/* ([a0edf19](https://github.com/astraldev/nanime/commit/a0edf19))
+- **composables:** Add default parameters for useAnimate and useDraggable ([12f1c41](https://github.com/astraldev/nanime/commit/12f1c41))
+- **config:** Provide config on the app and add a preset layer ([62a8262](https://github.com/astraldev/nanime/commit/62a8262))
+- **presets:** Fill in the formal, elegant and playful presets ([8e8e570](https://github.com/astraldev/nanime/commit/8e8e570))
+- **presets:** Speed up elegant ([b4557a7](https://github.com/astraldev/nanime/commit/b4557a7))
+- **presets:** Soften playful's bounce ([a429a9c](https://github.com/astraldev/nanime/commit/a429a9c))
+- **presets:** Tighten formal, lengthen elegant ([540d251](https://github.com/astraldev/nanime/commit/540d251))
+- **transitions:** Run AnimeTransition and AnimeTransitionGroup on waapi.animate() ([f9b7a06](https://github.com/astraldev/nanime/commit/f9b7a06))
+- **presets:** Define move on every preset style ([b80acb6](https://github.com/astraldev/nanime/commit/b80acb6))
+- **composables:** ⚠️  Replace keepTime with rebuild and add keepValue ([8897743](https://github.com/astraldev/nanime/commit/8897743))
+- **composables:** Blend a keepValue rebuild into the running animation ([95277e9](https://github.com/astraldev/nanime/commit/95277e9))
+- **presets:** Tune the built-in preset values and export AnimationPreset ([ec45957](https://github.com/astraldev/nanime/commit/ec45957))
+- **utils:** Export defineAnimationPreset from #nanime/utils ([5c8b270](https://github.com/astraldev/nanime/commit/5c8b270))
+- **module:** Warn on VueUse auto-import clashes and add vueuseAliases ([3dd8b47](https://github.com/astraldev/nanime/commit/3dd8b47))
+- **module:** Generalise vueuseAliases to aliases for any auto-import clash ([88c9338](https://github.com/astraldev/nanime/commit/88c9338))
+- **experimental:** Add useWaapiTimeline ([6e24716](https://github.com/astraldev/nanime/commit/6e24716))
+- **experimental:** Add separate reverse easing ([41b19fb](https://github.com/astraldev/nanime/commit/41b19fb))
 
 ### 🩹 Fixes
 
-- **useAnimeLayout:** Join patch calls made before the DOM update ([f68c8d3](https://github.com/astraldev/nanime/commit/f68c8d3))
-- **useAnimeLayout:** Keep layout items settled and patch() resolving across overlapping patches ([4938f0a](https://github.com/astraldev/nanime/commit/4938f0a))
+- Build the plugin types and load the module in the suites project ([36d58f1](https://github.com/astraldev/nanime/commit/36d58f1))
+- **config:** Keep the plugin from pulling runtime code into every build ([76b86c9](https://github.com/astraldev/nanime/commit/76b86c9))
+- **defaults:** Guard inject in useComponentDefaults ([cebf6bc](https://github.com/astraldev/nanime/commit/cebf6bc))
+- Apply the preset fade to a bare AnimeTransition and release the scroll observer on a keepValue rebuild ([5e62366](https://github.com/astraldev/nanime/commit/5e62366))
+- **composables:** Animate items added to a v-for template ref list ([044343a](https://github.com/astraldev/nanime/commit/044343a))
+- **composables:** Keep draggable position, refresh timeline sync and keep defaults for undefined keys ([0ccc590](https://github.com/astraldev/nanime/commit/0ccc590))
+- **experimental:** Persist WAAPI animations for reverse ([3be3ce9](https://github.com/astraldev/nanime/commit/3be3ce9))
+- **composables:** Guard a null scroll autoplay when useAnimate rebuilds ([04857f3](https://github.com/astraldev/nanime/commit/04857f3))
+
+### 💅 Refactors
+
+- **experimental:** Generate the patched copy under src/runtime ([d4dc07b](https://github.com/astraldev/nanime/commit/d4dc07b))
+- **experimental:** Drop trackTargetsOnly in favour of a patch skill ([88e8c0b](https://github.com/astraldev/nanime/commit/88e8c0b))
 
 ### 📖 Documentation
 
-- Document completeOnTabHidden and the 0.3.3 changes ([e58e52f](https://github.com/astraldev/nanime/commit/e58e52f))
-- Say when patch() resolves and add the 0.3.4 changelog ([0330b3d](https://github.com/astraldev/nanime/commit/0330b3d))
+- Document presets, the Vue setup and the v4 config layer ([1b638c6](https://github.com/astraldev/nanime/commit/1b638c6))
+- Split pages into smaller sections and add a Guides section ([ecea312](https://github.com/astraldev/nanime/commit/ecea312))
+- Quieter prose, table, callout and nav styling ([9d8337c](https://github.com/astraldev/nanime/commit/9d8337c))
+- Redesign the theme, sidebar and homepage ([d8e27eb](https://github.com/astraldev/nanime/commit/d8e27eb))
+- Link Guide, API and Updates from the header ([390fc03](https://github.com/astraldev/nanime/commit/390fc03))
+- Reorder sidebar groups and open them by default ([076d629](https://github.com/astraldev/nanime/commit/076d629))
+- Align the changelog link with the sidebar groups ([32f2e75](https://github.com/astraldev/nanime/commit/32f2e75))
+- Show the changelog as a dated timeline ([dfea88e](https://github.com/astraldev/nanime/commit/dfea88e))
+- Group the changelog by minor version ([28860de](https://github.com/astraldev/nanime/commit/28860de))
+- List changelog versions by date on a plain rail ([72e2d16](https://github.com/astraldev/nanime/commit/72e2d16))
+- Divide changelog versions by minor release ([b5a53d9](https://github.com/astraldev/nanime/commit/b5a53d9))
+- Drop the changelog rail ([8623123](https://github.com/astraldev/nanime/commit/8623123))
+- Group the changelog's page outline like the sidebar ([a30a540](https://github.com/astraldev/nanime/commit/a30a540))
+- Mark the newest released version as latest ([4a5480e](https://github.com/astraldev/nanime/commit/4a5480e))
+- Set the latest version in changelog frontmatter and badge it in the outline ([5078d29](https://github.com/astraldev/nanime/commit/5078d29))
+- **home:** Show the first animation's code beside a live preview ([66ce807](https://github.com/astraldev/nanime/commit/66ce807))
+- **home:** Trim the first animation to two lines ([7992197](https://github.com/astraldev/nanime/commit/7992197))
+- **home:** Restyle the cards, align with the header and wait for Geom ([92ddb28](https://github.com/astraldev/nanime/commit/92ddb28))
+- Rework the home demos, add a how-composables-run guide, bring nuxt-studio back in dev ([e5239fb](https://github.com/astraldev/nanime/commit/e5239fb))
+- **guides:** Split configuration into configuration and defaults ([6f140d0](https://github.com/astraldev/nanime/commit/6f140d0))
+- Trim getting started and home, reword the guides ([2023d6d](https://github.com/astraldev/nanime/commit/2023d6d))
+- **skill:** Add the rewording, cutting and restructuring rules to the prose style ([e73cd29](https://github.com/astraldev/nanime/commit/e73cd29))
+- **composables:** Move how composables run into the composables section ([2df8f05](https://github.com/astraldev/nanime/commit/2df8f05))
+- **skill:** Point the composable page spec and scaffold skill at the moved guide ([34faa56](https://github.com/astraldev/nanime/commit/34faa56))
+- **composables:** Restructure the composable pages around task demos ([87f1cb1](https://github.com/astraldev/nanime/commit/87f1cb1))
+- **components:** Restructure the transition pages around keyframe demos ([7106129](https://github.com/astraldev/nanime/commit/7106129))
+- Convert component API tables to field groups, add layout demos, drop examples intro ([899b20a](https://github.com/astraldev/nanime/commit/899b20a))
+- **comparisons:** Refresh dates and add the reduced-motion row ([5a6417d](https://github.com/astraldev/nanime/commit/5a6417d))
+- Document the rebuild option ([cfbfe2e](https://github.com/astraldev/nanime/commit/cfbfe2e))
+- **skill:** Align the page specs and the scaffold with the new page structure ([921c336](https://github.com/astraldev/nanime/commit/921c336))
+- **comparisons:** Mark playhead on rebuild as useScope only for vue-animejs ([325811a](https://github.com/astraldev/nanime/commit/325811a))
+- Demos for rebuild and the built-in presets, and a tidier presets guide ([c0b7ab4](https://github.com/astraldev/nanime/commit/c0b7ab4))
+- Drop the examples section and unused demos ([91603db](https://github.com/astraldev/nanime/commit/91603db))
+- Update the 0.4.0 changelog, add a migration guide and tidy composable pages ([bc2985c](https://github.com/astraldev/nanime/commit/bc2985c))
+- Rename the how composables run page to composable lifecycle, fix migration guide icons and match prose line height ([1bafc8c](https://github.com/astraldev/nanime/commit/1bafc8c))
+- Drop the migration guide, show the left sidebar on every docs page and tidy the See also links ([3005403](https://github.com/astraldev/nanime/commit/3005403))
+- Rewrite the comparison pages with fair tables and like-for-like examples ([00d356e](https://github.com/astraldev/nanime/commit/00d356e))
+- Tighten the configuration page and the aliases changelog entry ([5aeb10d](https://github.com/astraldev/nanime/commit/5aeb10d))
+- Cover 0.4 transition props and presets in docs and skill ([f85ddff](https://github.com/astraldev/nanime/commit/f85ddff))
+- Note that onComplete runs only when an animation plays to its end ([555f128](https://github.com/astraldev/nanime/commit/555f128))
+- **skill:** Document experimental useWaapiTimeline ([5d5cd5b](https://github.com/astraldev/nanime/commit/5d5cd5b))
+- **experimental:** Restructure useWaapiTimeline page and demos ([7547569](https://github.com/astraldev/nanime/commit/7547569))
+- Keep wide content from stretching the side columns ([5d29b01](https://github.com/astraldev/nanime/commit/5d29b01))
+- **changelog:** Add experimental useWaapiTimeline to 0.4.0 ([f7b90d7](https://github.com/astraldev/nanime/commit/f7b90d7))
+- Complete the 0.4.0 changelog and nanime skill ([d5360dd](https://github.com/astraldev/nanime/commit/d5360dd))
+- Fix 0.4.0 claims found in the docs audit ([00ce19e](https://github.com/astraldev/nanime/commit/00ce19e))
+- One-sentence 0.4.0 changelog, ten composables, Instant play on useWaapiTimeline ([2668aea](https://github.com/astraldev/nanime/commit/2668aea))
+- Close the gaps from the 0.4.0 docs audit ([dfbed7a](https://github.com/astraldev/nanime/commit/dfbed7a))
 
 ### 🏡 Chore
 
-- Sync release with main for v0.1.12 ([0637710](https://github.com/astraldev/nanime/commit/0637710))
-- Sync release with main ([b2655f8](https://github.com/astraldev/nanime/commit/b2655f8))
-- Sync release with main ([3f52a46](https://github.com/astraldev/nanime/commit/3f52a46))
-- Sync release with main for v0.2.0 ([e5dd43f](https://github.com/astraldev/nanime/commit/e5dd43f))
-- Sync release with main for OG image and layout demo fixes ([c628f84](https://github.com/astraldev/nanime/commit/c628f84))
-- Sync release with main for demo and animatable note updates ([33312bb](https://github.com/astraldev/nanime/commit/33312bb))
-- Sync release with main for v0.2.1 ([fa1d0f1](https://github.com/astraldev/nanime/commit/fa1d0f1))
-- Sync release with main for the docs page weight cut ([73aec99](https://github.com/astraldev/nanime/commit/73aec99))
-- Sync release with main for v0.3.0 ([aa9d5ca](https://github.com/astraldev/nanime/commit/aa9d5ca))
-- Sync release with main for v0.3.1 ([cee2fa5](https://github.com/astraldev/nanime/commit/cee2fa5))
-- Sync release with main for v0.3.2 ([dc5051b](https://github.com/astraldev/nanime/commit/dc5051b))
-- **release:** V0.3.3 ([0ce2a96](https://github.com/astraldev/nanime/commit/0ce2a96))
+- **docs:** Remove nuxt-studio ([167c0bc](https://github.com/astraldev/nanime/commit/167c0bc))
+- **skills:** Split the nanime skill into per-topic references and update docs skills ([e646d68](https://github.com/astraldev/nanime/commit/e646d68))
+- Ignore local videos and pnpm store, keep videos out of the typecheck ([83a3c47](https://github.com/astraldev/nanime/commit/83a3c47))
+- Improve docs and homepage effects ([b67c2f5](https://github.com/astraldev/nanime/commit/b67c2f5))
+
+#### ⚠️ Breaking Changes
+
+- **composables:** ⚠️  Replace keepTime with rebuild and add keepValue ([8897743](https://github.com/astraldev/nanime/commit/8897743))
 
 ### ❤️ Contributors
 
 - Ekure Edem ([@astraldev](https://github.com/astraldev))
+
+## v0.3.5
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.3.4...v0.3.5)
+
+### 🩹 Fixes
+
+- **AnimeTransition:** Defer leave done() when the animation ends synchronously ([75d11b2](https://github.com/astraldev/nanime/commit/75d11b2))
+
+### 📖 Documentation
+
+- Add the 0.3.5 changelog ([753aca3](https://github.com/astraldev/nanime/commit/753aca3))
+
+### ❤️ Contributors
+
+- Ekure Edem
+
+## v0.3.4
+
+[compare changes](https://github.com/astraldev/nanime/compare/0ce2a96...v0.3.4)
+
+### 🩹 Fixes
+
+- **useAnimeLayout:** Keep layout items settled and patch() resolving across overlapping patches ([3134e9b](https://github.com/astraldev/nanime/commit/3134e9b))
+
+### 📖 Documentation
+
+- Say when patch() resolves and add the 0.3.4 changelog ([42daa40](https://github.com/astraldev/nanime/commit/42daa40))
+
+### ❤️ Contributors
+
+- Ekure Edem
 
 ## v0.3.3
 

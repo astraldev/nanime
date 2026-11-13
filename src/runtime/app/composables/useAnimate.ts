@@ -1,54 +1,92 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
 import { normalizeAnimeTarget, sameTargets } from '../utils/targets'
+import { trackTargetList } from '../utils/target-list'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import type { AnimationParams, TargetsParam } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
 import { keepTime } from 'animejs/utils'
-import type { NanimeInstanceOptions } from '../public/types'
+import type { NanimeAnimateOptions } from '../public/types'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { hasNanimeProxy, markNanimeInstance, unwrapNanimeProxies } from '../utils/proxy'
 import { deepEqualWithSkip } from '../utils/deep-equal'
-import { resolveKeepTime } from '../utils/global-options'
-import { withReducedMotion } from '../utils/reduced-motion'
+import { resolveRebuild } from '../utils/global-options'
+import { omitUndefined, useComposableDefaults } from '../utils/component-defaults'
+import { useReducedMotion } from '../utils/reduced-motion'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
+function hasBlendComposition(params: AnimationParams) {
+  if (params.composition === 'blend') return true
+  return Object.values(params).some(value => typeof value === 'object' && value !== null && 'composition' in value && value.composition === 'blend')
+}
+
 /**
- * Runs an Anime.js `animate()` on `target` when the component mounts and
+ * Runs an AnimeJS `animate()` on `target` when the component mounts and
  * reverts it when the scope is disposed.
  *
- * When `target` or `parameters` change, the animation is rebuilt. Pass
- * `keepTime: true` to continue from the current playhead instead of
- * restarting.
+ * When `target` or `parameters` change, the animation is rebuilt. Set
+ * `rebuild` to change how.
  */
 export function useAnimate(
   target: Parameters<typeof normalizeAnimeTarget>[0],
   parameters?: MaybeRefOrGetter<AnimationParams>,
-  options?: NanimeInstanceOptions,
+  options?: NanimeAnimateOptions,
 ): JSAnimation {
   const flag = getAnimationComponentFlag()
   const mounted = useMounted()
   const animation = shallowRef(animate({}, {}))
 
-  const keepsTime = resolveKeepTime(options?.keepTime)
+  const rebuild = resolveRebuild(options?.rebuild, true)
+  const keepsTime = rebuild === 'keepTime'
+  const keepsValue = rebuild === 'keepValue'
 
+  const { withReducedMotion } = useReducedMotion()
   const create = (targets: TargetsParam, params: AnimationParams) => animate(targets, withReducedMotion(params))
   const createKeepingTime = keepsTime ? keepTime(create) : create
 
   const resolveTargets = () => normalizeAnimeTarget(target)
-  const resolveParameters = () => toValue(parameters) || {}
+  const resolveDefaults = useComposableDefaults('animate')
+  const resolveParameters = (): AnimationParams => ({ ...resolveDefaults(), ...omitUndefined(toValue(parameters) ?? {}) })
   const resolveBoundParameters = () => unwrapNanimeProxies(resolveParameters())
 
-  const rebuildAnimation = (targets: TargetsParam, params: AnimationParams) => {
-    if (hasNanimeProxy(resolveParameters())) {
-      animation.value?.cancel()
-      animation.value = create(targets, params)
-      return
-    }
+  let firstAnimation: JSAnimation | null = null
+  let keptAnimations: JSAnimation[] = []
+  let lastTargets: TargetsParam | null = null
 
-    if (!keepsTime) animation.value?.revert()
+  const revertAll = () => {
+    animation.value.revert()
+    for (const kept of [...keptAnimations].reverse()) kept.revert()
+    keptAnimations = []
+    firstAnimation?.revert()
+    firstAnimation = null
+  }
+
+  const keepsOldRunning = (params: AnimationParams) => {
+    const old = animation.value
+    return keepsValue && hasBlendComposition(params) && !old.paused && !old.completed && Number.isFinite(old.iterationCount)
+  }
+
+  const cancelPreviousAnimation = (nextParams: AnimationParams) => {
+    const previous = animation.value
+    const scrollObserver = previous._autoplay
+    previous.cancel()
+    if (scrollObserver !== null && typeof scrollObserver === 'object' && scrollObserver.linked === previous && scrollObserver !== nextParams.autoplay) scrollObserver.revert()
+  }
+
+  const rebuildFromCurrentValues = (targets: TargetsParam, params: AnimationParams) => {
+    if (lastTargets && !sameTargets(lastTargets, targets)) revertAll()
+    else if (lastTargets && keepsOldRunning(params)) keptAnimations = [...keptAnimations.filter(kept => !kept.completed), animation.value]
+    else cancelPreviousAnimation(params)
+    lastTargets = targets
+    animation.value = create(targets, params)
+    firstAnimation ??= animation.value
+  }
+
+  const rebuildAnimation = (targets: TargetsParam, params: AnimationParams) => {
+    if (keepsValue || hasNanimeProxy(resolveParameters())) return rebuildFromCurrentValues(targets, params)
+    if (!keepsTime) animation.value.revert()
     animation.value = createKeepingTime(targets, params)
   }
 
@@ -69,12 +107,11 @@ export function useAnimate(
       rebuildAnimation(targets, resolveBoundParameters())
     }
 
+    trackTargetList(target)
     watch([resolveTargets, () => snapshotParameters(resolveParameters())], sync)
     onMounted(sync)
 
-    tryOnScopeDispose(() => {
-      animation.value?.revert()
-    })
+    tryOnScopeDispose(revertAll)
   }
   else {
     nextTick(() => {

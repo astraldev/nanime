@@ -11,7 +11,7 @@ const route = useRoute()
       :label="link.label"
       color="neutral"
       variant="ghost"
-      :class="inSection(route.path, link.section) ? 'text-highlighted' : 'text-muted'"
+      :class="inSection(route.path, link.sections) ? 'text-highlighted' : 'text-muted'"
     />
   </nav>
 </template>

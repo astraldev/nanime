@@ -2,17 +2,11 @@ import { createAnimatable } from 'animejs/animatable'
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
 import { hasTargets, normalizeAnimeTarget, sameTargets } from '../utils/targets'
+import { trackTargetList } from '../utils/target-list'
 import type { AnimatableObject, AnimatableParams, TargetsParam } from 'animejs'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
-import { isMotionReduced, zeroNestedTimings } from '../utils/reduced-motion'
-
-function withReducedAnimatableMotion(params: AnimatableParams): AnimatableParams {
-  if (!isMotionReduced()) return params
-  const reduced = Object.assign(zeroNestedTimings(params), { duration: 0, ease: 'linear' })
-  for (const [key, value] of Object.entries(reduced)) if (typeof value === 'number') Reflect.set(reduced, key, 0)
-  return reduced
-}
+import { useReducedMotion, zeroNestedTimings } from '../utils/reduced-motion'
 
 /**
  * Creates an Anime.js `createAnimatable()` for `target` when the component
@@ -29,6 +23,13 @@ export function useAnimatable(
 
   const animatable = shallowRef(createAnimatable({}, {}))
   const mounted = useMounted()
+  const { isReduced } = useReducedMotion()
+  const withReducedAnimatableMotion = (params: AnimatableParams): AnimatableParams => {
+    if (!isReduced()) return params
+    const reduced = Object.assign(zeroNestedTimings(params), { duration: 0, ease: 'linear' })
+    for (const [key, value] of Object.entries(reduced)) if (typeof value === 'number') Reflect.set(reduced, key, 0)
+    return reduced
+  }
   const resolveOptions = () => withReducedAnimatableMotion(toValue(options) || {})
 
   const resolveTargets = () => normalizeAnimeTarget(target)
@@ -47,6 +48,7 @@ export function useAnimatable(
         : createAnimatable({}, {})
     }
 
+    trackTargetList(target)
     watch(resolveTargets, sync)
     onMounted(sync)
 

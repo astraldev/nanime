@@ -8,7 +8,7 @@ import {
   type NonFunctionProperties,
   type OnlyFunctionProperties,
 } from '../utils/extract-props'
-import { tryOnScopeDispose, useMounted } from '../utils/vue-helpers'
+import { tryOnScopeDispose, useMounted, warnOutsideComponent } from '../utils/vue-helpers'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import type { SplitTextOptions } from '../public/types'
@@ -21,7 +21,8 @@ type SplitterMethods = Omit<OnlyFunctionProperties<TextSplitter>, 'addEffect'> &
 
 type SplitterProperties = Omit<NonFunctionProperties<TextSplitter>, 'lines' | 'words' | 'chars'>
 
-type SplitText = {
+/** What `useSplitText()` returns: the split elements as refs, plus the splitter's properties and methods. */
+export type SplitText = {
   [x in 'lines' | 'words' | 'chars']: Ref<HTMLElement[]>
 } & {
   properties: ComputedRef<SplitterProperties | undefined>
@@ -42,6 +43,7 @@ export function useSplitText(
   parameters?: MaybeRefOrGetter<Parameters<typeof splitText>[1]>,
   options?: SplitTextOptions,
 ): SplitText {
+  warnOutsideComponent('useSplitText')
   const mounted = useMounted()
   const splitter = shallowRef<TextSplitter | null>(null)
   const version = shallowRef(0)
@@ -136,7 +138,7 @@ export function useSplitText(
         teardown()
         return
       }
-      if (previous?.element === element && deepEqualWithSkip(previous.snapshot, snapshot)) return
+      if (previous?.element === element && deepEqualWithSkip(previous.snapshot, snapshot, (_, value) => typeof value === 'function')) return
       previous = { element, snapshot }
       rebuildSplitter(element, resolveParameters())
     },
@@ -169,8 +171,17 @@ export function useSplitText(
       return omitProperties(properties, ['lines', 'words', 'chars'])
     }),
     methods: computed(() => {
-      if (!splitter.value) return undefined
-      return { ...extractOnlyFunctionProperties(splitter.value), addEffect }
+      const instance = splitter.value
+      if (!instance) return undefined
+      const revert = () => {
+        resyncSource(instance)
+        instance.revert()
+        lines.value = []
+        words.value = []
+        chars.value = []
+        return instance
+      }
+      return { ...extractOnlyFunctionProperties(instance), addEffect, revert }
     }),
   }
 }

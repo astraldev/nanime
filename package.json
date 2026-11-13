@@ -1,6 +1,6 @@
 {
   "name": "nanime",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Anime.js v4 for Nuxt: SSR-safe, auto-imported composables and transitions for animation, scroll, drag and text",
   "author": "Ekure Edem <61796351+astraldev@users.noreply.github.com>",
   "homepage": "https://nanimejs.netlify.app",
@@ -38,6 +38,18 @@
     ".": {
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./vue": {
+      "types": "./dist/vue/index.d.mts",
+      "import": "./dist/vue/index.mjs"
+    },
+    "./experimental": {
+      "types": "./dist/experimental/index.d.mts",
+      "import": "./dist/experimental/index.mjs"
+    },
+    "./presets/*": {
+      "types": "./dist/presets/*.d.mts",
+      "import": "./dist/presets/*.mjs"
     }
   },
   "main": "./dist/module.mjs",
@@ -45,6 +57,15 @@
     "*": {
       ".": [
         "./dist/types.d.mts"
+      ],
+      "vue": [
+        "./dist/vue/index.d.mts"
+      ],
+      "experimental": [
+        "./dist/experimental/index.d.mts"
+      ],
+      "presets/*": [
+        "./dist/presets/*.d.mts"
       ]
     }
   },
@@ -69,6 +90,8 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:types": "nuxt typecheck",
+    "build:vue": "tsdown --config build/tsdown.vue.config.ts",
+    "build:presets": "tsdown --config build/tsdown.presets.config.ts",
     "clean": "rm -rf docs/.nuxt docs/.output .nuxt dist"
   },
   "dependencies": {
@@ -84,6 +107,7 @@
     "@nuxt/module-builder": "catalog:nuxt",
     "@nuxt/schema": "catalog:nuxt",
     "@nuxt/test-utils": "catalog:nuxt",
+    "@tsdown/css": "catalog:tooling",
     "@types/node": "catalog:nuxt",
     "@vue/test-utils": "catalog:tooling",
     "@vueuse/core": "catalog:nuxt",
@@ -94,7 +118,9 @@
     "jsdom": "catalog:tooling",
     "lefthook": "catalog:tooling",
     "nuxt": "catalog:nuxt",
+    "tsdown": "catalog:tooling",
     "typescript": "catalog:nuxt",
+    "unrun": "catalog:tooling",
     "vitest": "catalog:tooling",
     "vue": "catalog:nuxt",
     "vue-tsc": "catalog:tooling"

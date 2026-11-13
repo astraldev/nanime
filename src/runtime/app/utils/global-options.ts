@@ -1,7 +1,9 @@
-import { useRuntimeConfig } from '#imports'
+import { hasInjectionContext, inject } from 'vue'
+import { PROVIDED_DEFAULTS, useNanimeConfig } from './config'
+import type { NanimeRebuild } from '../public/types'
 
-/** Per-call option first, then the `nanime.keepTime` set in nuxt.config. */
-export function resolveKeepTime(option?: boolean): boolean {
-  if (option !== undefined) return option
-  return useRuntimeConfig().public.nanime.keepTime
+export function resolveRebuild(option?: NanimeRebuild, supportsKeepValue = false): NanimeRebuild {
+  const provided = option === undefined && hasInjectionContext() ? inject(PROVIDED_DEFAULTS, null) : null
+  const rebuild = option ?? provided?.value.rebuild ?? useNanimeConfig()().rebuild ?? 'restart'
+  return rebuild === 'keepValue' && !supportsKeepValue ? 'restart' : rebuild
 }

@@ -2,11 +2,7 @@ name: Workflow CI
 
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   lint:
@@ -44,6 +40,9 @@ jobs:
 
       - name: Playground prepare
         run: pnpm dev:prepare
+
+      - name: Typecheck
+        run: pnpm test:types
 
       - name: Test
         run: pnpm test

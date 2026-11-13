@@ -2,7 +2,7 @@ import type { AutoLayout, LayoutAnimationParams } from 'animejs/layout'
 import type { Timeline } from 'animejs'
 import { createTimeline } from 'animejs/timeline'
 import { LAYOUT_ANIMATING_ATTRIBUTE } from './markers'
-import { isMotionReduced } from './reduced-motion'
+import type { IsReducedMotion } from './reduced-motion'
 
 type PinnedStyle = 'box-sizing' | 'line-height' | 'position' | 'white-space'
 
@@ -11,19 +11,26 @@ function readOneLineTexts(root: Element) {
   const oneLine = new Set<HTMLElement>()
   const range = document.createRange()
   if (typeof range.getClientRects !== 'function') return oneLine
+  const check = (element: HTMLElement) => {
+    if (checked.has(element)) return
+    checked.add(element)
+    range.selectNodeContents(element)
+    const lines = new Set([...range.getClientRects()].map(rect => Math.round(rect.top)))
+    if (lines.size === 1) oneLine.add(element)
+  }
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
   for (let text = walker.nextNode(); text; text = walker.nextNode()) {
     const parent = text.parentElement
-    if (!(parent instanceof HTMLElement) || checked.has(parent) || !text.textContent?.trim()) continue
-    checked.add(parent)
-    range.selectNodeContents(parent)
-    const lines = new Set([...range.getClientRects()].map(rect => Math.round(rect.top)))
-    if (lines.size === 1) oneLine.add(parent)
+    if (parent instanceof HTMLElement && text.textContent?.trim()) check(parent)
   }
   return oneLine
 }
 
-export function markLayoutAnimations(layout: AutoLayout): AutoLayout {
+interface MarkLayoutOptions {
+  isReduced?: IsReducedMotion
+}
+
+export function markLayoutAnimations(layout: AutoLayout, { isReduced = () => false }: MarkLayoutOptions = {}): AutoLayout {
   const record = layout.record.bind(layout)
   const animate = layout.animate.bind(layout)
   const revert = layout.revert.bind(layout)
@@ -57,7 +64,7 @@ export function markLayoutAnimations(layout: AutoLayout): AutoLayout {
   }
 
   layout.record = () => {
-    if (isMotionReduced()) return layout
+    if (isReduced()) return layout
     record()
     release()
     return layout
@@ -70,7 +77,7 @@ export function markLayoutAnimations(layout: AutoLayout): AutoLayout {
   }
 
   layout.animate = (params: LayoutAnimationParams = {}) => {
-    if (isMotionReduced()) return createTimeline({ onComplete: params.onComplete ?? layout.params.onComplete })
+    if (isReduced()) return createTimeline({ onComplete: params.onComplete ?? layout.params.onComplete })
     release()
     const oneLineTexts = readOneLineTexts(root)
     const onComplete = params.onComplete ?? layout.params.onComplete

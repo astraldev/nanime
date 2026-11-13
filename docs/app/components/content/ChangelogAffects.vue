@@ -21,8 +21,10 @@ const names = computed(() => props.of.split(/\s+/).filter(Boolean))
 
 <style scoped>
 .changelog-affects {
-  display: block;
-  margin-top: 0.125rem;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75em;
+  margin-top: 0.375rem;
   font-family: var(--font-mono);
   font-size: 0.8125em;
   color: var(--ui-text-muted);

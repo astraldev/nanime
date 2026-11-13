@@ -3,6 +3,7 @@
 
 @theme static {
   --font-sans: 'Geom', 'Public Sans', sans-serif;
+  --font-mono: 'Fira Code', monospace;
 
   /* Colors gotten from the anime.js website root styles */
   --hex-black-1: #252423;
@@ -29,10 +30,6 @@
 
   --color-primary: var(--hex-red-1);
   --color-neutral: var(--hex-black-1);
-}
-
-:root {
-  animation: rotate-primary 120s steps(16) infinite;
 }
 
 :root:not(.dark) {
@@ -70,42 +67,34 @@ li:has(> button[data-type="docs"]) + li:has(> button[data-type="docs"]) {
   margin-top: 0.375rem;
 }
 
-ul:has(> li > button[aria-label]) + h2 {
-  margin-top: 3rem;
-}
-
-/* Stopping the cycle reverts --color-primary to its @theme static value. */
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    animation: none;
-  }
-}
-
-@keyframes rotate-primary {
-  0%      { --color-primary: var(--hex-red-1); }
-  6.25%   { --color-primary: var(--hex-corail-1); }
-  12.5%   { --color-primary: var(--hex-orange-1); }
-  18.75%  { --color-primary: var(--hex-yellow-1); }
-  25%     { --color-primary: var(--hex-citrus-1); }
-  31.25%  { --color-primary: var(--hex-lime-1); }
-  37.5%   { --color-primary: var(--hex-green-1); }
-  43.75%  { --color-primary: var(--hex-turquoise-1); }
-  50%     { --color-primary: var(--hex-cyan-1); }
-  56.25%  { --color-primary: var(--hex-sky-1); }
-  62.5%   { --color-primary: var(--hex-sega-1); }
-  68.75%  { --color-primary: var(--hex-king-1); }
-  75%     { --color-primary: var(--hex-indigo-1); }
-  81.25%  { --color-primary: var(--hex-lavender-1); }
-  87.5%   { --color-primary: var(--hex-purple-1); }
-  93.75%  { --color-primary: var(--hex-magenta-1); }
-  100%    { --color-primary: var(--hex-red-1); }
-}
-
 td:has(> .comparison-good) {
-  background-color: color-mix(in oklab, var(--hex-green-1) 14%, transparent);
+  background-color: rgb(0 0 0 / 4%);
+}
+
+.dark td:has(> .comparison-good) {
+  background-color: rgb(255 255 255 / 6%);
 }
 
 .code-preview pre,
 .code-preview pre code {
   white-space: pre;
+}
+
+/*
+ * UContentToc renders its entries as <span data-slot="linkText" class="truncate">
+ * inside the right aside (Docus 5 / Nuxt UI 4). The column is too narrow for
+ * this site's headings, so let the labels wrap instead of ellipsizing. The
+ * overflow-wrap keeps a long unbroken word inside the column.
+ */
+[data-slot="right"] [data-slot="linkText"] {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+
+main p.leading-7,
+main li.leading-7,
+main :is(ul.list-disc, ol.list-decimal) > li {
+  line-height: 2rem;
 }

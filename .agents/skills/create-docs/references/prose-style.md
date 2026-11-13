@@ -1,8 +1,7 @@
 # Prose Style
 
 How the prose in this project's docs is written. Applies to every page
-under `docs/content/`: getting-started guides, composable pages, showcase
-examples. Structural conventions (frontmatter, MDC components, page
+under `docs/content/`: getting-started guides, composable pages, guides. Structural conventions (frontmatter, MDC components, page
 shapes) live in `writing-guide.md`, `mdc-components.md` and each skill's
 own SKILL.md. This file is only about the sentences.
 
@@ -148,18 +147,176 @@ patterns too.
   nanime stand out?" list before the table. The table now comes first,
   then "Which should you pick?", then the code comparisons. The selling
   list was dropped, since the table already says the same thing.
+- **A sentence that describes the table.** "Each row is one entry under
+  `components` or `composables` in `app.config.ts`. The second column lists
+  the props that entry accepts. The third column is the value used when
+  nothing else sets it." The entry names and column headers already say
+  this. Deleted.
+- **A longer sentence that says less.** "When two places set the same
+  setting, the one that covers less of the app wins. The second column
+  lists the places from the whole app to a single call or component, so
+  the last place listed wins." The reader has to decode "covers less".
+  Replaced with: "Some settings can be set in more than one place. The
+  table lists the places in order, and the last one listed wins."
+- **An example in prose next to the code that is the example.** "A
+  settings panel can use its own transition animation this way", directly
+  above a `SettingsPanel.vue` sample. The sample is the example. The prose
+  copy was cut.
+- **A section opener that gives four sentences for one purpose.** "Use
+  `provideAnimeDefaults()` when one part of the app needs its own
+  defaults. Call it in the `<script setup>` of a component. Everything
+  rendered inside that component uses the new defaults. Components outside
+  it keep the app-wide ones." Replaced with the purpose alone: "Use
+  `provideAnimeDefaults()` when one part of the app needs different
+  defaults from the rest." Where to call it is visible in the sample.
+- **A type name used as a lead-in.** "The argument is typed
+  `NanimeDefaults` and can be an object, a ref or a getter:" before a
+  table. The type name gave the reader nothing to act on. The ref and
+  getter fact moved to the notes after the table.
+- **A note on a table cell that restates the verb.** "Replaces the same
+  entry from a parent component's call. The two are not merged key by
+  key." "Replaces" already says the two are not merged. Cut the second
+  sentence.
+- **A rule with no case.** "Each prop goes through the layers on its own."
+  The reader cannot picture a result. Replaced with two headed cases that
+  each end on a concrete outcome ("`<AnimeTransition
+  enter-animation="fade">` fades in and still scales out").
+- **A direction word in an ordered list.** "Read from the next layer
+  down." Down the list, or down in priority? Name the position or the
+  thing: "the first of these that sets it".
+- **A lead-in that counts the table.** "`reducedMotion` takes one of three
+  values:" above a three-row table. The table shows the values. Delete the
+  line, and let the heading introduce the table.
+- **A lead-in that restates the sample.** "To follow the visitor's system
+  setting, set it to `'system'` in `nuxt.config.ts`:" above a sample whose
+  file label and body say exactly that. Reduced to the instruction alone:
+  "Set `reducedMotion` in `nuxt.config.ts`:". The table row for `'system'`
+  already says what the value does.
 
-## Explanation vs. implementation
+## Rewording and cutting
 
-On a showcase page, "What's happening" and "How it's built" explain the
-animation and the `nanime` API driving it, nothing else. Vue and DOM
-plumbing that a reader doesn't need to understand the effect (`ref`,
-`computed`, `setup()`, a `boolean` flag, a `ResizeObserver`, a ghost
-element's layout trick) belongs only in "Building it yourself" and the AI
-build prompt, which are recipes for someone actually implementing it.
-Before adding a detail to an explanation section, ask whether it explains
-the animation or the component wiring underneath it. Cut it if it's the
-latter.
+When asked to improve a page, restructure it if it mixes jobs, cut what
+adds no fact, then reword what is left so a reader who has never seen the
+page can follow it. Do not call a rewrite "trimming". Run the checks below
+on the whole page before handing it back. Doing this after the maintainer
+points at each passage is the failure to avoid.
+
+### Check the structure first
+
+Rewording sentences cannot fix a page whose structure is the problem. Before
+rewording, read the page as a whole and name the jobs it does. A page that
+mixes several jobs, repeats another page, or buries one answer in a long
+list of unrelated topics needs a restructure, and rewording it leaves the
+reader as lost as before.
+
+When a page needs a restructure, do it without asking. Restructuring means:
+
+- Move a passage next to the section it belongs to, such as folding
+  "Read properties after mount" under the Buffered section it depends on.
+- Merge passages that say the same thing, keeping the one with the sample.
+- Turn a paragraph that lists separate facts into a list, one fact per
+  item.
+- Reorder sections so the task or the example comes before the rule.
+- Keep every anchor other pages link to. Grep for inbound links and fix
+  any heading that changes.
+
+Ask first only when the fix is to split the page into two, because that
+adds a page, a nav entry and links in other files. Propose the split with
+the outline and the list of links it changes.
+
+When a maintainer says a page is "still bad" without naming a passage,
+assume the structure is the problem and diagnose that before editing more
+sentences.
+
+### Touch only what was asked
+
+Reword or cut only the passages the maintainer pointed at, or the page
+they asked you to improve. A restructure of a page they asked you to
+improve is part of that job. Wording they wrote or approved stays as
+written, even when a cut or a rewrite elsewhere on the page goes through
+the same text. A rewrite that removes a clause the maintainer approved counts as
+an unrequested change. Report other problems you find instead of fixing
+them.
+
+### Cut without asking
+
+Run this test on every sentence, list item and heading of a page you were
+asked to improve: does it add a fact the heading, table, sample or
+neighbouring sentence does not, and would the reader do anything
+differently because of it? If not, delete it. Do not wait for the
+maintainer to point at each one. The maintainer has had to say "so many
+irrelevant statements there" and "the list items, how useful are they?"
+on page after page.
+
+- A sentence that adds no fact beyond the heading, table or code sample
+  next to it. This covers sentences that describe the page itself ("this
+  page covers those rules once", "the second column lists..."), restate a
+  sample in prose, or repeat the previous paragraph.
+- A list item that restates the rule above it. If most items of a list say
+  "same as the rule", reduce the list to the exceptions. A five-item list
+  of how each composable treats a changed callback became the three
+  composables that do rebuild.
+- A fact that belongs to a different topic than the section's. "Composables
+  run on the client only" does not belong under a section about rebuilds.
+- Internals the reader cannot act on: why a prop is declared with
+  `default: undefined`, how a watcher compares callbacks.
+
+When a cut removes the only statement of a fact, move the fact instead.
+
+### Propose, do not apply
+
+- Content another page owns, when cutting it removes information from
+  this page. Link to the owner and propose the cut.
+- A whole section that serves a different job, such as a hidden-tab note on
+  a performance page. Propose it, and do not apply it without a yes.
+- Anything that changes a heading another page links to.
+
+### What stays, even when the page is long
+
+- A concrete case for every rule, as a sample or a one-line example. The
+  case is part of the rule and does not count as extra length.
+- The one sentence that states the page's or section's purpose.
+- A fact the reader needs and cannot see in the code, such as which
+  settings a function does not accept, or what applies only to
+  composables created afterwards.
+- Every anchor other pages link to. If a heading changes, fix the links.
+
+When a cut loses a fact, move the fact. The ref and getter sentence moved
+under the table when its lead-in line was removed.
+
+### Check each rewrite as a cold reader
+
+Before handing a page back, read every changed passage as someone who has
+not seen the page or the code:
+
+- Does every "it", "this" and "its" point at a clear thing in the same
+  sentence? ("Its siblings and its parents" pointed at nothing.)
+- Is a direction word ("down", "above", "below", "lower", "outer", "next
+  layer") used in a list where it could mean either way?
+- Is a term used before it is defined, or defined by a word that is
+  itself jargon ("layer", "entry", "supplies", "covers")? Use the plain
+  word or the real name.
+- Is the rule stated before an example? Put the example first.
+- Is the rewrite longer or more abstract than the original? A rewrite that
+  removes ambiguity by adding abstraction fails.
+- Does the same kind of problem exist elsewhere on the page? Fix the whole
+  page, not only the passage that was pointed at.
+- Did the edit itself add a sentence? Moving a table above a sample, or
+  adding a line to introduce it, adds prose. Every added sentence goes
+  through the same checks as an old one. An edit that reorders and then
+  adds a lead-in counting the table or restating the sample has
+  reintroduced the fault it was meant to fix.
+- Does a lead-in line sit above a table or a code sample? Keep it only if
+  it states a fact the table, the sample and the heading do not. Otherwise
+  the heading introduces them and the line goes.
+
+## Opening a section
+
+The opener of an `##` section is one plain statement of what the section
+is for or what to do. Leave out the sentences that restate where to call
+it, what is affected or what the sample shows, because the sample and the
+table carry those. A page's own intro under the title may be longer, since
+it also says what the page covers and where to go next.
 
 ## Naming
 
@@ -191,14 +348,12 @@ reader-address ("you'll notice"), no asides.
 - **Only claims you have checked.** Before writing "we do X instead of Y
   because Y would break", go read the source and confirm Y breaks. An
   unverified *why* is worse than no *why*, because it reads as
-  authoritative and is wrong. A past version of the showcase skill's own
-  page asserted that splitting a card into two elements was required to
-  stop two animations overwriting each other's `transform`. That turned
-  out to be false once someone read AnimeJS's transform-caching code.
-  See `../../create-showcase-doc/references/verify-ai-prompt.md` for the
-  full history.
+  authoritative and is wrong. A past docs page asserted that splitting a
+  card into two elements was required to stop two animations overwriting
+  each other's `transform`. That turned out to be false once someone read
+  AnimeJS's transform-caching code.
 - **Links to the pages that own a topic.** Composable mentions link to
-  `/composables/<name>`, examples link to `/examples/<name>`, external
+  `/composables/<name>`, guides link to `/guides/<name>`, external
   links carry `{target="_blank"}`. Generic web-platform material (render
   pipeline, layout thrashing, `prefers-reduced-motion`) gets linked out
   rather than re-explained. This project's docs are about `nanime`.
@@ -212,7 +367,7 @@ their head while the grammar keeps shifting under it:
 
 > Installation adds `nanime` to a project. Performance covers which
 > composable to reach for. Each composable page carries a live demo, and
-> the examples put several composables together.
+> the guides cover options and defaults.
 
 Four destinations, four different sentence shapes, and the composables
 index buried mid-paragraph. As a list, each line answers the same question
@@ -220,7 +375,7 @@ in the same shape:
 
 > - [Installation](/getting-started/installation) to add the module.
 > - [Composables](/composables/introduction) for each API, with a live demo on every page.
-> - [Examples](/examples/introduction) for full sequences built from several composables.
+> - [Guides](/guides/configuration) for module options and defaults.
 
 Keep the entries parallel. Once one starts with a verb, they all do. The
 reverse case is also worth watching: a list whose items only make sense
@@ -318,12 +473,6 @@ offending sentence when a check fails. "Sounds fine" is not a pass.
       concept without a sample, instruction before mechanism, no
       research-provenance line, setup steps as code blocks.
 
-**Explanation vs. implementation** (showcase pages only)
-- [ ] "What's happening" and "How it's built" contain no Vue or DOM
-      plumbing (`ref`, `computed`, `setup()`, a bare `boolean`,
-      `ResizeObserver`, a ghost-element layout trick). That detail exists
-      only in "Building it yourself" and the AI build prompt.
-
 **Naming**
 - [ ] "AnimeJS" is spelled the same way everywhere in prose and in AI
       build prompts (never "Anime.js" or "anime.js"), except the SEO
@@ -356,3 +505,27 @@ offending sentence when a check fails. "Sounds fine" is not a pass.
 
 **Length**
 - [ ] No paragraph restates a point the previous paragraph already made.
+- [ ] No sentence describes a table or heading instead of stating a fact.
+- [ ] No prose sentence restates the code sample or table next to it.
+- [ ] No lead-in line above a table or sample counts its rows or says what
+      its code already shows.
+- [ ] Every sentence the edit itself added passed the same checks as the
+      sentences it replaced.
+
+**Rewording and cutting**
+- [ ] The page's jobs were named before any sentence was reworded, and a
+      page that mixes jobs or repeats another page was restructured, not
+      only reworded. A split was proposed, not made.
+- [ ] Only passages the maintainer pointed at were reworded or cut.
+      Approved wording is unchanged, and other problems were reported.
+- [ ] Every sentence, list item and heading passed the cut test: it adds a
+      fact the neighbouring heading, table or sample does not, and the
+      reader acts on it. A list whose items mostly restate the rule was
+      reduced to its exceptions.
+- [ ] Every rule has a concrete case, and the case comes first.
+- [ ] No direction word ("down", "above", "below", "lower", "outer") in an
+      ordered list, and no undefined jargon ("layer", "entry").
+- [ ] Every "it", "this" and "its" points at a clear thing.
+- [ ] Each section opener is one plain statement of purpose.
+- [ ] The whole page was reread as a cold reader, not only the passage
+      that was being fixed.

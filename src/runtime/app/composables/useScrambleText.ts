@@ -1,6 +1,7 @@
 import { tryOnScopeDispose, useMounted, toReactive } from '../utils/vue-helpers'
 import { shallowRef, toValue, watch, type MaybeRefOrGetter, nextTick } from 'vue'
 import { hasTargets, normalizeAnimeTarget, sameTargets } from '../utils/targets'
+import { trackTargetList } from '../utils/target-list'
 import { snapshotParameters } from '../utils/snapshot-parameters'
 import type { AnimationParams, ScrambleTextParams } from 'animejs'
 import { animate, type JSAnimation } from 'animejs/animation'
@@ -9,10 +10,10 @@ import type { NanimeInstanceOptions, ScrambleAnimationParams } from '../public/t
 import { scrambleText } from 'animejs/text'
 import { AnimationComponentFlags, getAnimationComponentFlag } from '../utils/instance/instance-management'
 import { markNanimeInstance } from '../utils/proxy'
-import { resolveKeepTime } from '../utils/global-options'
+import { resolveRebuild } from '../utils/global-options'
 import { deepEqualWithSkip } from '../utils/deep-equal'
 import { SHARED_ANIME_JS_CALLBACKS } from '../utils/instance/shared-callbacks'
-import { isMotionReduced } from '../utils/reduced-motion'
+import { useReducedMotion } from '../utils/reduced-motion'
 
 const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
 
@@ -21,7 +22,7 @@ const callbacks = [...SHARED_ANIME_JS_CALLBACKS]
  * component mounts and reverts it when the scope is disposed.
  *
  * When `target`, `animationOptions` or `scrambleOptions` change, the
- * animation is rebuilt. Pass `keepTime: true` to continue from the current
+ * animation is rebuilt. Pass `rebuild: 'keepTime'` to continue from the current
  * playhead instead of restarting.
  */
 export function useScrambleText(
@@ -31,14 +32,15 @@ export function useScrambleText(
   options?: NanimeInstanceOptions,
 ): JSAnimation {
   const flag = getAnimationComponentFlag()
-  const keepsTime = resolveKeepTime(options?.keepTime)
+  const keepsTime = resolveRebuild(options?.rebuild) === 'keepTime'
+  const { isReduced } = useReducedMotion()
 
   const buildAnimation = (
     targets: NonNullable<ReturnType<typeof normalizeAnimeTarget>>,
     params: AnimationParams,
   ) => {
     const built = animate(targets, params)
-    if (isMotionReduced()) built.complete()
+    if (isReduced()) built.complete()
     return built
   }
   const rebuildAnimation = keepsTime ? keepTime(buildAnimation) : buildAnimation
@@ -51,6 +53,7 @@ export function useScrambleText(
   const resolveScrambleOptions = () => toValue(scrambleOptions) || {}
 
   if (flag === AnimationComponentFlags.Watchable) {
+    trackTargetList(target)
     let previous: {
       targets: NonNullable<ReturnType<typeof normalizeAnimeTarget>>
       animOptions: Record<string, unknown>
