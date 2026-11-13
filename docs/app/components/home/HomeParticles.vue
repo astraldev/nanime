@@ -3,8 +3,8 @@ import { reactive } from 'vue'
 
 const PARTICLE_SPACING = 18
 const PARTICLE_SIZE = 1.6
-const CURSOR_RADIUS = 170
-const PUSH_STRENGTH = 0.35
+const CURSOR_RADIUS = 200
+const PUSH_STRENGTH = 0.25
 const SPRING = 0.045
 const DAMPING = 0.84
 const CURSOR_SMOOTHING_MS = 260
@@ -32,6 +32,11 @@ onMounted(() => {
   let vx = new Float32Array(0)
   let vy = new Float32Array(0)
   let al = new Float32Array(0)
+  const active = new Set<number>()
+  let cols = 0
+  let rows = 0
+  let gx = 0
+  let gy = 0
   let raf = 0
   let present = false
   let accent = ''
@@ -45,8 +50,8 @@ onMounted(() => {
     cv.style.width = `${w}px`
     cv.style.height = `${h}px`
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    const cols = Math.ceil(w / PARTICLE_SPACING) + 1
-    const rows = Math.ceil(h / PARTICLE_SPACING) + 1
+    cols = Math.ceil(w / PARTICLE_SPACING) + 1
+    rows = Math.ceil(h / PARTICLE_SPACING) + 1
     const n = cols * rows
     hx = new Float32Array(n)
     hy = new Float32Array(n)
@@ -55,13 +60,14 @@ onMounted(() => {
     vx = new Float32Array(n)
     vy = new Float32Array(n)
     al = new Float32Array(n)
-    const ox = (w - (cols - 1) * PARTICLE_SPACING) / 2
-    const oy = (h - (rows - 1) * PARTICLE_SPACING) / 2
+    active.clear()
+    gx = (w - (cols - 1) * PARTICLE_SPACING) / 2
+    gy = (h - (rows - 1) * PARTICLE_SPACING) / 2
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const i = r * cols + c
-        hx[i] = px[i] = ox + c * PARTICLE_SPACING
-        hy[i] = py[i] = oy + r * PARTICLE_SPACING
+        hx[i] = px[i] = gx + c * PARTICLE_SPACING
+        hy[i] = py[i] = gy + r * PARTICLE_SPACING
       }
     }
   }
@@ -72,12 +78,19 @@ onMounted(() => {
     const cx = typeof rx === 'number' ? rx : -9999
     const cy = typeof ry === 'number' ? ry : -9999
     const r2 = CURSOR_RADIUS * CURSOR_RADIUS
-    let busy = false
+
+    if (present) {
+      const c1 = Math.min(cols - 1, Math.floor((cx + CURSOR_RADIUS - gx) / PARTICLE_SPACING))
+      const r1 = Math.min(rows - 1, Math.floor((cy + CURSOR_RADIUS - gy) / PARTICLE_SPACING))
+      for (let r = Math.max(0, Math.ceil((cy - CURSOR_RADIUS - gy) / PARTICLE_SPACING)); r <= r1; r++) {
+        for (let c = Math.max(0, Math.ceil((cx - CURSOR_RADIUS - gx) / PARTICLE_SPACING)); c <= c1; c++) active.add(r * cols + c)
+      }
+    }
 
     ctx.clearRect(0, 0, w, h)
     ctx.fillStyle = accent
 
-    for (let i = 0; i < px.length; i++) {
+    for (const i of active) {
       let ax = (hx[i]! - px[i]!) * SPRING
       let ay = (hy[i]! - py[i]!) * SPRING
       const dx = px[i]! - cx
@@ -104,16 +117,18 @@ onMounted(() => {
       const next = a + (target - a) * (target > a ? 0.25 : 0.08)
       al[i] = next
       if (next > 0.01) {
-        busy = true
         const size = PARTICLE_SIZE + next
         ctx.globalAlpha = next * MAX_ALPHA
         ctx.fillRect(px[i]! - size / 2, py[i]! - size / 2, size, size)
       }
-      else if (Math.abs(vx[i]!) + Math.abs(vy[i]!) > 0.02) busy = true
+      else if (next < 0.0001 && Math.abs(vx[i]!) + Math.abs(vy[i]!) < 0.0001 && Math.abs(ox) + Math.abs(oy) < 0.001) {
+        active.delete(i)
+        al[i] = 0
+      }
     }
     ctx.globalAlpha = 1
 
-    if (busy || present) raf = requestAnimationFrame(frame)
+    if (active.size > 0 || present) raf = requestAnimationFrame(frame)
     else {
       ctx.clearRect(0, 0, w, h)
       raf = 0
