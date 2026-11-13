@@ -5,8 +5,9 @@ description: |
   Use when animating elements, text, SVG or scroll in Nuxt: useAnimate, useWaapiAnimate,
   useAnimatable, useAnimeTimeline, useDraggable, useSplitText, useScrambleText,
   useAnimeScroll, useAnimeLayout, <AnimeTransition>, <AnimeTransitionGroup>,
-  <AnimeLayoutGroup>, transition styles, component defaults, provideAnimeDefaults and
-  the #nanime/* aliases. Also use when an effect seems to need raw animejs, GSAP or CSS
+  <AnimeLayoutGroup>, transition styles, component defaults, provideAnimeDefaults,
+  the #nanime/* aliases, and the experimental useWaapiTimeline from
+  #nanime/experimental. Also use when an effect seems to need raw animejs, GSAP or CSS
   transition classes. Most mistakes here do not throw; they animate the wrong thing.
 ---
 
@@ -26,6 +27,7 @@ or transition CSS. The effect almost always has a nanime path.
 | Animating elements, refs, arrays, plain objects | `useAnimate` (`useWaapiAnimate` for the Web Animations API) | [use-animate.md](references/composables/use-animate.md) |
 | Values set imperatively at speed (cursor follow, live counter) | `useAnimatable` | |
 | Sequencing | `useAnimeTimeline` | [use-anime-timeline.md](references/composables/use-anime-timeline.md) |
+| Native WAAPI clock, state toggles, callbacks | `useWaapiTimeline` (experimental, `#nanime/experimental`) | [use-waapi-timeline.md](references/composables/use-waapi-timeline.md) |
 | SVG draw, morph and motion path | `#nanime/proxies/svg` inside `useAnimate` or `useAnimeTimeline` | [use-anime-timeline.md](references/composables/use-anime-timeline.md) |
 | Scroll-driven animation | `useAnimeScroll` | [use-anime-scroll.md](references/composables/use-anime-scroll.md) |
 | Text split into lines, words, chars | `useSplitText` | [use-split-text.md](references/composables/use-split-text.md) |
@@ -71,6 +73,7 @@ Not auto-imported. Import helpers from these, never from `animejs` directly.
 | `#nanime/proxies/text` | `scrambleText`, for use inside animation parameters |
 | `#nanime/proxies` | Both of the above |
 | `#nanime/composables` | Every composable, for `composables: false` in `nuxt.config.ts` |
+| `#nanime/experimental` | `useWaapiTimeline`, `createWaapiTimeline` and their types. Not auto-imported. |
 
 ## Rules that apply everywhere
 
