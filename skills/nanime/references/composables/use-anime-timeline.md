@@ -27,6 +27,28 @@ Bind through `autoplay`, which nanime unwraps to the observer. Don't call
 `scroll.link(tl)`: it hands Anime.js the proxy itself.
 
 
+## Steps replay with their first arguments
+
+`add()`, `set()` and `sync()` run again on every rebuild with the arguments
+of the first call, so a `stagger()` inside `tl.add()` never updates. For steps
+that depend on state, build each one with `useAnimate` and a getter, which
+makes a new `stagger()` per rebuild, and join them with `sync()`. The timeline
+rebuilds when a synced animation does.
+
+```ts
+const cycle = shallowRef({ from: 0 })
+const ripple = useAnimate(dots, () => ({
+  delay: stagger(50, { grid, from: cycle.value.from }),
+  autoplay: false,
+}))
+const tl = useAnimeTimeline()
+
+tl.sync(ripple, 0)
+```
+
+Docs: https://nanimejs.netlify.app/composables/utilities#stagger-a-list-that-can-grow
+
+
 ## SVG helpers need a real element
 
 Composable targets accept refs. `createDrawable`, `morphTo` and
@@ -71,3 +93,11 @@ These come from Anime.js, not nanime:
 - `loop: n` means n *extra* passes. For "go and come back" with `alternate`,
   use `loop: 1`.
   https://animejs.com/documentation/animation/animation-playback-settings/loop
+
+
+## Porting from Anime.js v3
+
+Older v3 examples use `{ value: 80 }` keyframes and an `offset` key inside
+the child params. v4 reads `{ to: 80 }` (or a bare value) and takes the
+timeline position as the positional third argument of `add(targets, params,
+200)`. `{ value }` is ignored, and so is `offset` inside the params.
