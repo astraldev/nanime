@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.4.1
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.4.0...v0.4.1)
+
+### 🩹 Fixes
+
+- **useWaapiTimeline:** Start tweens after the previous one, accept keyframes, log errors in production ([4b82947](https://github.com/astraldev/nanime/commit/4b82947))
+
+### 📖 Documentation
+
+- **useWaapiTimeline:** Rewrite the page, add a callback demo and a timer, start the 0.4.1 changelog ([220b9ed](https://github.com/astraldev/nanime/commit/220b9ed))
+- Use npx nuxt module add in the install command ([5d50f88](https://github.com/astraldev/nanime/commit/5d50f88))
+- **skill:** Cover autoplay defaults, step replay and porting v3 keyframes ([be0b652](https://github.com/astraldev/nanime/commit/be0b652))
+- **agents:** Update the playground page skill ([b9de4f3](https://github.com/astraldev/nanime/commit/b9de4f3))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.4.0
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.3.5...v0.4.0)
