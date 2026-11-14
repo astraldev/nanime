@@ -210,6 +210,33 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     }
   }
 
+  function applyDirectionEase(next: Direction): void {
+    const held = eases.flatMap(({ animation, forward, reverse }) => {
+      const effect = animation.effect
+      const time = animation.currentTime
+      if (!effect || forward === reverse || typeof time !== 'number') return []
+
+      const { delay = 0, duration, progress } = effect.getComputedTiming()
+      if (typeof duration !== 'number' || typeof progress !== 'number') return []
+
+      return time >= delay && time <= delay + duration ? [{ animation, delay, duration, progress }] : []
+    })
+
+    applyEasing(next)
+
+    for (const { animation, delay, duration, progress } of held) {
+      let low = 0
+      let high = 1
+      for (let step = 0; step < 20; step++) {
+        const mid = (low + high) / 2
+        animation.currentTime = delay + mid * duration
+        if ((animation.effect?.getComputedTiming().progress ?? 0) < progress) low = mid
+        else high = mid
+      }
+      animation.currentTime = delay + high * duration
+    }
+  }
+
   function start(): void {
     if (!clock) {
       setStatus('finished')
@@ -253,10 +280,10 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
 
     build()
 
-    // a running timeline flips in place; no seek, so the playhead does not jump
+    // a running timeline flips in place; the clock does not move, tweens keep their value
     if (status === 'running') {
       if (direction !== next) {
-        applyEasing(next)
+        applyDirectionEase(next)
         direction = next
         applyRate()
       }
@@ -271,7 +298,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
       applyEasing(next)
     }
     else if (direction !== next) {
-      applyEasing(next)
+      applyDirectionEase(next)
     }
 
     direction = next
