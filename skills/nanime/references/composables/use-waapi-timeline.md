@@ -12,7 +12,7 @@ import { useWaapiTimeline } from '#nanime/experimental'
 const timeline = useWaapiTimeline()
 
 timeline.point('open', 0)
-timeline.tween(panel, { opacity: [0, 1], at: 'open', ease: 'outQuad' })
+timeline.tween(panel, { opacity: [0, 1], at: 'open', ease: 'ease-out' })
 timeline.callback(() => emit('opened'), 'open')
 timeline.play()
 ```
@@ -122,16 +122,22 @@ jump to the element's base value between the two tweens without it.
 
 ## Easing
 
-`ease` accepts AnimeJS names (`outQuad`, `outBack(3)`), functions and
-springs, plus CSS easings (`ease-out`, `cubic-bezier(...)`, `steps(...)`).
-AnimeJS forms go through `waapi.convertEase`. A spring also sets the tween
-duration to its settling duration unless you pass `duration` yourself. An
-unknown name logs a warning once and falls back to `'linear'`.
+`ease` takes a CSS easing string: `'ease-out'`, `'cubic-bezier(...)'`,
+`'steps(...)'` or `'linear(...)'`. Convert an AnimeJS easing, function or
+spring yourself with `waapi.convertEase()` from `animejs/waapi`, and set
+`duration` yourself for a spring. A string that is not a CSS easing logs a
+warning once and falls back to `'linear'`.
 
 For a different reverse feel, pass `ease: { forward, reverse }`. No curve is
-derived for you; the `reverse` curve is used while playing backward. Since
-reverse walks a curve backwards, `{ forward: 'outQuad', reverse: 'inQuad' }`
-starts fast in both directions.
+derived for you, and `reverse` defaults to `forward`. Since reverse walks a
+curve backwards, `{ forward: 'ease-out', reverse: 'ease-in' }` starts fast in
+both directions.
+
+When `reverse()` or `play()` changes the direction while the timeline runs or
+is paused, a tween already in progress keeps its current value and runs the
+rest of its course on the other curve. It can end slightly before or after
+the timeline does, and an overshooting curve such as `back` or `elastic` can
+make it jump slightly. Callbacks still run at their set times.
 
 
 ## Callbacks
