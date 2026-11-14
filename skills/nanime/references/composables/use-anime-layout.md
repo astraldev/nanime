@@ -32,6 +32,16 @@ async function toggleWide() {
 - When the change can't go in one callback: `layout.record()`, change state,
   `await nextTick()`, `layout.animate()`, in that order.
 
+## Porting an Anime.js `layout.update()` demo
+
+- Every change the demo makes inside `update(() => ...)` (class toggles,
+  `dataset`, `style.transform`) becomes reactive state, and the element reads it
+  from the template. Don't mutate the DOM inside `patch`: Vue overwrites it.
+- Per-call timing moves over unchanged: `layout.update(cb, { delay, ease })`
+  is `layout.patch(cb, { delay, ease })`.
+- Per-element values that depend on state (a position per card, say) go in
+  a function of the index called from `:style`.
+
 Docs: https://nanimejs.netlify.app/composables/use-anime-layout
 
 
