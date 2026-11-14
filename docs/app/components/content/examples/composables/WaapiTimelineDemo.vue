@@ -11,7 +11,7 @@ timeline
   .tween(box, { translate: ['0px', '160px'] })
   .tween(box, { rotate: ['0deg', '180deg'], at: '< + 50%' })
   .point('turned', '< + 100%')
-  .tween(box, { scale: ['1', '0.5'], at: 'turned' })
+  .tween(box, { scale: ['1', '1.25', '0.5'], at: '< + 50%' })
   .callback(() => (step.value = 'moving'), 0)
   .callback(() => (step.value = 'turned'), 'turned')
 

@@ -4,6 +4,8 @@ import ExampleWrapper, { type ExampleAction } from '~/components/shared/ExampleW
 
 const box = useTemplateRef('box')
 const state = ref('idle')
+const position = ref(0)
+let frame = 0
 
 const timeline = useWaapiTimeline({
   defaults: { duration: 1000, ease: 'inOutQuad' },
@@ -11,8 +13,8 @@ const timeline = useWaapiTimeline({
 
 timeline
   .tween(box, { translate: ['0px', '64px'] })
-  .tween(box, { translate: ['64px', '128px'], at: '< + 100%' })
-  .tween(box, { translate: ['128px', '192px'], at: '< + 100%' })
+  .tween(box, { translate: ['64px', '128px'] })
+  .tween(box, { translate: ['128px', '192px'] })
 
 function readState() {
   if (timeline.isRunning.value) state.value = 'running'
@@ -20,7 +22,23 @@ function readState() {
   else if (timeline.completed) state.value = 'completed'
 }
 
-watch(timeline.isRunning, readState)
+function followPlayhead() {
+  position.value = timeline.progress
+  frame = timeline.isRunning.value ? requestAnimationFrame(followPlayhead) : 0
+}
+
+function scrub(value: number) {
+  position.value = value
+  timeline.seek(value * timeline.duration)
+}
+
+watch(timeline.isRunning, () => {
+  readState()
+  cancelAnimationFrame(frame)
+  followPlayhead()
+})
+
+onBeforeUnmount(() => cancelAnimationFrame(frame))
 
 const actions: ExampleAction[] = [
   { label: 'Play', run: timeline.play },
@@ -36,6 +54,7 @@ const actions: ExampleAction[] = [
   <ExampleWrapper
     :actions="actions"
     :status="state"
+    :slider="{ value: position, onInput: scrub }"
   >
     <div class="flex w-54 flex-col gap-2">
       <div

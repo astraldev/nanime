@@ -32,31 +32,38 @@ destructuring them works.
 
 `at` accepts:
 
-- a number in milliseconds, `0` by default
+- a number in milliseconds
 - a point name, defined with `point('open', 0)`
 - `<`, the previous tween's start
 - a shift from the previous tween's start, `<+150`, `<-20%`, `<+0.2s`
 - a shift from a point, `open+150`, `open-20%`
 
-This differs from AnimeJS. Its `<` is the previous tween's end, `<<` is its
-start, and an omitted position appends. Here `<` is the start, `<<` is not
-supported, and an omitted `at` is `0`.
+An omitted `at` starts the tween when the previous tween ends, or at `0` for
+the first tween. Each tween in a row plays after the last without `at`. Give
+`at: '<'` to start two tweens together.
 
-A callback uses the same positions, but one before `0` throws. A callback
+`<` differs from AnimeJS. Its `<` is the previous tween's end and `<<` is its
+start. Here `<` is the start and `<<` is not supported. AnimeJS appends an
+omitted position to the end of the whole timeline, while here it follows the
+previous tween registered.
+
+A callback uses the same positions, but one before `0` is an error. A callback
 time counts toward `duration`, but a callback is not the previous tween for
 later `<` shifts.
 
 A string that is not a point or a `<` shift is read as a point name and
-throws: `'120'` and `'20%'` both throw. Write a time as a number.
+is an error: `'120'` and `'20%'` both fail. Write a time as a number.
 
 
 ## Registration freezes the timeline on the first build
 
 The first `play()`, `reverse()`, `restart()`, `alternate()` or `seek()`
-builds the timeline. After it, `tween()`, `point()` and `callback()` throw.
+builds the timeline. After it, `tween()`, `point()` and `callback()` are errors.
 Playback calls in `setup()` queue until mount, so tweens added after a
-queued `play()` still count. Each registration call validates its arguments, so a
-bad position or value throws at that call, not at the first play.
+queued `play()` still count. Each registration call validates its arguments,
+so a bad position or value is an error at that call, not at the first play.
+An error throws in development. In production it is logged with
+`console.error` and the call is skipped.
 
 Targets resolve once, at the build. A `null` target is skipped with no
 error, and a `v-if` element that renders again is a new element the build
@@ -67,11 +74,22 @@ again. `cancel()` keeps the registered tweens, points and callbacks.
 ## Values go to WAAPI as-is
 
 CSS properties such as `translate`, `rotate`, `scale` and `opacity` work.
-Lengths need units (`'160px'`). AnimeJS-only names such as `x` and `y` do
-nothing, with no error, and a `stagger()` value throws. A property takes
-one start and one end: `[from, to]`, `{ from, to }`, or a single value that
-animates from the current value. Give a later tween on the same property the
-previous tween's `to` as its `from`, or the element jumps.
+Lengths need units (`'160px'`). AnimeJS transform names such as `x`, `y`,
+`translateX` and `translateY` are not CSS properties, so they do nothing with
+no error. A `stagger()` value as a CSS property throws, and as `delay` or
+`duration` it becomes `0`. A property takes `[from, to]`,
+`{ from, to }`, three or more stops (`opacity: [0, 1, 0.6]`), or a single
+value that animates from the current value. Stops are evenly spaced and share
+one type. The tween's `ease` shapes the progress of the whole tween, not each
+segment between stops. Give a later tween on the same property the previous
+tween's `to` as its `from`, or the element jumps.
+
+Stops that need different timing or easing are a chain of tweens, one per
+stop. Register the tweens in order with no `at`, so each starts when the last
+ends. The previous tween is the last one registered, whatever its property,
+so register one chain at a time. Overlapping tweens on one CSS
+property replace each other, so properties with different timing each get
+their own chain.
 
 
 ## Playback
@@ -141,7 +159,7 @@ setting unless you pass `isReducedMotion`. Call `cancel()` when you are done.
 
 ## Not supported
 
-- Multi-stop keyframes, keyframe offsets and per-keyframe easing
+- Keyframe offsets and per-keyframe easing
 - `onBegin`, `onUpdate`, `onComplete` and `then()`
 - `loop`, `sync`, `set`, `remove` and `stretch`
 - JS object targets and SVG attributes outside CSS
