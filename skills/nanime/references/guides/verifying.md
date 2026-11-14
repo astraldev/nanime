@@ -38,6 +38,23 @@ expect(at(400)).toContain('translateX(0%)')
   only works with `rebuild: 'keepValue'` or `'keepTime'` (see
   [use-animate.md](../composables/use-animate.md)).
 
+## Watching real motion in a browser
+
+When a rect or a frame matters (layout, drag, scroll), happy-dom can't help. If
+the browser pane you drive is hidden, `requestAnimationFrame` never runs and
+every animation stays on frame 0, so the page looks broken when it isn't. Drive
+headless Chrome instead (Playwright with `headless: true`, or any CDP client).
+
+- Compare final rects first, for every element. Then compare per frame: record
+  `getBoundingClientRect()` inside a `requestAnimationFrame` loop that starts
+  just before the trigger, and compare against the reference at the same time
+  offsets.
+- Seed `Math.random` with `addInitScript` in both pages, and re-seed right
+  before each trigger. `stagger({ from: 'random' })` and `random()` draw from it,
+  so unseeded runs differ even when both are correct.
+- Align clocks before judging a mid-flight gap: a start offset of a few
+  frames looks like a large pixel error on a fast ease.
+
 ## happy-dom gaps
 
 These gaps are in the test environment. Your code isn't at fault.
