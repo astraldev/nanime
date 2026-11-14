@@ -29,8 +29,17 @@ to make it rescan.
 
 # How to create a page
 
+Check `git status` and `docs/app/pages/playground/` first. The user may be
+editing a page in parallel, and a page they already wrote is the source of
+truth: read it and align instead of writing a competing one.
+
 1. Read the source under `src/runtime/app/` (`composables/`,
-   `components/`) to learn the props, parameters and return values.
+   `components/`) to learn the props, parameters and return values. Also
+   read the composable's docs page in `docs/content/2.composables/` and its
+   `skills/nanime/references/composables/<name>.md`. When recreating code
+   from another library or version, express it in the composable's own
+   forms rather than copying values across, and compare it with the
+   original per frame.
 2. Create `docs/app/pages/playground/<name>.vue`. Add
    `useSeoMeta({ title: '<Name> playground', robots: 'noindex, nofollow' })`.
 3. Use Nuxt UI components (`UContainer`, `UButton`), which the docs app
@@ -124,6 +133,25 @@ built-in default changes.
 8. A fix to `src/` found this way needs a regression test in
    `../nanime-tests`, run by copying it to the same path here and deleting
    the copy. Check that it fails without the fix (`git stash push src`).
+9. Anime.js animations and timelines autoplay by default. A demo built
+   without `autoplay: false` runs once on mount and sits at its end state by
+   the time you look. For a page the user triggers, pass `autoplay: false`
+   and drive it from a button.
+10. A `200` from `curl` only proves the server rendered. Confirm the
+    animation actually runs on the client (the engine ticks, inline styles
+    change) before calling a demo correct.
+11. Prefer the composable's documented position idioms over hardcoded
+    absolute times. `useWaapiTimeline` has `point()` labels and relative `<`
+    shifts (`<+100%` is the previous tween's end); chain with those instead
+    of repeating absolute `at` values.
+12. A page can pass every numeric check and still show nothing: a missing
+    Tailwind arbitrary class (`grid-cols-[repeat(var(--rows),1rem)]`,
+    `bg-primary/50`) collapsed a grid to one column of transparent dots. After
+    the first load, read the rect and computed colour of the key elements
+    (size, column count, non-transparent background), and put layout-critical
+    styles in scoped CSS.
+13. If `preview_start` exits with "Another Nuxt dev server is already
+    running", don't kill that server. `navigate` the pane to its URL.
 
 # Verification
 
