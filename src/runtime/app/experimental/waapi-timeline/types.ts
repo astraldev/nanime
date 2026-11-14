@@ -1,5 +1,3 @@
-import type { EasingParam } from 'animejs'
-
 /**
  * An absolute time in milliseconds, a point name, a point with a shift
  * (`'open+150'`, `'open-20%'`), or a `<±X` shift from the previous tween's
@@ -67,12 +65,12 @@ export type WaapiTimelineTarget = WaapiTimelineDomTarget | (() => WaapiTimelineD
  */
 export interface WaapiTimelineEasePair {
   /** The easing used while the timeline plays forward. */
-  forward: EasingParam
+  forward: string
   /** The easing used while it plays backward. Defaults to `forward`. */
-  reverse?: EasingParam
+  reverse?: string
 }
 
-export type WaapiTimelineEase = EasingParam | WaapiTimelineEasePair
+export type WaapiTimelineEase = string | WaapiTimelineEasePair
 
 export type WaapiTweenParams = {
   /**
