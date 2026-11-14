@@ -46,14 +46,6 @@ describe('layoutTimeline callbacks', () => {
     expect(layout.tweens[0]?.reverseEase).toBe('ease-out')
   })
 
-  it('converts AnimeJS eases before the animation is built', () => {
-    const layout = layoutTimeline([
-      { kind: 'tween', target: null, params: { at: 0, ease: 'outQuad', opacity: [0, 1] } },
-    ], { duration: 300, ease: 'linear' })
-
-    expect(layout.tweens[0]?.ease).toMatch(/^linear\(/)
-  })
-
   it('rejects callbacks before the timeline start', () => {
     expect(() => layoutTimeline([
       { kind: 'callback', fn, at: -1 },

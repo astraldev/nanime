@@ -105,8 +105,6 @@ function readTween(params: WaapiTweenParams, defaults: WaapiTimelineDefaults) {
     : resolveEase(requested)
   const duration = normalizeDuration(
     params.duration
-    ?? resolvedEase.duration
-    ?? resolvedReverse.duration
     ?? defaults.duration
     ?? 300,
   )
