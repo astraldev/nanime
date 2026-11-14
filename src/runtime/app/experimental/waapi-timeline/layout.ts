@@ -6,6 +6,7 @@ import type {
   WaapiTimelinePair,
   WaapiTimelinePosition,
   WaapiTimelineRange,
+  WaapiTimelineStops,
   WaapiTimelineEase,
   WaapiTimelineEasePair,
   WaapiTimelineTarget,
@@ -67,6 +68,12 @@ export function isPair(value: unknown): value is WaapiTimelinePair {
     || (typeof from === 'number' && typeof to === 'number')
 }
 
+export function isStops(value: unknown): value is WaapiTimelineStops {
+  if (!Array.isArray(value) || value.length < 3) return false
+  return value.every((item: unknown) => typeof item === 'string')
+    || value.every((item: unknown) => typeof item === 'number')
+}
+
 export function isRange(value: unknown): value is WaapiTimelineRange {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return false
   const from = Reflect.get(value, 'from')
@@ -111,11 +118,11 @@ function readTween(params: WaapiTweenParams, defaults: WaapiTimelineDefaults) {
   // reserved keys describe the tween; every other key is a CSS property
   for (const [property, value] of Object.entries(params)) {
     if (RESERVED.has(property) || value === undefined) continue
-    if (typeof value === 'string' || typeof value === 'number' || isPair(value) || isRange(value)) {
+    if (typeof value === 'string' || typeof value === 'number' || isPair(value) || isStops(value) || isRange(value)) {
       tracks.push({ property, value })
       continue
     }
-    throw new Error(`createWaapiTimeline: "${property}" must be a value, a [from, to] pair, or a { from, to } object. Intermediate keyframes are not supported.`)
+    throw new Error(`createWaapiTimeline: "${property}" must be a value, a [from, to] pair, an array of stops of one type, or a { from, to } object.`)
   }
 
   return { at, duration, ease, reverseEase, delay, tracks }
@@ -146,7 +153,8 @@ export function layoutTimeline(entries: RegisteredEntry[], defaults: WaapiTimeli
 
     const values = readTween(entry.params, defaults)
     // '<' shifts measure from the previous tween, so keep it on the context
-    const start = resolveAt(values.at, context) + values.delay
+    const base: number = values.at === undefined ? previous?.end ?? 0 : resolveAt(values.at, context)
+    const start: number = base + values.delay
     const end = start + values.duration
     tweens.push({
       target: entry.target,

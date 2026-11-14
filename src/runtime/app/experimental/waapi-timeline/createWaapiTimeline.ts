@@ -1,5 +1,6 @@
 import { buildTimeline, type TimelineAnimationEase } from './build'
 import { layoutTimeline, type RegisteredEntry, type ResolvedCallback, type TimelineLayout } from './layout'
+import { fail, warnEmptyAutoplay } from './report'
 import type { WaapiTimeline, WaapiTimelineOptions, WaapiTimelineTarget } from './types'
 
 type Status = 'idle' | 'running' | 'paused' | 'finished'
@@ -47,6 +48,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
   let frame = 0
   let built = false
   let frozen = false
+  let autoplayPending = Boolean(options.autoplay)
 
   let status: Status = 'idle'
   let direction: Direction = 1
@@ -67,12 +69,14 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     catch (error) {
       entries.pop()
       layoutCache = null
-      throw error
+      fail(error instanceof Error ? error : new Error(String(error)))
     }
   }
 
-  function assertMutable(method: string): void {
-    if (frozen) throw new Error(`createWaapiTimeline: ${method}() must be called before the first play().`)
+  function canRegister(method: string): boolean {
+    if (!frozen) return true
+    fail(new Error(`createWaapiTimeline: ${method}() was called after the first play(). Register tweens, points and callbacks before playing.`))
+    return false
   }
 
   function setStatus(next: Status): void {
@@ -82,6 +86,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
   }
 
   function build(): void {
+    autoplayPending = false
     if (built) return
     if (typeof document === 'undefined' || typeof Animation === 'undefined' || typeof KeyframeEffect === 'undefined') return
 
@@ -308,6 +313,7 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
   }
 
   function cancelAction(): void {
+    autoplayPending = false
     // drop the finish handler before canceling so a stale finish is ignored
     if (clock) {
       clock.onfinish = null
@@ -353,22 +359,29 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     },
 
     point(name, at) {
-      assertMutable('point')
-      if (!name) throw new Error('createWaapiTimeline: point() needs a name.')
+      if (!canRegister('point')) return timeline
+      if (!name) {
+        fail(new Error('createWaapiTimeline: point() needs a name.'))
+        return timeline
+      }
 
       record({ kind: 'point', name, at })
       return timeline
     },
     tween(target, params) {
-      assertMutable('tween')
+      if (!canRegister('tween')) return timeline
+
       record({ kind: 'tween', target, params })
       return timeline
     },
     callback(input, at) {
-      assertMutable('callback')
+      if (!canRegister('callback')) return timeline
       const fn = typeof input === 'function' ? input : input.fn
       const position = typeof input === 'function' ? at : input.at
-      if (typeof fn !== 'function') throw new Error('createWaapiTimeline: callback() needs a function.')
+      if (typeof fn !== 'function') {
+        fail(new Error('createWaapiTimeline: callback() needs a function.'))
+        return timeline
+      }
 
       record({ kind: 'callback', fn, at: position })
       return timeline
@@ -421,7 +434,19 @@ export function createWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTi
     },
   }
 
-  if (options.autoplay) startIn(1)
+  if (options.autoplay) {
+    // wait a microtask so tweens chained after the factory call register first
+    queueMicrotask(() => {
+      if (!autoplayPending) return
+      autoplayPending = false
+
+      if (!entries.some(entry => entry.kind === 'tween')) {
+        warnEmptyAutoplay('createWaapiTimeline')
+        return
+      }
+      startIn(1)
+    })
+  }
 
   return timeline
 }

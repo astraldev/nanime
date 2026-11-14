@@ -20,6 +20,16 @@ export type WaapiTimelineValue = string | number
 export type WaapiTimelinePair = readonly [string, string] | readonly [number, number]
 
 /**
+ * Three or more values of one property, as evenly spaced keyframes:
+ * `[0, 1, 0.5]` or `['0px', '80px', '40px']`.
+ *
+ * All values must be the same type. The tween's `ease` shapes the progress of
+ * the whole tween, not each segment. Keyframe offsets and per-keyframe easing
+ * are not supported.
+ */
+export type WaapiTimelineStops = readonly string[] | readonly number[]
+
+/**
  * A tween value with an optional start and end.
  *
  * `{ to }` animates from the element's current value. `{ from }` animates
@@ -33,12 +43,10 @@ export interface WaapiTimelineRange {
 }
 
 /**
- * Any value accepted for one CSS property in a tween.
- *
- * A property has one start value and one end value. Intermediate keyframes
- * are not supported.
+ * Any value accepted for one CSS property in a tween: a single value, a
+ * `[from, to]` pair, a `{ from, to }` object, or an array of stops.
  */
-export type WaapiTimelineFrame = WaapiTimelineValue | WaapiTimelinePair | WaapiTimelineRange
+export type WaapiTimelineFrame = WaapiTimelineValue | WaapiTimelinePair | WaapiTimelineStops | WaapiTimelineRange
 
 /**
  * A DOM target for `createWaapiTimeline()`.
@@ -55,7 +63,7 @@ export type WaapiTimelineTarget = WaapiTimelineDomTarget | (() => WaapiTimelineD
  *
  * `at`, `duration`, `delay` and `ease` are reserved. Every other key is a CSS
  * property with a `[from, to]` pair, a `{ from, to }` object, or a single
- * value, passed to WAAPI as-is. Intermediate keyframes are not supported.
+ * value, or an array of three or more stops, passed to WAAPI as-is.
  */
 export interface WaapiTimelineEasePair {
   /** The easing used while the timeline plays forward. */
@@ -71,7 +79,7 @@ export type WaapiTweenParams = {
    * When the tween starts: absolute milliseconds, a point name, or a
    * `<±X` shift from the previous tween's start (`ms`, `s`, or `%` of its
    * duration).
-   * @default 0
+   * @default the end of the previous tween, or 0 for the first tween
    */
   at?: WaapiTimelinePosition
   /** @default 300 */
@@ -179,7 +187,7 @@ export interface WaapiTimelineMembers<Self, Running, Target> {
    */
   point(name: string, at: WaapiTimelinePosition): Self
   /**
-   * Add a tween. `at` defaults to `0`.
+   * Add a tween. Without `at` it starts when the previous tween ends.
    */
   tween(target: Target, params: WaapiTweenParams): Self
   /**

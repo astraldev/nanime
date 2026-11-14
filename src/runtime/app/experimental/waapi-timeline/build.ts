@@ -1,4 +1,4 @@
-import { isPair, isRange, type TrackInput } from './layout'
+import { isPair, isRange, isStops, type TrackInput } from './layout'
 import type { WaapiTimelineFill, WaapiTimelineFrame } from './types'
 
 interface BuiltTrack {
@@ -48,6 +48,7 @@ function persist(animation: Animation): void {
 
 function toFrames(property: string, value: WaapiTimelineFrame): Keyframe[] {
   if (isPair(value)) return [{ [property]: value[0] }, { [property]: value[1] }]
+  if (isStops(value)) return value.map(stop => ({ [property]: stop }))
   if (isRange(value)) {
     if (value.from !== undefined && value.to !== undefined) {
       return [{ [property]: value.from }, { [property]: value.to }]
