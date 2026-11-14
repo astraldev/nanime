@@ -159,3 +159,10 @@ changes only, `:deps="[view]"` when `view` also resizes items. See
 first value once with `v-once` and hand changes to the composable. See
 [use-scramble-text.md](references/composables/use-scramble-text.md) and
 [use-split-text.md](references/composables/use-split-text.md).
+
+### Animations and timelines autoplay by default
+
+Anime.js timers default to `autoplay: true`, so a `useAnimate` or
+`useAnimeTimeline` built without `autoplay: false` plays once on mount and
+finishes before you look. For a demo the user triggers, pass
+`autoplay: false` and call `play()` from a control.

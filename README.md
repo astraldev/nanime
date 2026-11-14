@@ -16,7 +16,7 @@
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-npx nuxi module add nanime
+npx nuxt module add nanime
 ```
 
 It works with Nuxt 3.13.5 and up, and Nuxt 4.

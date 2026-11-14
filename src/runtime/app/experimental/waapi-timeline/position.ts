@@ -89,5 +89,5 @@ export function resolveAt(at: WaapiTimelinePosition | undefined, context: Positi
     if (base) return applyTerms(base.time, base.duration, terms)
   }
 
-  throw new Error(`createWaapiTimeline: unknown point "${at}".`)
+  throw new Error(`createWaapiTimeline: unknown point "${at}". Register it with point() first, or write a time as a number.`)
 }

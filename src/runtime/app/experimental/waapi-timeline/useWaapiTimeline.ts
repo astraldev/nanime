@@ -4,6 +4,7 @@ import { tryOnScopeDispose } from '../../utils/vue-helpers'
 import { useReducedMotion } from '../../utils/reduced-motion'
 import { normalizeWaapiAnimeTarget } from '../../utils/targets'
 import { createWaapiTimeline } from './createWaapiTimeline'
+import { warnEmptyAutoplay } from './report'
 import type { WaapiTimelineOptions } from './types'
 import type { WaapiTimelineRef, WaapiTimelineRefTarget } from './types-ref'
 
@@ -65,11 +66,27 @@ export function useWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTimel
   let pending: Array<() => void> = []
   let autoplay = options.autoplay
   let mounted = !instance
+  let hasTweens = false
+  let played = false
+
+  function runAutoplay(): void {
+    if (!autoplay) return
+    if (!hasTweens) {
+      warnEmptyAutoplay('useWaapiTimeline')
+      return
+    }
+    core.play()
+  }
 
   function run(action: () => void): void {
     // preserve call order: play() then pause() must end paused, not idle
-    if (mounted) action()
-    else pending.push(action)
+    if (mounted) {
+      played = true
+      action()
+    }
+    else {
+      pending.push(action)
+    }
   }
 
   function flush(): void {
@@ -78,7 +95,7 @@ export function useWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTimel
     pending = []
 
     // match the factory: autoplay starts first, then queued calls apply
-    if (autoplay) core.play()
+    runAutoplay()
     for (const action of actions) action()
   }
 
@@ -108,6 +125,7 @@ export function useWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTimel
     },
     tween(target, params) {
       core.tween(() => resolveElements(target), params)
+      hasTweens = true
       return timeline
     },
     callback(input, at) {
@@ -152,8 +170,14 @@ export function useWaapiTimeline(options: WaapiTimelineOptions = {}): WaapiTimel
     },
   }
 
-  if (instance) onMounted(flush)
-  else if (autoplay) core.play()
+  if (instance) {
+    onMounted(flush)
+  }
+  else if (autoplay) {
+    queueMicrotask(() => {
+      if (!played) runAutoplay()
+    })
+  }
 
   tryOnScopeDispose(() => {
     pending = []

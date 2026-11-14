@@ -14,6 +14,7 @@ export type {
   WaapiTimelinePair,
   WaapiTimelinePosition,
   WaapiTimelineRange,
+  WaapiTimelineStops,
   WaapiTimelineTarget,
   WaapiTimelineValue,
   WaapiTweenParams,

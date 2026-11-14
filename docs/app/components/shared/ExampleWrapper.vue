@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Ref } from 'vue'
+
 export type ExampleAction = {
   label: string
   run: () => void
@@ -13,9 +15,15 @@ export type ExampleSlider = {
   onInput: (value: number) => void
 }
 
+export type ExampleTimer = {
+  readonly currentTime: number
+  readonly isRunning: Readonly<Ref<boolean>>
+}
+
 const props = withDefaults(defineProps<{
   actions?: ExampleAction[]
   slider?: ExampleSlider
+  timer?: ExampleTimer
   status?: string
   scrambleStatus?: boolean
   resizable?: boolean
@@ -31,6 +39,22 @@ if (props.scrambleStatus) {
   }))
 }
 
+const elapsed = ref(0)
+let frame = 0
+
+function readTimer() {
+  if (!props.timer) return
+  elapsed.value = props.timer.currentTime
+  frame = props.timer.isRunning.value ? requestAnimationFrame(readTimer) : 0
+}
+
+watch(() => props.timer?.isRunning.value, () => {
+  cancelAnimationFrame(frame)
+  readTimer()
+})
+
+onBeforeUnmount(() => cancelAnimationFrame(frame))
+
 function onSliderInput(event: Event, slider: ExampleSlider) {
   if (!(event.target instanceof HTMLInputElement)) return
   slider.onInput(Number.parseFloat(event.target.value))
@@ -39,9 +63,16 @@ function onSliderInput(event: Event, slider: ExampleSlider) {
 
 <template>
   <div
-    class="example-wrapper p-4 rounded-lg flex flex-col gap-4 border border-primary/20 bg-primary/5 backdrop-blur"
+    class="example-wrapper relative p-4 rounded-lg flex flex-col gap-4 border border-primary/20 bg-primary/5 backdrop-blur"
     :class="{ 'is-resizable': resizable }"
   >
+    <span
+      v-if="timer"
+      class="absolute top-3 right-4 w-20 text-right font-mono text-xs tabular-nums text-primary/70"
+    >
+      {{ Math.round(elapsed) }}ms
+    </span>
+
     <slot />
 
     <div
