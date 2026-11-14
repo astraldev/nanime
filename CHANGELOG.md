@@ -1,5 +1,32 @@
 # Changelog
 
+## v0.4.2
+
+[compare changes](https://github.com/astraldev/nanime/compare/v0.4.1...v0.4.2)
+
+### 🩹 Fixes
+
+- **waapi-timeline:** Keep tween values when the direction changes mid-run ([9cdb415](https://github.com/astraldev/nanime/commit/9cdb415))
+
+### 💅 Refactors
+
+- **waapi-timeline:** ⚠️  Accept only CSS easing strings ([104a11c](https://github.com/astraldev/nanime/commit/104a11c))
+
+### 📖 Documentation
+
+- **waapi-timeline:** Document CSS-only easing and the 0.4.2 changes ([d435078](https://github.com/astraldev/nanime/commit/d435078))
+- **skill:** Update the layout and verifying references ([aac002b](https://github.com/astraldev/nanime/commit/aac002b))
+- Add TODO ([2f11e34](https://github.com/astraldev/nanime/commit/2f11e34))
+- **waapi-timeline:** Describe direction changes and CSS-only easing ([446f3cc](https://github.com/astraldev/nanime/commit/446f3cc))
+
+#### ⚠️ Breaking Changes
+
+- **waapi-timeline:** ⚠️  Accept only CSS easing strings ([104a11c](https://github.com/astraldev/nanime/commit/104a11c))
+
+### ❤️ Contributors
+
+- Ekure Edem ([@astraldev](https://github.com/astraldev))
+
 ## v0.4.1
 
 [compare changes](https://github.com/astraldev/nanime/compare/v0.4.0...v0.4.1)
