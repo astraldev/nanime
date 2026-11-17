@@ -1,13 +1,6 @@
 export default defineNuxtConfig({
   extends: ['docus'],
   modules: ['nanime'],
-  $development: {
-    hooks: {
-      'build:manifest': (manifest) => {
-        for (const chunk of Object.values(manifest)) chunk.prefetch = false
-      },
-    },
-  },
   components: {
     global: true,
     dirs: ['~/components'],
@@ -97,6 +90,11 @@ export default defineNuxtConfig({
         'remark-emoji',
         'remark-mdc',
       ],
+    },
+  },
+  hooks: {
+    'build:manifest': (manifest) => {
+      for (const chunk of Object.values(manifest)) chunk.prefetch = false
     },
   },
   icon: {
