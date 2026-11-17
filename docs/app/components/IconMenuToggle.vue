@@ -10,6 +10,8 @@ defineProps<{
     variant="ghost"
     color="neutral"
     class="-me-1.5"
+    :aria-label="open ? 'Close menu' : 'Open menu'"
+    :aria-expanded="open"
     square
   >
     <svg
